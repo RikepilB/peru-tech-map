@@ -2,6 +2,5 @@
 # This auto-requests their review on every pull request, and — when paired
 # with branch protection's "Require review from Code Owners" — blocks any
 # merge until they approve.
-# TODO: swap in your real GitHub username if "ridi.pillaca" isn't it.
 
-* @ridi.pillaca
+* @RikepilB
