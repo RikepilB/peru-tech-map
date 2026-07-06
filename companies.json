@@ -1,0 +1,461 @@
+[
+  {
+    "name": "Culqi",
+    "domain": "culqi.com",
+    "city": "lima",
+    "address": "San Isidro, Lima",
+    "lat": -12.0930, "lng": -77.0270,
+    "funding": { "type": "Startup" },
+    "tag": "Online payment gateway (Credicorp/BCP group) letting businesses accept card payments in-store and online."
+  },
+  {
+    "name": "Kambista",
+    "domain": "kambista.com",
+    "city": "lima",
+    "address": "Miraflores, Lima",
+    "lat": -12.1040, "lng": -77.0225,
+    "funding": { "type": "Startup" },
+    "tag": "Peru's first fully digital currency exchange house — buy/sell dollars and soles online at live rates."
+  },
+  {
+    "name": "Yape",
+    "domain": "yape.com.pe",
+    "city": "lima",
+    "address": "Chorrillos, Lima (BCP Centro de Innovación Tecnológica)",
+    "lat": -12.1770, "lng": -77.0130,
+    "funding": { "type": "Startup" },
+    "tag": "Peru's largest digital wallet/payments app (19M+ users), built out of BCP's innovation center."
+  },
+  {
+    "name": "Crehana",
+    "domain": "crehana.com",
+    "city": "lima",
+    "address": "San Isidro, Lima",
+    "lat": -12.1225, "lng": -77.0295,
+    "funding": { "type": "Startup" },
+    "tag": "Lima-founded edtech platform — online courses for creative, business and tech professionals across LatAm and Spain."
+  },
+  {
+    "name": "Rappi Perú",
+    "domain": "rappi.com.pe",
+    "city": "lima",
+    "address": "San Isidro, Lima",
+    "lat": -12.0913, "lng": -77.0280,
+    "funding": { "type": "Startup" },
+    "tag": "Colombian quick-commerce/delivery unicorn with a major Lima operation and corporate office in San Isidro."
+  },
+  {
+    "name": "Chazki",
+    "domain": "chazki.com",
+    "city": "lima",
+    "lat": -12.1080, "lng": -76.9990,
+    "funding": { "type": "Startup" },
+    "tag": "Peruvian last-mile logistics/delivery startup connecting e-commerce companies with couriers across LatAm."
+  },
+  {
+    "name": "Rextie",
+    "domain": "rextie.com",
+    "city": "lima",
+    "address": "Miraflores, Lima",
+    "lat": -12.1211, "lng": -77.0297,
+    "funding": { "type": "Startup" },
+    "tag": "Leading online currency exchange house in Peru."
+  },
+  {
+    "name": "Manantial Tecnológico",
+    "domain": "manantial.pe",
+    "city": "lima",
+    "address": "San Isidro, Lima",
+    "lat": -12.0958, "lng": -77.0335,
+    "funding": { "type": "Consultancy" },
+    "tag": "AWS/Oracle cloud consulting partner — migration, infrastructure and AWS re/Start training."
+  },
+  {
+    "name": "Caleidos",
+    "domain": "caleidos.pe",
+    "city": "lima",
+    "address": "Magdalena del Mar, Lima",
+    "lat": -12.0930, "lng": -77.0730,
+    "funding": { "type": "Consultancy" },
+    "tag": "AWS Advanced Tier Services Partner (est. 2013) — cloud migration, DevOps and generative AI on AWS."
+  },
+  {
+    "name": "Avantica (Encora)",
+    "domain": "avantica.com",
+    "city": "lima",
+    "address": "San Isidro, Lima",
+    "lat": -12.0975, "lng": -77.0295,
+    "funding": { "type": "Consultancy" },
+    "tag": "Nearshore software development and digital product engineering firm, part of the global Encora group."
+  },
+  {
+    "name": "Innoteam Perú",
+    "domain": "innoteamperu.com",
+    "city": "lima",
+    "address": "San Isidro, Lima",
+    "lat": -12.0913, "lng": -77.0280,
+    "funding": { "type": "Consultancy" },
+    "tag": "IT consulting firm helping small and medium Peruvian businesses with digital transformation."
+  },
+  {
+    "name": "Belatrix (Globant)",
+    "domain": "globant.com",
+    "city": "lima",
+    "address": "San Isidro, Lima",
+    "lat": -12.0985, "lng": -77.0364,
+    "funding": { "type": "Acquired" },
+    "tag": "Custom software development studio acquired by Globant in 2019; Lima delivery presence."
+  },
+  {
+    "name": "UTEC Ventures",
+    "domain": "utecventures.com",
+    "city": "lima",
+    "address": "Barranco, Lima",
+    "lat": -12.1480, "lng": -77.0210,
+    "funding": { "type": "Incubator" },
+    "tag": "Startup accelerator run by Universidad de Ingeniería y Tecnología (UTEC)."
+  },
+  {
+    "name": "WeWork San Isidro",
+    "domain": "wework.com",
+    "city": "lima",
+    "address": "San Isidro, Lima",
+    "lat": -12.1005, "lng": -77.0210,
+    "funding": { "type": "Coworking" },
+    "tag": "WeWork coworking location in San Isidro's financial district, Lima's largest business hub."
+  },
+  {
+    "name": "Regus Real Ocho",
+    "domain": "regus.com",
+    "city": "lima",
+    "address": "San Isidro, Lima",
+    "lat": -12.1000, "lng": -77.0230,
+    "funding": { "type": "Coworking" },
+    "tag": "Regus serviced-office and coworking location in the Real Ocho tower."
+  },
+  {
+    "name": "1551 Incubadora (UNMSM)",
+    "city": "lima",
+    "address": "Cercado de Lima",
+    "lat": -12.0570, "lng": -77.0810,
+    "funding": { "type": "Incubator" },
+    "tag": "University-run startup incubator of Universidad Nacional Mayor de San Marcos."
+  },
+  {
+    "name": "VendeMás (Niubiz)",
+    "domain": "niubiz.com.pe",
+    "city": "lima",
+    "address": "Miraflores, Lima",
+    "lat": -12.1180, "lng": -77.0280,
+    "funding": { "type": "Startup" },
+    "tag": "POS payment-terminal product line from Niubiz helping small/medium merchants accept digital payments."
+  },
+  {
+    "name": "Endeavor Perú",
+    "domain": "endeavor.org.pe",
+    "city": "lima",
+    "address": "San Isidro, Lima",
+    "lat": -12.0985, "lng": -77.0364,
+    "funding": { "type": "Nonprofit" },
+    "tag": "Local chapter of the global Endeavor network, mentoring Peru's high-impact scale-up entrepreneurs."
+  },
+  {
+    "name": "Quantico AI",
+    "domain": "quantico.ai",
+    "city": "lima",
+    "address": "Magdalena del Mar, Lima",
+    "lat": -12.0919, "lng": -77.0757,
+    "funding": { "type": "Startup" },
+    "tag": "AI-driven social listening and web analytics SaaS delivering enterprise market insight across LatAm."
+  },
+  {
+    "name": "Keynua",
+    "domain": "keynua.com",
+    "city": "lima",
+    "address": "San Isidro, Lima",
+    "lat": -12.0977, "lng": -77.0365,
+    "funding": { "type": "Startup" },
+    "tag": "Y Combinator (W19) — video-based e-signature and identity-verification platform combining biometrics with legal validity across LatAm."
+  },
+  {
+    "name": "MindQube",
+    "domain": "mindqube.com",
+    "city": "lima",
+    "address": "Santiago de Surco, Lima",
+    "lat": -12.1090, "lng": -76.9790,
+    "funding": { "type": "Startup" },
+    "tag": "Cloud-based no-code platform for building and customizing enterprise business applications."
+  },
+  {
+    "name": "Laus",
+    "domain": "lausapp.com",
+    "city": "lima",
+    "address": "Miraflores, Lima",
+    "lat": -12.1211, "lng": -77.0282,
+    "funding": { "type": "Startup" },
+    "tag": "Occupational health and safety (HSE) compliance SaaS digitizing risk reporting and regulatory audits."
+  },
+  {
+    "name": "EQUIP",
+    "domain": "equipconstruye.com",
+    "city": "lima",
+    "address": "San Isidro, Lima",
+    "lat": -12.0977, "lng": -77.0365,
+    "funding": { "type": "Startup" },
+    "tag": "B2B marketplace for construction materials with embedded fintech credit for construction companies."
+  },
+  {
+    "name": "Apurata",
+    "domain": "apurata.com",
+    "city": "lima",
+    "address": "Calle Chinchón 1018, San Isidro, Lima",
+    "lat": -12.0950849, "lng": -77.026154,
+    "funding": { "type": "Startup" },
+    "tag": "Y Combinator (S19) — fintech offering fast digital microloans using alternative credit-scoring for underbanked Peruvians."
+  },
+  {
+    "name": "OlaClick",
+    "domain": "ola.click",
+    "city": "lima",
+    "address": "Miraflores, Lima",
+    "lat": -12.1211, "lng": -77.0282,
+    "funding": { "type": "Startup" },
+    "tag": "Y Combinator (W21) — restaurant e-commerce/POS platform enabling WhatsApp ordering and digital menus for LatAm SMEs."
+  },
+  {
+    "name": "Kashin",
+    "domain": "kashin.app",
+    "city": "lima",
+    "address": "Miraflores, Lima",
+    "lat": -12.1211, "lng": -77.0282,
+    "funding": { "type": "Startup" },
+    "tag": "Y Combinator (S22) — mobile micro-lending and digital wallet platform for the informal economy."
+  },
+  {
+    "name": "Talently",
+    "domain": "talently.tech",
+    "city": "lima",
+    "address": "Lima (no specific street address publicly verifiable)",
+    "lat": -12.0995, "lng": -77.0375,
+    "funding": { "type": "Startup" },
+    "tag": "Platform connecting Latin American software-engineering talent with US/global companies for hiring and staffing."
+  },
+  {
+    "name": "Kurios",
+    "domain": "kurios.la",
+    "city": "lima",
+    "address": "Av. José Pardo 434, Miraflores, Lima",
+    "lat": -12.1215, "lng": -77.0290,
+    "funding": { "type": "Startup" },
+    "tag": "Y Combinator (S21) — cohort-based upskilling (product management, growth, data analytics) for corporate teams across LatAm."
+  },
+  {
+    "name": "uDocz",
+    "domain": "udocz.com",
+    "city": "lima",
+    "address": "Lima (no specific street address publicly verifiable)",
+    "lat": -12.0995, "lng": -77.0375,
+    "funding": { "type": "Startup" },
+    "tag": "Edtech platform where university students share study materials, expanding into AI-powered tutoring across LatAm."
+  },
+  {
+    "name": "Laboratoria",
+    "domain": "laboratoria.la",
+    "city": "lima",
+    "address": "Av. Almirante Miguel Grau 629, Barranco, Lima",
+    "lat": -12.1520, "lng": -77.0195,
+    "funding": { "type": "Startup" },
+    "tag": "Social-impact tech venture training women from underserved backgrounds in software development and UX design."
+  },
+  {
+    "name": "Wayra Perú",
+    "domain": "wayra.com",
+    "city": "lima",
+    "address": "Av. Arequipa 1155, Lima (Fundación Telefónica building)",
+    "lat": -12.0793, "lng": -77.0407,
+    "funding": { "type": "Incubator" },
+    "tag": "Telefónica/Movistar's corporate venture and open-innovation accelerator arm."
+  },
+  {
+    "name": "Emprende UP",
+    "domain": "emprendeup.pe",
+    "city": "lima",
+    "address": "Universidad del Pacífico, Jesús María, Lima",
+    "lat": -12.0791, "lng": -77.0472,
+    "funding": { "type": "Incubator" },
+    "tag": "Universidad del Pacífico's entrepreneurship center — incubation, acceleration, and angel-investor network programs."
+  },
+  {
+    "name": "PUCP Emprende (CIDE)",
+    "domain": "cide.pucp.edu.pe",
+    "city": "lima",
+    "address": "PUCP campus, San Miguel, Lima",
+    "lat": -12.0692, "lng": -77.0797,
+    "funding": { "type": "Incubator" },
+    "tag": "PUCP's academic incubator/accelerator (Centro de Innovación y Desarrollo Emprendedor), running the NEXUM incubator."
+  },
+  {
+    "name": "USIL Ventures",
+    "domain": "usilventures.com",
+    "city": "lima",
+    "address": "Calle Toulon 330, La Molina, Lima",
+    "lat": -12.0850, "lng": -76.9430,
+    "funding": { "type": "Incubator" },
+    "tag": "Universidad San Ignacio de Loyola's incubator/accelerator — scale-up and internationalization programs."
+  },
+  {
+    "name": "Salkantay Ventures",
+    "domain": "salkantay.vc",
+    "city": "lima",
+    "address": "Av. La Mar 662, Miraflores, Lima",
+    "lat": -12.1145, "lng": -77.0345,
+    "funding": { "type": "Fund" },
+    "tag": "Early-stage Peruvian VC fund (est. 2012) investing pre-seed to Series A, focused on EdTech, FinTech, AgTech and B2B SaaS."
+  },
+  {
+    "name": "Winnipeg Capital",
+    "domain": "winnipegcapital.com",
+    "city": "lima",
+    "address": "Lima (no specific address independently verifiable)",
+    "lat": -12.0975, "lng": -77.0364,
+    "funding": { "type": "Fund" },
+    "tag": "Peruvian multi-family office and asset manager running the Winnipeg Startup Fund, a seed-stage vehicle."
+  },
+  {
+    "name": "AVP Ventures",
+    "domain": "avpventures.com",
+    "city": "lima",
+    "address": "Ca. Recavarren 111, Miraflores/San Isidro border, Lima",
+    "lat": -12.1002, "lng": -77.0353,
+    "funding": { "type": "Fund" },
+    "tag": "Peru's largest angel-investor network turned early-stage VC fund (formerly Angel Ventures Peru)."
+  },
+  {
+    "name": "PECAP",
+    "domain": "pecap.pe",
+    "city": "lima",
+    "address": "Cal. G. Lara 328, San Isidro, Lima",
+    "lat": -12.0940, "lng": -77.0320,
+    "funding": { "type": "Fund" },
+    "tag": "Asociación Peruana de Capital Semilla y Emprendedor — the trade association for Peru's angel/seed investor networks."
+  },
+  {
+    "name": "Le Qara",
+    "city": "arequipa",
+    "lat": -16.4005, "lng": -71.5375,
+    "funding": { "type": "Startup" },
+    "tag": "Biotech startup producing vegan biocuero (bio-leather) and biotextiles from living microorganism cultures; H&M Foundation Global Change Award winner."
+  },
+  {
+    "name": "Yak-Bi",
+    "city": "arequipa",
+    "lat": -16.3975, "lng": -71.5455,
+    "funding": { "type": "Startup" },
+    "tag": "UCSM student-founded IoT/automation system helping industrial and agroindustrial companies cut water consumption up to 22%."
+  },
+  {
+    "name": "sTemis",
+    "domain": "stemis.pe",
+    "city": "arequipa",
+    "lat": -16.3970, "lng": -71.5460,
+    "funding": { "type": "Startup" },
+    "tag": "Legaltech/edtech startup — digital simulator of judicial trials used by thousands of law students across Peru."
+  },
+  {
+    "name": "Alveoprol",
+    "city": "arequipa",
+    "lat": -16.3972, "lng": -71.5458,
+    "funding": { "type": "Startup" },
+    "tag": "Biomaterials for oral-health applications, incubated through UCSM's INNICIA Venture Studio."
+  },
+  {
+    "name": "FLY",
+    "city": "arequipa",
+    "lat": -16.3968, "lng": -71.5462,
+    "funding": { "type": "Startup" },
+    "tag": "Inclusive-tourism startup using drones for real-time virtual access to Arequipa sites for people with reduced mobility."
+  },
+  {
+    "name": "Dentito",
+    "city": "arequipa",
+    "lat": -16.4015, "lng": -71.5410,
+    "funding": { "type": "Acquired" },
+    "tag": "Medtech startup automating dental/medical-office processes; acquired by DocToc Health in 2025."
+  },
+  {
+    "name": "AM Software",
+    "domain": "amsoftware.pe",
+    "city": "arequipa",
+    "lat": -16.3990, "lng": -71.5350,
+    "funding": { "type": "Consultancy" },
+    "tag": "Custom software development firm with 10+ years building bespoke business systems."
+  },
+  {
+    "name": "Netfyks",
+    "domain": "netfyks.com",
+    "city": "arequipa",
+    "address": "Av. Obrera, Arequipa",
+    "lat": -16.4180, "lng": -71.5300,
+    "funding": { "type": "Consultancy" },
+    "tag": "IT consultancy and software factory — custom web/mobile development, e-invoicing, hosting."
+  },
+  {
+    "name": "Ingenia 3 Perú",
+    "domain": "ingenia3peru.com",
+    "city": "arequipa",
+    "lat": -16.4000, "lng": -71.5360,
+    "funding": { "type": "Consultancy" },
+    "tag": "Software factory specializing in ERP systems and custom web/mobile solutions."
+  },
+  {
+    "name": "La Pera Coworking",
+    "city": "arequipa",
+    "address": "Yanahuara, Arequipa",
+    "lat": -16.3928, "lng": -71.5423,
+    "funding": { "type": "Coworking" },
+    "tag": "Coworking space with shared desks, private offices, and meeting/event rooms in Arequipa's commercial district."
+  },
+  {
+    "name": "Conexa Coworking",
+    "domain": "conexacoworking.com",
+    "city": "arequipa",
+    "address": "Umacollo, Arequipa",
+    "lat": -16.3985, "lng": -71.5455,
+    "funding": { "type": "Coworking" },
+    "tag": "Flexible coworking space with private/shared desks, meeting rooms, and an auditorium."
+  },
+  {
+    "name": "Kaman (UCSP)",
+    "domain": "ucsp.edu.pe",
+    "city": "arequipa",
+    "lat": -16.4025, "lng": -71.5415,
+    "funding": { "type": "Incubator" },
+    "tag": "Universidad Católica San Pablo's business incubator — southern Peru's first (2015), 140+ startups incubated."
+  },
+  {
+    "name": "INNICIA (UCSM)",
+    "domain": "ucsm.edu.pe",
+    "city": "arequipa",
+    "lat": -16.3970, "lng": -71.5460,
+    "funding": { "type": "Incubator" },
+    "tag": "UCSM's Venture Studio incubator — 280+ startups supported, including Yak-Bi, Alveoprol and FLY."
+  },
+  {
+    "name": "Marketing Singular",
+    "domain": "marketing-singular.com",
+    "city": "arequipa",
+    "address": "Cayma, Arequipa",
+    "lat": -16.3900, "lng": -71.5430,
+    "funding": { "type": "Consultancy" },
+    "tag": "Digital marketing and web development agency serving Arequipa-area businesses."
+  },
+  {
+    "name": "Predacom",
+    "domain": "predacom.net",
+    "city": "arequipa",
+    "address": "Umacollo (Yanahuara), Arequipa",
+    "lat": -16.3980, "lng": -71.5450,
+    "funding": { "type": "Consultancy" },
+    "tag": "15+ year web design and SEO agency serving Arequipa clients."
+  }
+]

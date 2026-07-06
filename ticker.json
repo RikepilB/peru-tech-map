@@ -1,0 +1,17 @@
+[
+  { "label": "PAYMENTS",   "text": "Yape (BCP) crosses 19M+ users — Peru's largest digital wallet, born out of BCP's Lima innovation center" },
+  { "label": "FINTECH",    "text": "Culqi and Rextie keep growing Lima's online-payments and currency-exchange rails" },
+  { "label": "EDTECH",     "text": "Crehana scales online courses for creative and tech professionals across LatAm and Spain" },
+  { "label": "DELIVERY",   "text": "Rappi Perú and Chazki anchor Lima's quick-commerce and last-mile logistics scene" },
+  { "label": "CLOUD",      "text": "Manantial Tecnológico and Caleidos run AWS/Oracle cloud migrations from San Isidro" },
+  { "label": "M&A",        "text": "Belatrix (Globant) shows Lima's software studios can get acquired by global players" },
+  { "label": "INCUBATOR",  "text": "UTEC Ventures and UNMSM's 1551 keep accelerating Lima's earliest-stage founders" },
+  { "label": "BIOTECH",    "text": "Le Qara wins the H&M Foundation Global Change Award for Arequipa-made bio-leather" },
+  { "label": "EXIT",       "text": "Dentito becomes the first recorded startup exit from southern Peru, acquired by DocToc Health (2025)" },
+  { "label": "UNIVERSITY", "text": "UCSM's INNICIA and UCSP's Kaman have incubated 400+ startups combined out of Arequipa" },
+  { "label": "LEGALTECH",  "text": "sTemis' judicial-trial simulator is used by thousands of law students across Peru" },
+  { "label": "AGTECH",     "text": "Yak-Bi's IoT system cuts industrial water use up to 22% for Arequipa agroindustrial clients" },
+  { "label": "COWORKING",  "text": "La Pera and Conexa anchor Arequipa's Yanahuara/Umacollo coworking cluster" },
+  { "label": "YC",         "text": "Keynua, Apurata, OlaClick, Kashin and Kurios are all Y Combinator alumni operating out of Lima" },
+  { "label": "STAT",       "text": "53 companies indexed across Lima & Arequipa" }
+]

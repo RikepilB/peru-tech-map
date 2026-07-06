@@ -1,0 +1,40 @@
+{
+  "model": "sonnet",
+  "env": {
+    "MAX_THINKING_TOKENS": "10000",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "haiku"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(pnpm:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(git:*)",
+      "Bash(node:*)",
+      "Bash(python:*)",
+      "Bash(python3:*)"
+    ],
+    "deny": [
+      "Read(**/.env*)",
+      "Read(**/secrets/**)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Write(**/.env*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd /c pnpm lint --silent 2>nul || echo [hook] lint skipped",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}

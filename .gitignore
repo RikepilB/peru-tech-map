@@ -1,0 +1,11 @@
+.DS_Store
+*.log
+
+# local overrides / secrets — never commit
+CLAUDE.local.md
+.claude/settings.local.json
+.env
+.env.local
+
+# visual-brainstorming companion scratch (superpowers skill)
+.superpowers/
