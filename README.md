@@ -102,7 +102,6 @@ Then open **http://localhost:8000**.
 ## Known TODOs Before Shipping
 
 - **`FORM_ENDPOINT` in `index.html`** is a placeholder (`https://formsubmit.co/ajax/YOUR_EMAIL_HERE`). The "Add A Company" modal is built but inert until you swap in your own [FormSubmit](https://formsubmit.co/)-verified email — first real submission triggers FormSubmit's one-time verification email.
-- **`CODEOWNERS`** has a placeholder GitHub handle (`@ridi.pillaca`) — confirm/replace with the real handle before enabling branch-protection review requirements.
 - No `assets/` folder yet (no local logo overrides, no custom favicon/OG image) — markers fall back to Google's favicon service or an initial-letter tile, which is enough to ship, but a custom favicon/meta image would be a nice follow-up.
 
 ---
