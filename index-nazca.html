@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<title>Peru Grid — Nazca Desert preview</title>
+<meta name="description" content="Peru Grid — Nazca Desert design preview (not the shipped design yet)." />
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #E8DCC8;
+    --panel: #F1E7D4;
+    --panel-2: #DECDAE;
+    --line: #B79C7A;
+    --rust: #8C3B2E;
+    --rust-dim: rgba(140,59,46,0.18);
+    --ink: #2A1E17;
+    --muted: #6B5A47;
+    --serif: "Source Serif 4", Georgia, serif;
+    --sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --statusbar: 24px;
+    --ticker: 26px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  /* NOTE: no global transition/transform rules — they would fight MapLibre marker positioning */
+  html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); }
+  body { font-family: var(--sans); color: var(--ink); font-size: 13px; }
+  #map { position: absolute; top: 0; left: 0; right: 0; bottom: calc(var(--statusbar) + var(--ticker)); }
+  .maplibregl-ctrl-attrib { font-size: 9px !important; background: rgba(232,220,200,0.75) !important; }
+  .maplibregl-ctrl-attrib a { color: #6B5A47 !important; }
+  .maplibregl-ctrl-bottom-right { bottom: calc(var(--statusbar) + var(--ticker)); }
+
+  /* ---------- Brand eyebrow ---------- */
+  .brand {
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%); z-index: 6;
+    display: flex; align-items: center; gap: 9px; padding: 8px 15px;
+    background: var(--panel); border: 1px solid var(--line);
+    font-family: var(--serif); font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink);
+  }
+  .brand .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--rust); }
+
+  /* ---------- Controls ---------- */
+  .controls { position: absolute; right: 14px; bottom: calc(var(--statusbar) + var(--ticker) + 16px); z-index: 6; display: flex; flex-direction: column; gap: 8px; }
+  .ctl { width: 40px; height: 40px; display: grid; place-items: center; cursor: pointer;
+    background: var(--panel); border: 1px solid var(--line); color: var(--ink);
+    font-family: var(--sans); font-size: 15px; font-weight: 600; user-select: none; }
+  .ctl:hover { border-color: var(--rust); color: var(--rust); }
+  #toggle3d { width: 40px; font-size: 12px; letter-spacing: .05em; }
+  #toggle3d.on { background: var(--rust); color: #fff; border-color: var(--rust); }
+
+  /* ---------- Sidebar ---------- */
+  #panel {
+    position: absolute; top: 0; left: 0; bottom: calc(var(--statusbar) + var(--ticker)); width: 320px; z-index: 7;
+    display: flex; flex-direction: column; background: var(--panel); border-right: 1px solid var(--line);
+  }
+  .panel-head { padding: 16px 16px 13px; border-bottom: 1px solid var(--line); }
+  .panel-head .eyebrow { font-family: var(--sans); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+  .panel-head h1 { margin: 7px 0 3px; font-family: var(--serif); font-size: 20px; font-weight: 700; letter-spacing: .01em; }
+  .panel-head .count { font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+  .barrow { display: flex; align-items: center; gap: 7px; margin-top: 11px; }
+  .barrow .barlabel { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .barbtn { font-family: var(--sans); font-size: 10px; letter-spacing: .06em; text-transform: uppercase;
+    padding: 4px 9px; background: transparent; color: var(--muted); border: 1px solid var(--line); cursor: pointer; border-radius: 3px; }
+  .barbtn:hover { border-color: var(--rust); color: var(--rust); }
+  .barbtn.active { background: var(--rust); color: #fff; border-color: var(--rust); }
+
+  .panel-list { flex: 1; overflow-y: auto; }
+  .panel-list::-webkit-scrollbar { width: 8px; }
+  .panel-list::-webkit-scrollbar-thumb { background: var(--line); }
+  .co {
+    display: flex; align-items: center; gap: 11px; padding: 11px 16px; cursor: pointer;
+    border-left: 3px solid transparent; border-bottom: 1px solid rgba(183,156,122,0.5);
+  }
+  .co:hover { border-left-color: var(--rust); background: rgba(140,59,46,0.05); }
+  .co.active { border-left-color: var(--rust); background: var(--panel-2); }
+  .co .logo { width: 26px; height: 26px; flex: 0 0 auto; background: #fff; display: grid; place-items: center; overflow: hidden; border: 1px solid var(--line); border-radius: 3px; }
+  .co .logo img { width: 100%; height: 100%; object-fit: contain; }
+  .co .logo .initial { font-weight: 700; color: var(--ink); font-size: 13px; }
+  .co .meta { min-width: 0; flex: 1; }
+  .co .name { font-family: var(--serif); font-weight: 600; font-size: 13.5px; letter-spacing: .01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .co .tag { font-size: 10px; color: var(--muted); text-align: right; white-space: nowrap; letter-spacing: .03em; text-transform: uppercase; }
+
+  .panel-err { padding: 24px 16px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+  .panel-err b { color: var(--rust); display: block; margin-bottom: 6px; letter-spacing: .05em; }
+
+  .panel-foot { padding: 12px; border-top: 1px solid var(--line); }
+  .btn { width: 100%; padding: 12px; cursor: pointer; font-family: var(--sans); font-weight: 600; font-size: 12px;
+    letter-spacing: .06em; text-transform: uppercase; background: var(--rust); color: #fff; border: 1px solid var(--rust); border-radius: 4px; }
+  .btn:hover { background: #9d4433; }
+  .btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+  .btn.ghost:hover { border-color: var(--rust); color: var(--rust); }
+
+  .drag-handle { display: none; }
+
+  /* ---------- Status bar ---------- */
+  .statusbar {
+    position: absolute; left: 0; right: 0; bottom: 0; height: var(--statusbar); z-index: 8;
+    display: flex; align-items: center; gap: 22px; padding: 0 14px;
+    background: rgba(232,220,200,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid var(--line); font-size: 11px; letter-spacing: .06em; color: var(--muted);
+    overflow: hidden; white-space: nowrap;
+  }
+  .statusbar .k { color: var(--rust); }
+  .statusbar .live { margin-left: auto; color: var(--rust); display: flex; align-items: center; gap: 6px; }
+  .statusbar .live .b { width: 7px; height: 7px; border-radius: 50%; background: var(--rust); }
+
+  /* ---------- Ticker ---------- */
+  .ticker { position: absolute; left: 0; right: 0; bottom: var(--statusbar); height: var(--ticker); z-index: 8;
+    background: var(--ink); overflow: hidden; display: flex; align-items: center; }
+  .ticker-track { display: inline-flex; white-space: nowrap; will-change: transform; animation: ticker 90s linear infinite; }
+  .ticker:hover .ticker-track { animation-play-state: paused; }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .ti { display: inline-flex; align-items: center; gap: 8px; padding: 0 16px; font-size: 11px; letter-spacing: .04em; color: var(--bg); }
+  .ti .ti-label { color: #E6A15A; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+  .ticker-track .div { color: var(--rust); padding: 0 2px; font-size: 9px; }
+
+  /* ---------- Company marker: rust-red line-drawn pin ----------
+     WRAPPER (the element handed to maplibregl.Marker) carries NONE of our CSS —
+     MapLibre writes transform on it every frame. All visuals live on .co-marker (inner). */
+  .co-marker { position: relative; width: 28px; height: 36px; cursor: pointer; }
+  .co-marker svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; transition: transform .14s ease; transform-origin: bottom center; }
+  .co-marker:hover svg { transform: scale(1.1); }
+  .co-marker .pin-path { fill: var(--bg); stroke: var(--rust); stroke-width: 2; }
+  .co-marker .tile { position: absolute; top: 2px; left: 5px; width: 18px; height: 18px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: #fff; }
+  .co-marker .tile img { width: 13px; height: 13px; object-fit: contain; }
+  .co-marker .tile .initial { font-weight: 700; color: var(--ink); font-size: 10px; }
+  .co-marker.sel .pin-path { stroke-width: 2.6; fill: var(--rust-dim); }
+
+  /* ---------- Popup ---------- */
+  .maplibregl-popup.co-pop .maplibregl-popup-content {
+    background: var(--panel); border: 1px solid var(--line); padding: 13px 15px; color: var(--ink);
+    font-family: var(--sans); border-radius: 3px; }
+  .maplibregl-popup.co-pop .maplibregl-popup-tip { border-top-color: var(--panel) !important; }
+  .co-pop .pname { font-family: var(--serif); font-weight: 600; font-size: 15px; letter-spacing: .01em; margin-bottom: 7px; }
+  .co-pop .ptag { color: var(--muted); font-size: 11px; letter-spacing: .01em; margin: -3px 0 8px; line-height: 1.5; max-width: 240px; }
+  .co-pop a.site { color: var(--rust); font-size: 12px; text-decoration: none; }
+  .co-pop a.site:hover { text-decoration: underline; }
+  .co-pop .addr { color: var(--muted); font-size: 10px; margin-top: 6px; letter-spacing: .02em; }
+  .chip { display: inline-block; margin-top: 10px; padding: 3px 8px; font-size: 10px; letter-spacing: .05em; text-transform: uppercase; border-radius: 3px; }
+  .chip.boot { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+  .chip.fund { background: var(--rust); color: #fff; border: 1px solid var(--rust); }
+
+  /* ---------- Add-company modal ---------- */
+  .scrim { position: absolute; inset: 0; z-index: 20; background: rgba(42,30,23,0.55); backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center; padding: 20px; }
+  .scrim.open { display: flex; }
+  .modal { width: min(440px, 100%); max-height: 88vh; overflow-y: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 5px; }
+  .modal-head { padding: 16px 18px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+  .modal-head h2 { margin: 0; font-family: var(--serif); font-size: 16px; font-weight: 700; letter-spacing: .01em; }
+  .modal-head .x { cursor: pointer; color: var(--muted); font-size: 20px; line-height: 1; }
+  .modal-body { padding: 18px; }
+  .field { margin-bottom: 13px; }
+  .field label { display: block; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .field input, .field select { width: 100%; padding: 10px 11px; font-family: var(--sans); font-size: 13px; color: var(--ink);
+    background: #fff; border: 1px solid var(--line); border-radius: 4px; outline: none; }
+  .field input:focus, .field select:focus { border-color: var(--rust); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+  .pin-row { display: flex; gap: 10px; align-items: center; }
+  .pin-row .btn { width: auto; padding: 9px 13px; }
+  .pin-row .coords { font-size: 10px; color: var(--muted); letter-spacing: .02em; }
+  .form-note { font-size: 10px; color: var(--muted); line-height: 1.5; margin-top: -6px; margin-bottom: 13px; }
+  .form-success { display: none; padding: 28px 20px; text-align: center; }
+  .form-success.show { display: block; }
+  .form-success .big { font-family: var(--serif); font-size: 16px; font-weight: 700; letter-spacing: .02em; color: var(--rust); margin-bottom: 10px; }
+  .form-success p { color: var(--muted); font-size: 12px; line-height: 1.6; }
+  .add-hint { position: absolute; top: 60px; left: 50%; transform: translateX(-50%); z-index: 25;
+    background: var(--rust); color: #fff; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 9px 15px; border-radius: 4px; display: none; }
+  .add-hint.show { display: block; }
+
+  /* ---------- Loader: simple fade-in, no terminal boot lines ---------- */
+  .loader { position: absolute; inset: 0; z-index: 50; background: var(--bg); display: grid; place-items: center;
+    transition: opacity .6s ease; }
+  .loader.done { opacity: 0; pointer-events: none; }
+  .loader .inner { text-align: center; }
+  .loader .mark { font-family: var(--serif); font-size: 22px; font-weight: 700; letter-spacing: .06em; color: var(--ink); text-transform: uppercase; }
+  .loader .mark span { color: var(--rust); }
+  .loader .sub { margin-top: 10px; font-family: var(--sans); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ticker-track { animation: none; }
+  }
+
+  @media (max-width: 767px) {
+    .brand { top: 10px; }
+    .controls { bottom: calc(var(--sheet-peek, 96px) + var(--statusbar) + var(--ticker) + 12px); }
+    #panel {
+      top: auto; left: 0; right: 0; bottom: calc(var(--statusbar) + var(--ticker)); width: auto; height: 60vh;
+      transform: translateY(calc(100% - 96px)); transition: transform .32s cubic-bezier(.32,.72,0,1);
+      border-right: 0; border-top: 1px solid var(--line);
+    }
+    #panel.expanded { transform: translateY(0); }
+    .drag-handle { display: block; width: 38px; height: 3px; background: var(--line); margin: 8px auto 2px; }
+    .panel-head { cursor: pointer; padding-top: 4px; }
+  }
+</style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <div class="brand"><span class="dot"></span>Peru Grid</div>
+
+  <div class="controls">
+    <div id="compass" class="ctl" title="Reset bearing (north up)">
+      <svg width="18" height="18" viewBox="0 0 24 24"><polygon points="12,3 8,13 12,11 16,13" fill="#8C3B2E"/><polygon points="12,21 8,11 12,13 16,11" fill="#B79C7A"/></svg>
+    </div>
+    <div class="ctl-group" style="display:flex;flex-direction:column">
+      <div id="rotL" class="ctl" title="Rotate left">⟲</div>
+      <div id="rotR" class="ctl" title="Rotate right" style="border-top:0">⟳</div>
+    </div>
+    <div class="ctl-group" style="display:flex;flex-direction:column">
+      <div id="zin" class="ctl" title="Zoom in">+</div>
+      <div id="zout" class="ctl" title="Zoom out" style="border-top:0">−</div>
+    </div>
+    <div id="toggle3d" class="ctl" title="Toggle 3D">3D</div>
+  </div>
+
+  <aside id="panel">
+    <div class="drag-handle" id="handle"></div>
+    <div class="panel-head" id="panelHead">
+      <div class="eyebrow">Where The Builders Are</div>
+      <h1>Peru Grid</h1>
+      <div class="count" id="coCount">LOADING…</div>
+      <div class="barrow">
+        <span class="barlabel">City</span>
+        <button class="barbtn active" data-city="lima">Lima</button>
+        <button class="barbtn" data-city="arequipa">Arequipa</button>
+      </div>
+      <div class="barrow">
+        <span class="barlabel">Sort</span>
+        <button class="barbtn active" data-sort="default">Default</button>
+        <button class="barbtn" data-sort="alpha">A–Z</button>
+      </div>
+    </div>
+    <div class="panel-list" id="coList"></div>
+    <div class="panel-foot">
+      <button class="btn" id="addBtn">+ Add A Company</button>
+    </div>
+  </aside>
+
+  <div class="add-hint" id="addHint">Tap the map to drop a pin</div>
+
+  <div class="ticker" id="ticker"><div class="ticker-track" id="tickerTrack"></div></div>
+
+  <div class="statusbar" id="statusbar">
+    <span><span class="k">LAT</span> —</span>
+    <span><span class="k">LNG</span> —</span>
+    <span><span class="k">Z</span> —</span>
+    <span><span class="k">N</span> — COMPANIES</span>
+    <span class="live"><span class="b"></span>LIVE</span>
+  </div>
+
+  <!-- Add company modal -->
+  <div class="scrim" id="scrim">
+    <div class="modal">
+      <div class="modal-head"><h2>Add A Company</h2><span class="x" id="closeModal">×</span></div>
+      <div class="modal-body" id="formWrap">
+        <div class="form-note">TODO: this form isn't wired up yet — set FORM_ENDPOINT in the script to your own <a href="https://formsubmit.co/" target="_blank" rel="noopener" style="color:var(--rust)">FormSubmit</a>-verified email before shipping.</div>
+        <form id="coForm">
+          <div class="field"><label>Company Name</label><input name="Company" required placeholder="ACME INC." /></div>
+          <div class="field"><label>Website</label><input name="Website" required placeholder="acme.com" /></div>
+          <div class="field"><label>City</label>
+            <select name="City"><option value="lima">Lima</option><option value="arequipa">Arequipa</option></select>
+          </div>
+          <div class="field">
+            <label>Location</label>
+            <div class="pin-row">
+              <button type="button" class="btn ghost" id="dropPin">Drop A Pin</button>
+              <span class="coords" id="coordsLabel">NO PIN SET</span>
+            </div>
+            <input type="hidden" name="Latitude" id="latIn" />
+            <input type="hidden" name="Longitude" id="lngIn" />
+          </div>
+          <div class="row2">
+            <div class="field"><label>Category</label>
+              <select name="Category"><option>Startup</option><option>Consultancy</option><option>Coworking</option><option>Incubator</option><option>Nonprofit</option><option>Fund</option></select>
+            </div>
+            <div class="field"><label>Your Email</label><input name="Submitter Email" type="email" placeholder="you@email.com" /></div>
+          </div>
+          <button type="submit" class="btn" id="submitBtn">Submit For Review</button>
+        </form>
+      </div>
+      <div class="form-success" id="formSuccess">
+        <div class="big">Submitted</div>
+        <p>Thanks — new companies get reviewed and added.</p>
+        <div style="margin-top:18px"><button class="btn ghost" id="successClose">Close</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loader -->
+  <div class="loader" id="loader">
+    <div class="inner">
+      <div class="mark">Peru <span>Grid</span></div>
+      <div class="sub" id="loaderSub">Loading</div>
+    </div>
+  </div>
+
+<script>
+// Served over http.server (python3 -m http.server) — companies.json is fetch()'d at startup,
+// which is exactly why opening this file via file:// will NOT work (CORS / fetch blocked).
+const CITIES = {
+  lima: {
+    label: "LIMA",
+    home: { center: [-77.0295, -12.0930], zoom: 12.3, pitch: 0, bearing: 0 },
+    bbox: [-77.20, -12.35, -76.90, -11.95], // [minLng, minLat, maxLng, maxLat]
+    maxBounds: [[-77.28, -12.42], [-76.82, -11.88]],
+    minZoom: 10.5,
+  },
+  arequipa: {
+    label: "AREQUIPA",
+    home: { center: [-71.5375, -16.3988], zoom: 13.2, pitch: 0, bearing: 0 },
+    bbox: [-71.60, -16.50, -71.45, -16.30],
+    maxBounds: [[-71.68, -16.58], [-71.37, -16.22]],
+    minZoom: 11,
+  },
+};
+const FORM_ENDPOINT = "https://formsubmit.co/ajax/YOUR_EMAIL_HERE"; // TODO: replace with your own FormSubmit-verified email
+const MUTED_FUNDING_TYPES = new Set(["Startup", "Consultancy", "Coworking", "Incubator", "Nonprofit", "Fund"]);
+
+const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
+const flyPadding = () => isMobile()
+  ? { bottom: Math.round(window.innerHeight * 0.6), top: 30, left: 20, right: 20 }
+  : { left: 340, top: 40, right: 40, bottom: 60 };
+
+let currentCity = "lima";
+let ALL_COMPANIES = []; // full companies.json, every city
+let COMPANIES = [];     // filtered to the active city
+
+const map = new maplibregl.Map({
+  container: "map",
+  style: "https://tiles.openfreemap.org/styles/liberty",
+  center: CITIES[currentCity].home.center, zoom: CITIES[currentCity].home.zoom, pitch: 0, bearing: 0,
+  antialias: true, maxPitch: 70,
+  maxBounds: CITIES[currentCity].maxBounds,
+  minZoom: CITIES[currentCity].minZoom,
+  attributionControl: { compact: true },
+});
+window._map = map;
+
+const setP = (id, p, v) => { try { map.setPaintProperty(id, p, v); } catch (e) {} };
+const setL = (id, p, v) => { try { map.setLayoutProperty(id, p, v); } catch (e) {} };
+const setF = (id, f) => { try { map.setFilter(id, f); } catch (e) {} };
+
+const ROAD_MAJOR = /motorway|trunk|primary/;
+const STREET_CLASSES = ["motorway", "trunk", "primary", "secondary"];
+
+map.on("load", async () => {
+  themeBaseLayers();
+  setupBuildings();
+  addSky();
+  loadTicker();
+  await loadCompanies();
+  startStatusBar();
+  map.flyTo({ ...CITIES[currentCity].home, duration: 2600, curve: 1.4, essential: true });
+});
+
+// Nazca Desert: sand background, rust-red linework, muted tan roads/buildings
+function themeBaseLayers() {
+  for (const layer of map.getStyle().layers) {
+    const id = layer.id, lid = id.toLowerCase(), t = layer.type, srcL = layer["source-layer"];
+    try {
+      if (t === "background") { setP(id, "background-color", "#E8DCC8"); continue; }
+
+      if (t === "fill") {
+        if (/water|ocean|sea|river|lake|bay|basin/.test(lid)) setP(id, "fill-color", "#D8CBA6");
+        else if (/building/.test(lid)) { setP(id, "fill-color", "#DECDAE"); setP(id, "fill-outline-color", "#B79C7A"); setP(id, "fill-opacity", 1); }
+        else if (/park|wood|forest|grass|garden|pitch|golf|recreation|cemetery|meadow|landcover/.test(lid)) setP(id, "fill-color", "#DFD3B8");
+        else setP(id, "fill-color", "#E8DCC8");
+        continue;
+      }
+
+      if (t === "line") {
+        if (/water|waterway|river|canal|stream|shore|coast/.test(lid)) { setP(id, "line-color", "#B79C7A"); setP(id, "line-opacity", 0.5); continue; }
+        if (/casing|outline/.test(lid)) { setP(id, "line-opacity", 0); continue; }
+        if (/rail|transit|tram|subway|funicular|boundary|admin/.test(lid)) { setP(id, "line-color", "#C9B79C"); continue; }
+        if (ROAD_MAJOR.test(lid) || /secondary/.test(lid)) { setP(id, "line-color", "#8C3B2E"); setP(id, "line-opacity", 0.55); }
+        else { setP(id, "line-color", "#C9B79C"); setP(id, "line-opacity", 0.9); }
+        continue;
+      }
+
+      if (t === "symbol") {
+        if (srcL === "poi" || /poi|housenumber/.test(lid)) { setL(id, "visibility", "none"); continue; }
+        if (srcL === "transportation_name" || /highway-name|road.*name|road_label/.test(lid)) {
+          setF(id, ["in", ["get", "class"], ["literal", STREET_CLASSES]]);
+          setL(id, "text-font", ["Noto Sans Regular"]);
+          setP(id, "text-color", "#6B5A47");
+          setP(id, "text-halo-color", "#E8DCC8");
+          setP(id, "text-halo-width", 1.4);
+          try { map.setLayoutProperty(id, "text-size", 11); } catch (e) {}
+          continue;
+        }
+        const isPlace = srcL === "place" || /place|city|town|suburb|neighbourhood/.test(lid);
+        setL(id, "text-font", ["Noto Sans Regular"]);
+        if (isPlace) { setL(id, "text-transform", "uppercase"); setP(id, "text-color", "#6B5A47"); }
+        else setP(id, "text-color", "#8a7a63");
+        setP(id, "text-halo-color", "#E8DCC8");
+        setP(id, "text-halo-width", 1.4);
+        continue;
+      }
+    } catch (e) {}
+  }
+  setP("background", "background-color", "#E8DCC8");
+}
+
+// 2D flat footprints by default; 3D extrusion is toggle-only
+function setupBuildings() {
+  if (map.getLayer("building")) setL("building", "visibility", "visible");
+  const extColor = ["interpolate", ["linear"], ["coalesce", ["get", "render_height"], 6],
+    6, "#D8C9A8", 40, "#C9B694", 120, "#B7A17E", 250, "#A38E6C"];
+  if (map.getLayer("building-3d")) {
+    setP("building-3d", "fill-extrusion-color", extColor);
+    setP("building-3d", "fill-extrusion-opacity", 0.95);
+    setP("building-3d", "fill-extrusion-vertical-gradient", true);
+    setL("building-3d", "visibility", "none");
+  } else {
+    let firstSymbol;
+    for (const l of map.getStyle().layers) { if (l.type === "symbol") { firstSymbol = l.id; break; } }
+    map.addLayer({
+      id: "building-3d", source: "openmaptiles", "source-layer": "building", type: "fill-extrusion", minzoom: 14,
+      layout: { visibility: "none" },
+      paint: {
+        "fill-extrusion-color": extColor,
+        "fill-extrusion-height": ["coalesce", ["get", "render_height"], 6],
+        "fill-extrusion-base": ["coalesce", ["get", "render_min_height"], 0],
+        "fill-extrusion-opacity": 0.95,
+        "fill-extrusion-vertical-gradient": true,
+      }
+    }, firstSymbol);
+  }
+}
+
+function addSky() {
+  try { map.setSky({ "sky-color": "#E8DCC8", "sky-horizon-blend": 0.4, "horizon-color": "#DECDAE", "fog-color": "#E8DCC8", "fog-ground-blend": 0.5 }); } catch (e) {}
+}
+
+// ---------- Companies (single source of truth: companies.json) ----------
+const markers = [];
+let openPopup = null;
+let selected = -1;
+let sortMode = "default"; // "default" (JSON order) | "alpha" (A–Z)
+
+async function loadCompanies() {
+  try {
+    const res = await fetch("./companies.json", { cache: "no-cache" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    ALL_COMPANIES = await res.json();
+    applyCity(currentCity, { skipFly: true });
+  } catch (err) {
+    console.error("[grid] failed to load companies.json", err);
+    document.getElementById("coCount").textContent = "ERROR";
+    document.getElementById("coList").innerHTML =
+      `<div class="panel-err"><b>Grid offline</b>Could not load companies.json. Ensure the site is served over http (python3 -m http.server) and the file exists alongside index-nazca.html.</div>`;
+  }
+}
+
+// Filter to the active city + bbox-guard, then rebuild markers/sidebar and refit the camera
+function applyCity(city, opts = {}) {
+  currentCity = city;
+  const cfg = CITIES[city];
+
+  COMPANIES = ALL_COMPANIES.filter(c => {
+    if (c.city !== city) return false;
+    const ok = c.lng >= cfg.bbox[0] && c.lng <= cfg.bbox[2] && c.lat >= cfg.bbox[1] && c.lat <= cfg.bbox[3];
+    if (!ok) console.warn(`[grid] skipped ${c.name} — coords ${c.lat},${c.lng} outside ${city} core bbox`);
+    return ok;
+  });
+
+  markers.forEach(mk => mk.marker.remove());
+  markers.length = 0;
+  if (openPopup) { openPopup.remove(); openPopup = null; }
+  selected = -1;
+
+  map.setMaxBounds(cfg.maxBounds);
+  map.setMinZoom(cfg.minZoom);
+  if (!opts.skipFly) map.flyTo({ ...cfg.home, duration: 1400, essential: true });
+
+  buildMarkers();
+  buildSidebar();
+}
+
+// ---------- Ticker (separate feed: ticker.json — not filtered by city, it's a shared headline reel) ----------
+async function loadTicker() {
+  try {
+    const res = await fetch("./ticker.json", { cache: "no-cache" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const items = await res.json();
+    if (!Array.isArray(items) || !items.length) throw new Error("empty");
+    const seq = items.map(it =>
+      `<span class="ti"><span class="ti-label">${it.label || "•"}</span>${it.text}</span><span class="div">◆</span>`
+    ).join("");
+    const track = document.getElementById("tickerTrack");
+    track.innerHTML = seq + seq;
+    const PX_PER_SEC = 32;
+    requestAnimationFrame(() => {
+      const loopWidth = track.scrollWidth / 2;
+      if (loopWidth > 0) track.style.animationDuration = (loopWidth / PX_PER_SEC) + "s";
+    });
+  } catch (err) {
+    console.warn("[grid] ticker.json not loaded — hiding ticker", err);
+    document.getElementById("ticker").style.display = "none";
+    document.documentElement.style.setProperty("--ticker", "0px");
+  }
+}
+
+// Prefer a local logo (assets/logos/...) if provided, else fall back to the favicon service —
+// returns null (not a broken URL) when there's no domain, so callers render the initial-letter tile instead.
+function logoSrc(c) { return c.logo ? c.logo : (c.domain ? `https://www.google.com/s2/favicons?domain=${c.domain}&sz=64` : null); }
+
+function validDomain(d) { return d && d.includes("."); }
+
+function fundingChip(f) {
+  if (!f) return "";
+  const cls = MUTED_FUNDING_TYPES.has(f.type) ? "boot" : "fund";
+  return `<span class="chip ${cls}">${f.type}</span>`;
+}
+
+const PIN_SVG = `<svg viewBox="0 0 28 36"><path class="pin-path" d="M14 2c6.6 0 12 5.2 12 11.7 0 8.8-12 20.3-12 20.3S2 22.5 2 13.7C2 7.2 7.4 2 14 2z"/></svg>`;
+
+function buildMarkers() {
+  // Group companies sharing the same coordinate so we can fan them out (spiderfy)
+  const groups = {};
+  COMPANIES.forEach((c, i) => {
+    const key = `${c.lat.toFixed(5)},${c.lng.toFixed(5)}`;
+    (groups[key] = groups[key] || []).push(i);
+  });
+
+  COMPANIES.forEach((c, i) => {
+    // WRAPPER: bare div, MapLibre owns its transform. No class, no CSS, ever.
+    const wrapper = document.createElement("div");
+    // INNER: all visuals + animations live here
+    const inner = document.createElement("div");
+    inner.className = "co-marker";
+    inner.innerHTML = PIN_SVG;
+    const tile = document.createElement("div"); tile.className = "tile";
+    const src = logoSrc(c);
+    if (src) {
+      const img = document.createElement("img");
+      img.src = src;
+      img.onerror = () => { tile.innerHTML = `<span class="initial">${c.name[0]}</span>`; };
+      tile.appendChild(img);
+    } else {
+      tile.innerHTML = `<span class="initial">${c.name[0]}</span>`;
+    }
+    inner.appendChild(tile);
+    wrapper.appendChild(inner);
+    inner.addEventListener("click", (e) => { e.stopPropagation(); selectCompany(i, true); });
+
+    // Fan out co-located pins by a fixed pixel offset (stays separated at any zoom)
+    const group = groups[`${c.lat.toFixed(5)},${c.lng.toFixed(5)}`];
+    let offset = [0, -18];
+    if (group.length > 1) {
+      const k = group.indexOf(i);
+      const ang = (2 * Math.PI / group.length) * k - Math.PI / 2;
+      const r = Math.max(26, 16 / Math.sin(Math.PI / group.length));
+      offset = [Math.cos(ang) * r, Math.sin(ang) * r - 18];
+    }
+
+    const m = new maplibregl.Marker({ element: wrapper, anchor: "bottom", offset })
+      .setLngLat([c.lng, c.lat]).addTo(map);
+    markers.push({ marker: m, inner });
+  });
+}
+
+function selectCompany(i, fly) {
+  selected = i;
+  const c = COMPANIES[i];
+  markers.forEach((mk, j) => mk.inner.classList.toggle("sel", j === i));
+  document.querySelectorAll(".co").forEach((row) => row.classList.toggle("active", Number(row.dataset.idx) === i));
+
+  if (openPopup) openPopup.remove();
+  openPopup = new maplibregl.Popup({ offset: 30, closeButton: false, className: "co-pop", maxWidth: "280px" })
+    .setLngLat([c.lng, c.lat])
+    .setHTML(`
+      <div class="pname">${c.name}</div>
+      ${c.tag ? `<div class="ptag">${c.tag}</div>` : ""}
+      ${validDomain(c.domain) ? `<a class="site" href="https://${c.domain}" target="_blank" rel="noopener">${c.domain} ↗</a>` : ""}
+      <div>${fundingChip(c.funding)}</div>
+      ${c.address ? `<div class="addr">${c.address}</div>` : ""}
+    `).addTo(map);
+
+  if (fly) map.flyTo({ center: [c.lng, c.lat], zoom: 16, padding: flyPadding(), duration: 1500, essential: true });
+  if (isMobile()) document.getElementById("panel").classList.remove("expanded");
+}
+
+map.on("click", () => {
+  if (addMode) return;
+  if (openPopup) { openPopup.remove(); openPopup = null; }
+  markers.forEach(mk => mk.inner.classList.remove("sel"));
+  document.querySelectorAll(".co").forEach(row => row.classList.remove("active"));
+  selected = -1;
+});
+
+function buildSidebar() {
+  const list = document.getElementById("coList");
+  list.innerHTML = "";
+  document.getElementById("coCount").textContent = `${COMPANIES.length} PLACES INDEXED`;
+  const order = COMPANIES.map((c, i) => i);
+  if (sortMode === "alpha") order.sort((a, b) => COMPANIES[a].name.localeCompare(COMPANIES[b].name));
+  order.forEach((i) => {
+    const c = COMPANIES[i];
+    const row = document.createElement("div");
+    row.className = "co" + (i === selected ? " active" : "");
+    row.dataset.idx = i;
+    const src = logoSrc(c);
+    const logoHtml = src
+      ? `<img src="${src}" onerror="this.parentNode.innerHTML='<span class=\\'initial\\'>${c.name[0]}</span>'">`
+      : `<span class="initial">${c.name[0]}</span>`;
+    row.innerHTML = `
+      <div class="logo">${logoHtml}</div>
+      <div class="meta"><div class="name">${c.name}</div></div>
+      <div class="tag">${c.funding ? c.funding.type : ""}</div>`;
+    row.addEventListener("click", () => selectCompany(i, true));
+    list.appendChild(row);
+  });
+}
+
+// ---------- Controls ----------
+document.querySelectorAll(".barbtn[data-city]").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (btn.dataset.city === currentCity) return;
+    document.querySelectorAll(".barbtn[data-city]").forEach((b) => b.classList.toggle("active", b === btn));
+    applyCity(btn.dataset.city);
+  });
+});
+
+document.querySelectorAll(".barbtn[data-sort]").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    sortMode = btn.dataset.sort;
+    document.querySelectorAll(".barbtn[data-sort]").forEach((b) => b.classList.toggle("active", b === btn));
+    buildSidebar();
+  });
+});
+
+document.getElementById("zin").onclick = () => map.zoomIn({ duration: 400 });
+document.getElementById("zout").onclick = () => map.zoomOut({ duration: 400 });
+document.getElementById("compass").onclick = () => map.easeTo({ bearing: 0, duration: 600 });
+document.getElementById("rotL").onclick = () => map.easeTo({ bearing: map.getBearing() - 30, duration: 400 });
+document.getElementById("rotR").onclick = () => map.easeTo({ bearing: map.getBearing() + 30, duration: 400 });
+map.on("rotate", () => { const n = document.querySelector("#compass svg"); if (n) n.style.transform = `rotate(${-map.getBearing()}deg)`; });
+
+let is3D = false;
+document.getElementById("toggle3d").onclick = () => set3D(!is3D);
+function set3D(on) {
+  is3D = on;
+  const btn = document.getElementById("toggle3d");
+  btn.textContent = on ? "2D" : "3D";
+  btn.classList.toggle("on", on);
+  if (map.getLayer("building")) setL("building", "visibility", on ? "none" : "visible");
+  if (map.getLayer("building-3d")) setL("building-3d", "visibility", on ? "visible" : "none");
+  if (on) map.easeTo({ pitch: 55, bearing: -17, duration: 800 });
+  else map.easeTo({ pitch: 0, duration: 800 });
+}
+
+// ---------- Status bar (throttled to one update per frame) ----------
+let sbQueued = false;
+function startStatusBar() {
+  const update = () => {
+    sbQueued = false;
+    const c = map.getCenter(), z = map.getZoom();
+    document.getElementById("statusbar").innerHTML =
+      `<span><span class="k">LAT</span> ${c.lat.toFixed(4)}</span>` +
+      `<span><span class="k">LNG</span> ${c.lng.toFixed(4)}</span>` +
+      `<span><span class="k">Z</span> ${z.toFixed(1)}</span>` +
+      `<span><span class="k">N</span> ${COMPANIES.length} ${CITIES[currentCity].label}</span>` +
+      `<span class="live"><span class="b"></span>LIVE</span>`;
+  };
+  map.on("move", () => { if (!sbQueued) { sbQueued = true; requestAnimationFrame(update); } });
+  update();
+}
+
+// ---------- Mobile sheet ----------
+const panel = document.getElementById("panel");
+document.getElementById("panelHead").addEventListener("click", () => { if (isMobile()) panel.classList.toggle("expanded"); });
+document.getElementById("handle").addEventListener("click", () => panel.classList.toggle("expanded"));
+
+// ---------- Add-company modal ----------
+const scrim = document.getElementById("scrim");
+let addMode = false;
+const addHint = document.getElementById("addHint");
+document.getElementById("addBtn").onclick = () => scrim.classList.add("open");
+document.getElementById("closeModal").onclick = () => closeModal();
+document.getElementById("successClose").onclick = () => closeModal();
+scrim.addEventListener("click", (e) => { if (e.target === scrim) closeModal(); });
+function closeModal() { scrim.classList.remove("open"); setAddMode(false); }
+function setAddMode(on) { addMode = on; addHint.classList.toggle("show", on); map.getCanvas().style.cursor = on ? "crosshair" : ""; if (on) scrim.classList.remove("open"); }
+document.getElementById("dropPin").onclick = () => setAddMode(true);
+
+let tempPin = null;
+map.on("click", (e) => {
+  if (!addMode) return;
+  const { lng, lat } = e.lngLat;
+  document.getElementById("latIn").value = lat.toFixed(6);
+  document.getElementById("lngIn").value = lng.toFixed(6);
+  document.getElementById("coordsLabel").textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  if (tempPin) tempPin.remove();
+  const wrap = document.createElement("div");
+  const inner = document.createElement("div"); inner.className = "co-marker";
+  inner.innerHTML = PIN_SVG + `<div class="tile"><span class="initial">+</span></div>`;
+  wrap.appendChild(inner);
+  tempPin = new maplibregl.Marker({ element: wrap, anchor: "bottom" }).setLngLat([lng, lat]).addTo(map);
+  setAddMode(false);
+  scrim.classList.add("open");
+});
+
+document.getElementById("coForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById("submitBtn");
+  btn.textContent = "Submitting…"; btn.disabled = true;
+  const data = Object.fromEntries(new FormData(e.target).entries());
+  data._subject = "New company submission — Peru Grid";
+  data._template = "table";
+  try {
+    const res = await fetch(FORM_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(data) });
+    if (!res.ok) throw new Error("bad response");
+    document.getElementById("formWrap").style.display = "none";
+    document.getElementById("formSuccess").classList.add("show");
+    if (tempPin) { tempPin.remove(); tempPin = null; }
+  } catch (err) {
+    btn.textContent = "Try Again"; btn.disabled = false;
+    alert("Something went wrong submitting the form. (Is FORM_ENDPOINT configured yet?)");
+  }
+});
+
+// ---------- Loader (simple fade-in — no terminal boot lines) ----------
+const loader = document.getElementById("loader");
+function dismissLoader() {
+  loader.classList.add("done");
+}
+map.once("idle", dismissLoader);
+setTimeout(dismissLoader, 9000);
+</script>
+</body>
+</html>
