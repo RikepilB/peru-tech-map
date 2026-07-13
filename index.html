@@ -5,48 +5,214 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <title>Peru Grid — Where The Builders Are</title>
 <meta name="description" content="Peru Grid — an interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa." />
+<script>
+// EN/ES translation dictionary for UI chrome (labels, buttons, form, loader). Company data
+// (names, taglines, funding types) stays as-is — not translated, see docs/handoff for scope.
+window.I18N = {
+  en: {
+    tagline: "Where The Builders Are",
+    loading: "LOADING…",
+    placesIndexed: function (n) { return n + " PLACES INDEXED"; },
+    error: "ERROR",
+    city: "City", sort: "Sort",
+    default: "Default", alpha: "A–Z",
+    addCompany: "+ Add A Company",
+    addHint: "Tap the map to drop a pin",
+    resetBearing: "Reset bearing (north up)",
+    rotateLeft: "Rotate left", rotateRight: "Rotate right",
+    zoomIn: "Zoom in", zoomOut: "Zoom out",
+    toggle3d: "Toggle 3D",
+    modalTitle: "Add A Company", close: "Close",
+    fCompanyName: "Company Name", pCompanyName: "ACME INC.",
+    fWebsite: "Website", pWebsite: "acme.com",
+    fLocation: "Location", dropPin: "Drop A Pin", noPinSet: "NO PIN SET",
+    fCategory: "Category",
+    fEmail: "Your Email", pEmail: "you@email.com",
+    submit: "Submit For Review", submitting: "Submitting…", tryAgain: "Try Again",
+    submitError: "Something went wrong submitting the form — check your connection and try again.",
+    submitted: "Submitted", submittedBody: "Thanks — new companies get reviewed and added.",
+    bootInit: "INITIALIZING MAPLIBRE GL", bootTiles: "LOADING VECTOR TILES", bootGrid: "MOUNTING COMPANY GRID",
+    bootBooting: "BOOTING PERU GRID…", bootOnline: "GRID ONLINE ✓",
+    bootFailed: "BOOT FAILED",
+    bootInterrupted: "Startup was interrupted — usually a slow or blocked network request.",
+    bootTimeout: "timed out waiting for the map to finish loading",
+    bootUnknown: "unknown error",
+    bootLibFailed: "map library failed to load (unpkg + jsdelivr both unreachable)",
+    reload: "Reload",
+    gridOffline: "// GRID OFFLINE",
+    gridOfflineBody: "Could not load companies.json. Ensure the site is served over http (python3 -m http.server) and the file exists alongside index.html.",
+    statCompanies: "COMPANIES", statLive: "LIVE",
+    langToggle: "ES", switchLang: "Switch to Spanish",
+    title: "Peru Grid — Where The Builders Are",
+    metaDesc: "Peru Grid — an interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa.",
+    catStartup: "Startup", catConsultancy: "Consultancy", catCoworking: "Coworking",
+    catIncubator: "Incubator", catNonprofit: "Nonprofit", catFund: "Fund",
+  },
+  es: {
+    tagline: "Donde Están Los Builders",
+    loading: "CARGANDO…",
+    placesIndexed: function (n) { return n + " LUGARES INDEXADOS"; },
+    error: "ERROR",
+    city: "Ciudad", sort: "Orden",
+    default: "Por Defecto", alpha: "A–Z",
+    addCompany: "+ Agregar Empresa",
+    addHint: "Toca el mapa para colocar un pin",
+    resetBearing: "Reiniciar orientación (norte arriba)",
+    rotateLeft: "Rotar izquierda", rotateRight: "Rotar derecha",
+    zoomIn: "Acercar", zoomOut: "Alejar",
+    toggle3d: "Alternar 3D",
+    modalTitle: "Agregar Empresa", close: "Cerrar",
+    fCompanyName: "Nombre De La Empresa", pCompanyName: "ACME INC.",
+    fWebsite: "Sitio Web", pWebsite: "acme.com",
+    fLocation: "Ubicación", dropPin: "Colocar Un Pin", noPinSet: "SIN PIN",
+    fCategory: "Categoría",
+    fEmail: "Tu Correo", pEmail: "tu@correo.com",
+    submit: "Enviar Para Revisión", submitting: "Enviando…", tryAgain: "Intentar De Nuevo",
+    submitError: "Algo salió mal al enviar el formulario — revisa tu conexión e intenta de nuevo.",
+    submitted: "Enviado", submittedBody: "Gracias — las nuevas empresas se revisan y se agregan.",
+    bootInit: "INICIANDO MAPLIBRE GL", bootTiles: "CARGANDO TILES VECTORIALES", bootGrid: "MONTANDO GRID DE EMPRESAS",
+    bootBooting: "INICIANDO PERU GRID…", bootOnline: "GRID EN LÍNEA ✓",
+    bootFailed: "ERROR DE INICIO",
+    bootInterrupted: "El inicio se interrumpió — normalmente por una red lenta o bloqueada.",
+    bootTimeout: "tiempo de espera agotado cargando el mapa",
+    bootUnknown: "error desconocido",
+    bootLibFailed: "no se pudo cargar la librería del mapa (unpkg y jsdelivr fallaron)",
+    reload: "Recargar",
+    gridOffline: "// GRID SIN CONEXIÓN",
+    gridOfflineBody: "No se pudo cargar companies.json. Sirve el sitio por http (python3 -m http.server) y confirma que el archivo esté junto a index.html.",
+    statCompanies: "EMPRESAS", statLive: "EN VIVO",
+    langToggle: "EN", switchLang: "Cambiar a inglés",
+    title: "Peru Grid — Donde Están Los Builders",
+    metaDesc: "Peru Grid — un mapa interactivo de startups, consultoras cloud, coworkings e incubadoras en Lima y Arequipa.",
+    catStartup: "Startup", catConsultancy: "Consultoría", catCoworking: "Coworking",
+    catIncubator: "Incubadora", catNonprofit: "Sin Fines De Lucro", catFund: "Fondo",
+  },
+};
+window.getLang = function () {
+  var saved = localStorage.getItem("pg_lang");
+  if (saved === "en" || saved === "es") return saved;
+  return (navigator.language || "").toLowerCase().indexOf("es") === 0 ? "es" : "en";
+};
+window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[key]; };
+
+// Boot watchdog — runs first, undeferred, so it's registered before anything else can throw
+// or hang. Any startup failure (thrown error, rejected promise, or the map silently never
+// firing "load") gets surfaced on screen with a reload button instead of an infinite silent
+// "BOOTING PERU GRID… 0%" freeze.
+//
+// Also owns maplibre-gl.js load confirmation: a `defer` script that fails or is slow to load
+// (CDN hiccup) is skipped silently by the browser with zero error, leaving `maplibregl`
+// undefined when the next deferred script runs — the app script below no longer assumes
+// `defer` ordering alone guarantees the library is ready; it waits for __mapLibReady().
+(function () {
+  var BOOT_TIMEOUT_MS = 15000;
+  var handled = false;
+  function showBootError(msg) {
+    if (handled) return; handled = true;
+    var loader = document.getElementById("loader");
+    var inner = loader && loader.querySelector(".inner");
+    if (!inner) return;
+    inner.innerHTML =
+      '<div class="row" style="color:#ff6b6b">&gt; ' + t("bootFailed") + '<span class="amber"> ' +
+      String(msg).replace(/</g, "&lt;").slice(0, 200) +
+      '</span></div>' +
+      '<div class="bar">' + t("bootInterrupted") + '</div>' +
+      '<button id="bootRetry" class="btn" style="margin-top:14px">' + t("reload") + '</button>';
+    var btn = document.getElementById("bootRetry");
+    if (btn) btn.addEventListener("click", function () { location.reload(); });
+  }
+  window.showBootError = showBootError;
+  window.addEventListener("error", function (e) { showBootError(e.message || t("bootUnknown")); });
+  window.addEventListener("unhandledrejection", function (e) {
+    showBootError((e.reason && e.reason.message) || String(e.reason));
+  });
+  window.addEventListener("load", function () {
+    setTimeout(function () {
+      var loader = document.getElementById("loader");
+      if (loader && !loader.classList.contains("done")) {
+        showBootError(t("bootTimeout"));
+      }
+    }, BOOT_TIMEOUT_MS);
+  });
+
+  // __mapLibReady(cb): calls cb() once `maplibregl` is confirmed loaded — immediately if
+  // already present, otherwise once the primary CDN's onload fires, retrying once from a
+  // second CDN if the primary one errors out.
+  var readyCbs = [];
+  window.__mapLibReady = function (cb) {
+    if (typeof maplibregl !== "undefined") { cb(); return; }
+    readyCbs.push(cb);
+  };
+  window.__mapLibLoaded = function () {
+    if (typeof maplibregl === "undefined") return; // onload fired but script body didn't execute
+    readyCbs.splice(0).forEach(function (cb) { cb(); });
+  };
+  window.__mapLibFailed = function () {
+    var fallback = document.createElement("script");
+    fallback.src = "https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js";
+    fallback.onload = window.__mapLibLoaded;
+    fallback.onerror = function () { showBootError(t("bootLibFailed")); };
+    document.head.appendChild(fallback);
+  };
+})();
+</script>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
-<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js" defer
+  onload="window.__mapLibLoaded()" onerror="window.__mapLibFailed()"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://tiles.openfreemap.org" crossorigin>
+<link rel="preconnect" href="https://www.google.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@300;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #070A08;
-    --panel: #0C110D;
-    --line: #16281D;
-    --green: #056540;
-    --green-bright: #0FA968;
-    --green-dim: rgba(5,101,64,0.35);
-    --text: #D6E2D8;
-    --muted: #6B7A6E;
-    --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --bg: #1B222C;
+    --panel: rgba(43,51,66,0.65);
+    --line: #2B3342;
+    --green: #1DA842;
+    --green-bright: #05DC60;
+    --green-dim: rgba(29,168,66,0.35);
+    --text: #F4F6F9;
+    --muted: #7C8794;
+    --sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --radius: 12px;
+    --blur: 12px;
     --statusbar: 24px;
     --ticker: 26px;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   /* NOTE: no global transition/transform rules — they would fight MapLibre marker positioning */
   html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); }
-  body { font-family: var(--mono); color: var(--text); font-size: 13px; }
+  body { font-family: var(--sans); color: var(--text); font-size: 13px; }
   #map { position: absolute; top: 0; left: 0; right: 0; bottom: calc(var(--statusbar) + var(--ticker)); }
-  .maplibregl-ctrl-attrib { font-size: 9px !important; background: rgba(7,10,8,0.7) !important; }
-  .maplibregl-ctrl-attrib a { color: #6B7A6E !important; }
+  .maplibregl-ctrl-attrib { font-size: 9px !important; background: rgba(27,34,44,0.7) !important; }
+  .maplibregl-ctrl-attrib a { color: #7C8794 !important; }
   .maplibregl-ctrl-bottom-right { bottom: calc(var(--statusbar) + var(--ticker)); }
 
   /* ---------- Brand eyebrow ---------- */
   .brand {
     position: absolute; top: 14px; left: 50%; transform: translateX(-50%); z-index: 6;
     display: flex; align-items: center; gap: 9px; padding: 8px 15px;
-    background: var(--panel); border: 1px solid var(--line);
+    background: var(--panel); border: 1.5px solid var(--line); border-radius: var(--radius);
+    backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
     font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--text);
   }
-  .brand .dot { width: 7px; height: 7px; background: var(--green-bright); }
+  .brand .dot { width: 7px; height: 7px; background: var(--green-bright); border-radius: 50%; }
+  .brand #langToggle {
+    margin-left: 4px; background: transparent; border: 1.5px solid var(--line); color: var(--muted);
+    font-family: inherit; font-size: 10px; letter-spacing: .1em; padding: 3px 8px; border-radius: 6px;
+    cursor: pointer; text-transform: uppercase;
+  }
+  .brand #langToggle:hover { border-color: var(--green-bright); color: var(--green-bright); }
 
   /* ---------- Controls ---------- */
   .controls { position: absolute; right: 14px; bottom: calc(var(--statusbar) + var(--ticker) + 16px); z-index: 6; display: flex; flex-direction: column; gap: 8px; }
   .ctl { width: 40px; height: 40px; display: grid; place-items: center; cursor: pointer;
-    background: var(--panel); border: 1px solid var(--line); color: var(--text);
-    font-family: var(--mono); font-size: 15px; font-weight: 600; user-select: none; }
+    background: var(--panel); border: 1.5px solid var(--line); border-radius: 8px; color: var(--text);
+    backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
+    font-family: var(--sans); font-size: 15px; font-weight: 600; user-select: none;
+    padding: 0; margin: 0; }
   .ctl:hover { border-color: var(--green-bright); color: var(--green-bright); }
   #toggle3d { width: 40px; font-size: 12px; letter-spacing: .05em; }
   #toggle3d.on { background: var(--green); color: #fff; border-color: var(--green); }
@@ -54,9 +220,10 @@
   /* ---------- Sidebar ---------- */
   #panel {
     position: absolute; top: 0; left: 0; bottom: calc(var(--statusbar) + var(--ticker)); width: 320px; z-index: 7;
-    display: flex; flex-direction: column; background: var(--panel); border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; background: var(--panel); border-right: 1.5px solid var(--line);
+    backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
   }
-  .panel-head { padding: 16px 16px 13px; border-bottom: 1px solid var(--line); }
+  .panel-head { padding: 16px 16px 13px; border-bottom: 1.5px solid var(--line); }
   .panel-head .eyebrow { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
   .panel-head h1 { margin: 7px 0 3px; font-size: 18px; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; }
   .cursor { display: inline-block; width: 9px; height: 15px; background: var(--green-bright); margin-left: 3px; vertical-align: -2px; animation: blink 1.1s step-end infinite; }
@@ -64,8 +231,8 @@
   .panel-head .count { font-size: 11px; color: var(--muted); letter-spacing: .05em; }
   .barrow { display: flex; align-items: center; gap: 7px; margin-top: 11px; }
   .barrow .barlabel { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
-  .barbtn { font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
-    padding: 4px 9px; background: transparent; color: var(--muted); border: 1px solid var(--line); cursor: pointer; }
+  .barbtn { font-family: var(--sans); font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+    padding: 4px 9px; background: transparent; color: var(--muted); border: 1.5px solid var(--line); border-radius: 8px; cursor: pointer; }
   .barbtn:hover { border-color: var(--green-bright); color: var(--green-bright); }
   .barbtn.active { background: var(--green); color: #fff; border-color: var(--green); }
 
@@ -74,15 +241,15 @@
   .panel-list::-webkit-scrollbar-thumb { background: var(--line); }
   .co {
     display: flex; align-items: center; gap: 11px; padding: 11px 16px; cursor: pointer;
-    border-left: 2px solid transparent; border-bottom: 1px solid rgba(22,40,29,0.5);
+    border-bottom: 1px solid rgba(43,51,66,0.5);
   }
-  .co:hover { border-left-color: var(--green-bright); background: rgba(15,169,104,0.05); }
-  .co.active { border-left-color: var(--green); background: rgba(5,101,64,0.14); }
+  .co:hover { background: rgba(5,220,96,0.07); }
+  .co.active { background: rgba(29,168,66,0.14); }
   .co .prefix { width: 10px; color: var(--green-bright); opacity: 0; font-weight: 700; }
   .co.active .prefix { opacity: 1; }
-  .co .logo { width: 26px; height: 26px; flex: 0 0 auto; background: #fff; display: grid; place-items: center; overflow: hidden; border: 1px solid var(--green-dim); }
+  .co .logo { width: 26px; height: 26px; flex: 0 0 auto; background: #fff; border-radius: 6px; display: grid; place-items: center; overflow: hidden; border: 1px solid var(--green-dim); }
   .co .logo img { width: 100%; height: 100%; object-fit: contain; }
-  .co .logo .initial { font-weight: 700; color: #070A08; font-size: 13px; }
+  .co .logo .initial { font-weight: 700; color: var(--bg); font-size: 13px; }
   .co .meta { min-width: 0; flex: 1; }
   .co .name { font-weight: 600; font-size: 13px; letter-spacing: .01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .co .tag { font-size: 10px; color: var(--muted); text-align: right; white-space: nowrap; letter-spacing: .03em; }
@@ -90,9 +257,9 @@
   .panel-err { padding: 24px 16px; color: var(--muted); font-size: 12px; line-height: 1.6; }
   .panel-err b { color: #ff6b5b; display: block; margin-bottom: 6px; letter-spacing: .1em; }
 
-  .panel-foot { padding: 12px; border-top: 1px solid var(--line); }
-  .btn { width: 100%; padding: 12px; cursor: pointer; font-family: var(--mono); font-weight: 600; font-size: 12px;
-    letter-spacing: .08em; text-transform: uppercase; background: var(--green); color: #fff; border: 1px solid var(--green); }
+  .panel-foot { padding: 12px; border-top: 1.5px solid var(--line); }
+  .btn { width: 100%; padding: 12px; cursor: pointer; font-family: var(--sans); font-weight: 600; font-size: 12px;
+    border-radius: 8px; letter-spacing: .08em; text-transform: uppercase; background: var(--green); color: #fff; border: 1px solid var(--green); }
   .btn:hover { background: #067a4d; }
   .btn.ghost { background: transparent; color: var(--text); border-color: var(--line); }
   .btn.ghost:hover { border-color: var(--green-bright); color: var(--green-bright); }
@@ -103,8 +270,9 @@
   .statusbar {
     position: absolute; left: 0; right: 0; bottom: 0; height: var(--statusbar); z-index: 8;
     display: flex; align-items: center; gap: 22px; padding: 0 14px;
-    background: #05080680; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    border-top: 1px solid var(--line); font-size: 11px; letter-spacing: .08em; color: var(--muted);
+    background: rgba(27,34,44,0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border-top: 1.5px solid var(--line); font-family: var(--mono); font-size: 11px; letter-spacing: .08em; color: var(--muted);
+    font-variant-numeric: tabular-nums;
     overflow: hidden; white-space: nowrap;
   }
   .statusbar .k { color: var(--green-bright); }
@@ -113,8 +281,8 @@
 
   /* ---------- Ticker ---------- */
   .ticker { position: absolute; left: 0; right: 0; bottom: var(--statusbar); height: var(--ticker); z-index: 8;
-    background: rgba(5,8,6,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    border-top: 1px solid var(--line); overflow: hidden; display: flex; align-items: center; }
+    background: rgba(27,34,44,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border-top: 1.5px solid var(--line); overflow: hidden; display: flex; align-items: center; }
   .ticker-track { display: inline-flex; white-space: nowrap; will-change: transform; animation: ticker 90s linear infinite; }
   .ticker:hover .ticker-track { animation-play-state: paused; }
   @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -126,62 +294,66 @@
      WRAPPER (the element handed to maplibregl.Marker) carries NONE of our CSS —
      MapLibre writes transform on it every frame. All visuals live on .co-marker (inner). */
   .co-marker { position: relative; width: 28px; height: 28px; cursor: pointer; }
-  .co-marker .tile { position: absolute; inset: 0; background: #fff; border: 1px solid var(--green-dim);
+  .co-marker .tile { position: absolute; inset: 0; background: #fff; border: 1px solid var(--green-dim); border-radius: 6px;
     display: grid; place-items: center; overflow: hidden; transition: transform .14s ease; }
   .co-marker:hover .tile { transform: scale(1.12); }
   .co-marker .tile img { width: 20px; height: 20px; object-fit: contain; }
-  .co-marker .tile .initial { font-weight: 700; color: #070A08; font-size: 13px; }
-  .co-marker .ring { position: absolute; inset: -5px; border: 1px solid var(--green-bright); opacity: 0; pointer-events: none; }
+  .co-marker .tile .initial { font-weight: 700; color: var(--bg); font-size: 13px; }
+  .co-marker .ring { position: absolute; inset: -5px; border: 1px solid var(--green-bright); border-radius: 9px; opacity: 0; pointer-events: none; }
   .co-marker.sel .tile { border-color: var(--green); border-width: 2px; }
   .co-marker.sel .ring { opacity: 1; animation: ping 1.6s ease-out infinite; }
   @keyframes ping { 0% { transform: scale(1); opacity: .9; } 70%, 100% { transform: scale(1.7); opacity: 0; } }
 
   /* ---------- Popup ---------- */
   .maplibregl-popup.co-pop .maplibregl-popup-content {
-    background: var(--panel); border: 1px solid var(--line); padding: 13px 15px; color: var(--text);
-    font-family: var(--mono); border-radius: 0; }
+    background: var(--panel); border: 1.5px solid var(--line); padding: 13px 15px; color: var(--text);
+    backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
+    font-family: var(--sans); border-radius: var(--radius); }
   .maplibregl-popup.co-pop .maplibregl-popup-tip { display: none; }
   .co-pop .pname { font-weight: 600; font-size: 14px; letter-spacing: .02em; text-transform: uppercase; margin-bottom: 7px; }
   .co-pop .ptag { color: var(--muted); font-size: 10px; letter-spacing: .04em; margin: -3px 0 8px; line-height: 1.5; max-width: 240px; text-transform: none; }
   .co-pop a.site { color: var(--green-bright); font-size: 12px; text-decoration: none; }
   .co-pop a.site:hover { text-decoration: underline; }
   .co-pop .addr { color: var(--muted); font-size: 10px; margin-top: 6px; letter-spacing: .03em; }
-  .chip { display: inline-block; margin-top: 10px; padding: 3px 8px; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
-  .chip.boot { background: rgba(5,101,64,0.18); color: var(--green-bright); border: 1px solid var(--green-dim); }
+  .chip { display: inline-block; margin-top: 10px; padding: 3px 8px; border-radius: 6px; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
+  .chip.boot { background: rgba(29,168,66,0.18); color: var(--green-bright); border: 1px solid var(--green-dim); }
   .chip.fund { background: var(--green); color: #fff; border: 1px solid var(--green); }
 
   /* ---------- Add-company modal ---------- */
   .scrim { position: absolute; inset: 0; z-index: 20; background: rgba(3,5,4,0.7); backdrop-filter: blur(4px);
     display: none; align-items: center; justify-content: center; padding: 20px; }
   .scrim.open { display: flex; }
-  .modal { width: min(440px, 100%); max-height: 88vh; overflow-y: auto; background: var(--panel); border: 1px solid var(--line); }
-  .modal-head { padding: 16px 18px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+  .modal { width: min(440px, 100%); max-height: 88vh; overflow-y: auto; background: var(--panel); border: 1.5px solid var(--line); border-radius: var(--radius);
+    backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur)); }
+  .modal-head { padding: 16px 18px; border-bottom: 1.5px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
   .modal-head h2 { margin: 0; font-size: 14px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
-  .modal-head .x { cursor: pointer; color: var(--muted); font-size: 20px; line-height: 1; }
+  .modal-head .x { cursor: pointer; color: var(--muted); font-size: 20px; line-height: 1;
+    background: none; border: none; padding: 0; font-family: inherit; }
   .modal-body { padding: 18px; }
   .field { margin-bottom: 13px; }
   .field label { display: block; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-  .field input, .field select { width: 100%; padding: 10px 11px; font-family: var(--mono); font-size: 13px; color: var(--text);
-    background: #0a0f0b; border: 1px solid var(--line); border-radius: 0; outline: none; }
+  .field input, .field select { width: 100%; padding: 10px 11px; font-family: var(--sans); font-size: 13px; color: var(--text);
+    background: #151b24; border: 1.5px solid var(--line); border-radius: 8px; outline: none; }
   .field input:focus, .field select:focus { border-color: var(--green-bright); }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
   .pin-row { display: flex; gap: 10px; align-items: center; }
   .pin-row .btn { width: auto; padding: 9px 13px; }
   .pin-row .coords { font-size: 10px; color: var(--muted); letter-spacing: .03em; }
   .form-note { font-size: 10px; color: var(--muted); line-height: 1.5; margin-top: -6px; margin-bottom: 13px; }
+  .form-error { margin-top: 10px; font-size: 12px; color: #ff6b5b; line-height: 1.5; }
   .form-success { display: none; padding: 28px 20px; text-align: center; }
   .form-success.show { display: block; }
   .form-success .big { font-size: 14px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--green-bright); margin-bottom: 10px; }
   .form-success p { color: var(--muted); font-size: 12px; line-height: 1.6; }
   .add-hint { position: absolute; top: 60px; left: 50%; transform: translateX(-50%); z-index: 25;
-    background: var(--green); color: #fff; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding: 9px 15px; display: none; }
+    background: var(--green); color: #fff; border-radius: 8px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding: 9px 15px; display: none; }
   .add-hint.show { display: block; }
 
   /* ---------- Loader ---------- */
-  .loader { position: absolute; inset: 0; z-index: 50; background: #050806; display: grid; place-items: center;
+  .loader { position: absolute; inset: 0; z-index: 50; background: var(--bg); display: grid; place-items: center;
     transition: opacity .5s ease; }
   .loader.done { opacity: 0; pointer-events: none; }
-  .loader .inner { text-align: left; color: var(--green-bright); font-size: 13px; letter-spacing: .12em; line-height: 1.9; }
+  .loader .inner { font-family: var(--mono); text-align: left; color: var(--green-bright); font-size: 13px; letter-spacing: .12em; line-height: 1.9; }
   .loader .row span.amber { color: var(--text); }
   .loader .bar { margin-top: 10px; color: var(--muted); }
 
@@ -206,47 +378,50 @@
 <body>
   <div id="map"></div>
 
-  <div class="brand"><span class="dot"></span>Peru Grid</div>
+  <div class="brand">
+    <span class="dot"></span>Peru Grid
+    <button type="button" id="langToggle" data-i18n="langToggle" data-i18n-title="switchLang" data-i18n-aria="switchLang">ES</button>
+  </div>
 
   <div class="controls">
-    <div id="compass" class="ctl" title="Reset bearing (north up)">
-      <svg width="18" height="18" viewBox="0 0 24 24"><polygon points="12,3 8,13 12,11 16,13" fill="#0FA968"/><polygon points="12,21 8,11 12,13 16,11" fill="#6B7A6E"/></svg>
+    <button type="button" id="compass" class="ctl" data-i18n-title="resetBearing" data-i18n-aria="resetBearing" title="Reset bearing (north up)" aria-label="Reset bearing to north">
+      <svg width="18" height="18" viewBox="0 0 24 24"><polygon points="12,3 8,13 12,11 16,13" fill="#05DC60"/><polygon points="12,21 8,11 12,13 16,11" fill="#7C8794"/></svg>
+    </button>
+    <div class="ctl-group" style="display:flex;flex-direction:column">
+      <button type="button" id="rotL" class="ctl" data-i18n-title="rotateLeft" data-i18n-aria="rotateLeft" title="Rotate left" aria-label="Rotate map left">⟲</button>
+      <button type="button" id="rotR" class="ctl" data-i18n-title="rotateRight" data-i18n-aria="rotateRight" style="border-top:0" title="Rotate right" aria-label="Rotate map right">⟳</button>
     </div>
     <div class="ctl-group" style="display:flex;flex-direction:column">
-      <div id="rotL" class="ctl" title="Rotate left">⟲</div>
-      <div id="rotR" class="ctl" title="Rotate right" style="border-top:0">⟳</div>
+      <button type="button" id="zin" class="ctl" data-i18n-title="zoomIn" data-i18n-aria="zoomIn" title="Zoom in" aria-label="Zoom in">+</button>
+      <button type="button" id="zout" class="ctl" data-i18n-title="zoomOut" data-i18n-aria="zoomOut" style="border-top:0" title="Zoom out" aria-label="Zoom out">−</button>
     </div>
-    <div class="ctl-group" style="display:flex;flex-direction:column">
-      <div id="zin" class="ctl" title="Zoom in">+</div>
-      <div id="zout" class="ctl" title="Zoom out" style="border-top:0">−</div>
-    </div>
-    <div id="toggle3d" class="ctl" title="Toggle 3D">3D</div>
+    <button type="button" id="toggle3d" class="ctl" data-i18n-title="toggle3d" data-i18n-aria="toggle3d" title="Toggle 3D" aria-label="Toggle 3D buildings">3D</button>
   </div>
 
   <aside id="panel">
     <div class="drag-handle" id="handle"></div>
     <div class="panel-head" id="panelHead">
-      <div class="eyebrow">Where The Builders Are</div>
+      <div class="eyebrow" data-i18n="tagline">Where The Builders Are</div>
       <h1>Peru Grid<span class="cursor"></span></h1>
       <div class="count" id="coCount">LOADING…</div>
       <div class="barrow">
-        <span class="barlabel">City</span>
+        <span class="barlabel" data-i18n="city">City</span>
         <button class="barbtn active" data-city="lima">Lima</button>
         <button class="barbtn" data-city="arequipa">Arequipa</button>
       </div>
       <div class="barrow">
-        <span class="barlabel">Sort</span>
-        <button class="barbtn active" data-sort="default">Default</button>
-        <button class="barbtn" data-sort="alpha">A–Z</button>
+        <span class="barlabel" data-i18n="sort">Sort</span>
+        <button class="barbtn active" data-sort="default" data-i18n="default">Default</button>
+        <button class="barbtn" data-sort="alpha" data-i18n="alpha">A–Z</button>
       </div>
     </div>
     <div class="panel-list" id="coList"></div>
     <div class="panel-foot">
-      <button class="btn" id="addBtn">+ Add A Company</button>
+      <button class="btn" id="addBtn" data-i18n="addCompany">+ Add A Company</button>
     </div>
   </aside>
 
-  <div class="add-hint" id="addHint">Tap the map to drop a pin</div>
+  <div class="add-hint" id="addHint" data-i18n="addHint">Tap the map to drop a pin</div>
 
   <div class="ticker" id="ticker"><div class="ticker-track" id="tickerTrack"></div></div>
 
@@ -254,44 +429,51 @@
     <span><span class="k">LAT</span> —</span>
     <span><span class="k">LNG</span> —</span>
     <span><span class="k">Z</span> —</span>
-    <span><span class="k">N</span> — COMPANIES</span>
-    <span class="live"><span class="b"></span>LIVE</span>
+    <span><span class="k">N</span> — <span data-i18n="statCompanies">COMPANIES</span></span>
+    <span class="live"><span class="b"></span><span data-i18n="statLive">LIVE</span></span>
   </div>
 
   <!-- Add company modal -->
   <div class="scrim" id="scrim">
     <div class="modal">
-      <div class="modal-head"><h2>Add A Company</h2><span class="x" id="closeModal">×</span></div>
+      <div class="modal-head"><h2 data-i18n="modalTitle">Add A Company</h2><button type="button" class="x" id="closeModal" data-i18n-aria="close" aria-label="Close">×</button></div>
       <div class="modal-body" id="formWrap">
-        <div class="form-note">TODO: this form isn't wired up yet — set FORM_ENDPOINT in the script to your own <a href="https://formsubmit.co/" target="_blank" rel="noopener" style="color:var(--green-bright)">FormSubmit</a>-verified email before shipping.</div>
         <form id="coForm">
-          <div class="field"><label>Company Name</label><input name="Company" required placeholder="ACME INC." /></div>
-          <div class="field"><label>Website</label><input name="Website" required placeholder="acme.com" /></div>
-          <div class="field"><label>City</label>
+          <div class="field"><label data-i18n="fCompanyName">Company Name</label><input name="Company" required placeholder="ACME INC." data-i18n-placeholder="pCompanyName" /></div>
+          <div class="field"><label data-i18n="fWebsite">Website</label><input name="Website" required placeholder="acme.com" data-i18n-placeholder="pWebsite" /></div>
+          <div class="field"><label data-i18n="city">City</label>
             <select name="City"><option value="lima">Lima</option><option value="arequipa">Arequipa</option></select>
           </div>
           <div class="field">
-            <label>Location</label>
+            <label data-i18n="fLocation">Location</label>
             <div class="pin-row">
-              <button type="button" class="btn ghost" id="dropPin">Drop A Pin</button>
-              <span class="coords" id="coordsLabel">NO PIN SET</span>
+              <button type="button" class="btn ghost" id="dropPin" data-i18n="dropPin">Drop A Pin</button>
+              <span class="coords" id="coordsLabel" data-i18n="noPinSet">NO PIN SET</span>
             </div>
             <input type="hidden" name="Latitude" id="latIn" />
             <input type="hidden" name="Longitude" id="lngIn" />
           </div>
           <div class="row2">
-            <div class="field"><label>Category</label>
-              <select name="Category"><option>Startup</option><option>Consultancy</option><option>Coworking</option><option>Incubator</option><option>Nonprofit</option><option>Fund</option></select>
+            <div class="field"><label data-i18n="fCategory">Category</label>
+              <select name="Category">
+                <option value="Startup" data-i18n="catStartup">Startup</option>
+                <option value="Consultancy" data-i18n="catConsultancy">Consultancy</option>
+                <option value="Coworking" data-i18n="catCoworking">Coworking</option>
+                <option value="Incubator" data-i18n="catIncubator">Incubator</option>
+                <option value="Nonprofit" data-i18n="catNonprofit">Nonprofit</option>
+                <option value="Fund" data-i18n="catFund">Fund</option>
+              </select>
             </div>
-            <div class="field"><label>Your Email</label><input name="Submitter Email" type="email" placeholder="you@email.com" /></div>
+            <div class="field"><label data-i18n="fEmail">Your Email</label><input name="Submitter Email" type="email" placeholder="you@email.com" data-i18n-placeholder="pEmail" /></div>
           </div>
-          <button type="submit" class="btn" id="submitBtn">Submit For Review</button>
+          <button type="submit" class="btn" id="submitBtn" data-i18n="submit">Submit For Review</button>
+          <div class="form-error" id="formError" role="alert" style="display:none"></div>
         </form>
       </div>
       <div class="form-success" id="formSuccess">
-        <div class="big">Submitted</div>
-        <p>Thanks — new companies get reviewed and added.</p>
-        <div style="margin-top:18px"><button class="btn ghost" id="successClose">Close</button></div>
+        <div class="big" data-i18n="submitted">Submitted</div>
+        <p data-i18n="submittedBody">Thanks — new companies get reviewed and added.</p>
+        <div style="margin-top:18px"><button class="btn ghost" id="successClose" data-i18n="close">Close</button></div>
       </div>
     </div>
   </div>
@@ -299,16 +481,43 @@
   <!-- Loader -->
   <div class="loader" id="loader">
     <div class="inner">
-      <div class="row">> INITIALIZING MAPLIBRE GL<span class="amber"> OK</span></div>
-      <div class="row">> LOADING VECTOR TILES<span class="amber"> OK</span></div>
-      <div class="row">> MOUNTING COMPANY GRID<span class="amber" id="gridStatus"> …</span></div>
-      <div class="bar" id="bootBar">BOOTING PERU GRID… <span id="spin">|</span> <span id="pct">0%</span></div>
+      <div class="row">> <span data-i18n="bootInit">INITIALIZING MAPLIBRE GL</span><span class="amber"> OK</span></div>
+      <div class="row">> <span data-i18n="bootTiles">LOADING VECTOR TILES</span><span class="amber"> OK</span></div>
+      <div class="row">> <span data-i18n="bootGrid">MOUNTING COMPANY GRID</span><span class="amber" id="gridStatus"> …</span></div>
+      <div class="bar" id="bootBar"><span data-i18n="bootBooting">BOOTING PERU GRID…</span> <span id="spin">|</span> <span id="pct">0%</span></div>
     </div>
   </div>
 
 <script>
+// Applies the EN/ES dictionary to static markup. Runs immediately (not deferred) so the
+// loader and chrome show the right language from first paint, independent of map/library load.
+function applyI18N() {
+  var lang = getLang();
+  document.documentElement.lang = lang;
+  document.title = t("title");
+  var m = document.querySelector('meta[name="description"]');
+  if (m) m.setAttribute("content", t("metaDesc"));
+  document.querySelectorAll("[data-i18n]").forEach(function (el) { el.textContent = t(el.getAttribute("data-i18n")); });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(function (el) { el.setAttribute("placeholder", t(el.getAttribute("data-i18n-placeholder"))); });
+  document.querySelectorAll("[data-i18n-title]").forEach(function (el) { el.setAttribute("title", t(el.getAttribute("data-i18n-title"))); });
+  document.querySelectorAll("[data-i18n-aria]").forEach(function (el) { el.setAttribute("aria-label", t(el.getAttribute("data-i18n-aria"))); });
+}
+document.getElementById("coCount").textContent = t("loading");
+applyI18N();
+document.getElementById("langToggle").addEventListener("click", function () {
+  localStorage.setItem("pg_lang", getLang() === "en" ? "es" : "en");
+  applyI18N();
+  if (window.__pgRefreshSidebar) window.__pgRefreshSidebar();
+  if (window.__pgUpdateStatusbar) window.__pgUpdateStatusbar();
+});
+</script>
+
+<script defer>
 // Served over http.server (python3 -m http.server) — companies.json is fetch()'d at startup,
 // which is exactly why opening this file via file:// will NOT work (CORS / fetch blocked).
+// Wrapped in bootApp() and started via __mapLibReady() (see head watchdog script) rather than
+// relying on `defer` ordering alone to guarantee maplibre-gl.js has finished loading.
+function bootApp() {
 const CITIES = {
   lima: {
     label: "LIMA",
@@ -325,7 +534,7 @@ const CITIES = {
     minZoom: 11,
   },
 };
-const FORM_ENDPOINT = "https://formsubmit.co/ajax/YOUR_EMAIL_HERE"; // TODO: replace with your own FormSubmit-verified email
+const FORM_ENDPOINT = "https://formsubmit.co/ajax/ridi.pillaca@gmail.com";
 const MUTED_FUNDING_TYPES = new Set(["Startup", "Consultancy", "Coworking", "Incubator", "Nonprofit", "Fund"]);
 
 const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
@@ -366,26 +575,39 @@ map.on("load", async () => {
   map.flyTo({ ...CITIES[currentCity].home, duration: 2600, curve: 1.4, essential: true });
 });
 
+// Refresh which buildings are "ours" whenever the view settles (pan/zoom/tile-load/3D toggle).
+// "idle" fires repeatedly during continuous interaction — debounce so the ~50-company
+// queryRenderedFeatures + setData pass runs once per settle, not once per micro-frame.
+let hlRefreshTimer = null;
+map.on("idle", () => {
+  if (!COMPANIES.length) return;
+  clearTimeout(hlRefreshTimer);
+  hlRefreshTimer = setTimeout(refreshCompanyBuildingHighlights, 120);
+});
+
+// Costa Verde dark basemap: near-black navy bg, cool slate-blue buildings (real lightness
+// delta from bg — this is what Nazca got wrong), neon-emerald glowing arterials, deep teal
+// water. Distinct hue/lightness bands per layer type so nothing washes into "one color".
 function themeBaseLayers() {
   for (const layer of map.getStyle().layers) {
     const id = layer.id, lid = id.toLowerCase(), t = layer.type, srcL = layer["source-layer"];
     try {
-      if (t === "background") { setP(id, "background-color", "#070A08"); continue; }
+      if (t === "background") { setP(id, "background-color", "#0F1621"); continue; }
 
       if (t === "fill") {
-        if (/water|ocean|sea|river|lake|bay|basin/.test(lid)) setP(id, "fill-color", "#0A1410");
-        else if (/building/.test(lid)) { setP(id, "fill-color", "#0E1410"); setP(id, "fill-outline-color", "#0a5a3a"); setP(id, "fill-opacity", 1); }
-        else if (/park|wood|forest|grass|garden|pitch|golf|recreation|cemetery|meadow|landcover/.test(lid)) setP(id, "fill-color", "#0B130C");
-        else setP(id, "fill-color", "#080C09");
+        if (/water|ocean|sea|river|lake|bay|basin/.test(lid)) setP(id, "fill-color", "#0A2A33");
+        else if (/building/.test(lid)) { setP(id, "fill-color", "#212936"); setP(id, "fill-outline-color", "#1B222C"); setP(id, "fill-opacity", 0.9); }
+        else if (/park|wood|forest|grass|garden|pitch|golf|recreation|cemetery|meadow|landcover/.test(lid)) setP(id, "fill-color", "#16301F");
+        else setP(id, "fill-color", "#131B27");
         continue;
       }
 
       if (t === "line") {
-        if (/water|waterway|river|canal|stream|shore|coast/.test(lid)) { setP(id, "line-color", "#0a5a3a"); setP(id, "line-opacity", 0.35); continue; }
+        if (/water|waterway|river|canal|stream|shore|coast/.test(lid)) { setP(id, "line-color", "#0FA9A0"); setP(id, "line-opacity", 0.4); continue; }
         if (/casing|outline/.test(lid)) { setP(id, "line-opacity", 0); continue; }
-        if (/rail|transit|tram|subway|funicular|boundary|admin/.test(lid)) { setP(id, "line-color", "#16281D"); continue; }
-        if (ROAD_MAJOR.test(lid) || /secondary/.test(lid)) { setP(id, "line-color", "#0FA968"); setP(id, "line-opacity", 0.55); }
-        else { setP(id, "line-color", "#16281D"); setP(id, "line-opacity", 0.9); }
+        if (/rail|transit|tram|subway|funicular|boundary|admin/.test(lid)) { setP(id, "line-color", "#2B3342"); continue; }
+        if (ROAD_MAJOR.test(lid) || /secondary/.test(lid)) { setP(id, "line-color", "#05DC60"); setP(id, "line-opacity", 0.7); }
+        else { setP(id, "line-color", "#2B3342"); setP(id, "line-opacity", 0.9); }
         continue;
       }
 
@@ -394,30 +616,44 @@ function themeBaseLayers() {
         if (srcL === "transportation_name" || /highway-name|road.*name|road_label/.test(lid)) {
           setF(id, ["in", ["get", "class"], ["literal", STREET_CLASSES]]);
           setL(id, "text-font", ["Noto Sans Regular"]);
-          setP(id, "text-color", "#6B7A6E");
-          setP(id, "text-halo-color", "#070A08");
+          setP(id, "text-color", "#7C8794");
+          setP(id, "text-halo-color", "#0F1621");
           setP(id, "text-halo-width", 1.4);
           try { map.setLayoutProperty(id, "text-size", 11); } catch (e) {}
           continue;
         }
         const isPlace = srcL === "place" || /place|city|town|suburb|neighbourhood/.test(lid);
         setL(id, "text-font", ["Noto Sans Regular"]);
-        if (isPlace) { setL(id, "text-transform", "uppercase"); setP(id, "text-color", "#6B7A6E"); }
-        else setP(id, "text-color", "#8595a0");
-        setP(id, "text-halo-color", "#070A08");
+        if (isPlace) { setL(id, "text-transform", "uppercase"); setP(id, "text-color", "#C7D0DA"); }
+        else setP(id, "text-color", "#8595a5");
+        setP(id, "text-halo-color", "#0F1621");
         setP(id, "text-halo-width", 1.4);
         continue;
       }
     } catch (e) {}
   }
-  setP("background", "background-color", "#070A08");
+  setP("background", "background-color", "#0F1621");
 }
 
-// 2D flat footprints by default; 3D extrusion is toggle-only
+function addSky() {
+  try { map.setSky({ "sky-color": "#0F1621", "sky-horizon-blend": 0.4, "horizon-color": "#122436", "fog-color": "#0F1621", "fog-ground-blend": 0.5 }); } catch (e) {}
+}
+
+// 2D flat footprints by default; 3D extrusion is toggle-only. Also seeds the empty
+// company-building highlight sources/layers (filled in by refreshCompanyBuildingHighlights).
 function setupBuildings() {
-  if (map.getLayer("building")) setL("building", "visibility", "visible");
+  if (map.getLayer("building")) {
+    setL("building", "visibility", "visible");
+    // Base style caps this layer at maxzoom 14 (it expects you to switch to extruded 3D
+    // beyond that) — but 2D is our default and company pins fly in to zoom 16, so without
+    // this the flat footprints (and the company highlight riding on them) vanish exactly
+    // where users actually look.
+    map.setLayerZoomRange("building", 13, 24);
+  }
+  // Kept dark/desaturated, close to bg lightness — non-company buildings recede so the
+  // emerald company highlight (co-buildings-3d-highlight) is the only thing that pops.
   const extColor = ["interpolate", ["linear"], ["coalesce", ["get", "render_height"], 6],
-    6, "#1b1e1c", 40, "#262a27", 120, "#333835", 250, "#414640"];
+    6, "#1E2530", 40, "#252E3B", 120, "#2E3849", 250, "#3A4557"];
   if (map.getLayer("building-3d")) {
     setP("building-3d", "fill-extrusion-color", extColor);
     setP("building-3d", "fill-extrusion-opacity", 0.95);
@@ -438,10 +674,109 @@ function setupBuildings() {
       }
     }, firstSymbol);
   }
+
+  // Idle state stays subtle (dim fill, thin outline) since ~50 buildings all lit solid would
+  // read as noise, not signal — hover is where the accent actually pops, feature-state driven.
+  const HOVER = ["boolean", ["feature-state", "hover"], false];
+  const emptyFC = { type: "FeatureCollection", features: [] };
+  map.addSource("co-buildings-3d", { type: "geojson", data: emptyFC });
+  map.addLayer({
+    id: "co-buildings-3d-highlight", type: "fill-extrusion", source: "co-buildings-3d",
+    layout: { visibility: "none" },
+    paint: {
+      "fill-extrusion-color": ["case", HOVER, "#3DFFA0", "#14A362"],
+      "fill-extrusion-height": ["coalesce", ["get", "height"], 6],
+      "fill-extrusion-base": ["coalesce", ["get", "base"], 0],
+      // fill-extrusion-opacity doesn't support data/feature-state expressions (MapLibre style
+      // spec) — hover differentiation here rides on fill-extrusion-color alone, opacity fixed.
+      "fill-extrusion-opacity": 0.85,
+      "fill-extrusion-vertical-gradient": true,
+    }
+  });
+  map.addSource("co-buildings-2d", { type: "geojson", data: emptyFC });
+  map.addLayer({
+    id: "co-buildings-2d-highlight", type: "fill", source: "co-buildings-2d",
+    paint: {
+      "fill-color": ["case", HOVER, "#05DC60", "#0FA968"],
+      "fill-opacity": ["case", HOVER, 0.8, 0.32],
+      "fill-outline-color": "#05DC60",
+    }
+  });
 }
 
-function addSky() {
-  try { map.setSky({ "sky-color": "#070A08", "sky-horizon-blend": 0.4, "horizon-color": "#0c140e", "fog-color": "#070A08", "fog-ground-blend": 0.5 }); } catch (e) {}
+let hoveredCoBuilding = null; // { source, id } of the currently-hovered company building, if any
+function setCoBuildingHover(source, id, hover) {
+  if (id == null) return;
+  map.setFeatureState({ source, id }, { hover });
+}
+function clearCoBuildingHover() {
+  if (hoveredCoBuilding) { setCoBuildingHover(hoveredCoBuilding.source, hoveredCoBuilding.id, false); hoveredCoBuilding = null; }
+  map.getCanvas().style.cursor = "";
+}
+map.on("mousemove", (e) => {
+  const layers = ["co-buildings-3d-highlight", "co-buildings-2d-highlight"].filter((id) => map.getLayer(id));
+  const feats = layers.length ? map.queryRenderedFeatures(e.point, { layers }) : [];
+  if (!feats.length) { clearCoBuildingHover(); return; }
+  const f = feats[0];
+  if (hoveredCoBuilding && hoveredCoBuilding.source === f.source && hoveredCoBuilding.id === f.id) return;
+  clearCoBuildingHover();
+  hoveredCoBuilding = { source: f.source, id: f.id };
+  setCoBuildingHover(f.source, f.id, true);
+  map.getCanvas().style.cursor = "pointer";
+});
+map.on("mouseleave", clearCoBuildingHover);
+
+// Vector tiles sometimes generalize nearby footprints into one oversized MultiPolygon
+// (block-scale, not building-scale) — reject those before they get counted as "the" building.
+// Real single buildings never span this wide; ~150m per axis is generous headroom.
+const MAX_BUILDING_SPAN_DEG = 0.0015;
+function isBuildingSizedGeometry(geometry) {
+  let minx = Infinity, miny = Infinity, maxx = -Infinity, maxy = -Infinity;
+  const walk = (c) => {
+    if (typeof c[0] === "number") {
+      if (c[0] < minx) minx = c[0]; if (c[0] > maxx) maxx = c[0];
+      if (c[1] < miny) miny = c[1]; if (c[1] > maxy) maxy = c[1];
+    } else c.forEach(walk);
+  };
+  walk(geometry.coordinates);
+  return (maxx - minx) < MAX_BUILDING_SPAN_DEG && (maxy - miny) < MAX_BUILDING_SPAN_DEG;
+}
+
+// Buildings that host an indexed company get a bold emerald highlight, always — this is what
+// makes the skyline read as "a tech map" instead of a generic city render. Queries the real
+// building geometry under each company's pin (only those currently in viewport/loaded tiles;
+// widens naturally as you pan/zoom, cheap enough to redo in full each time given ~50 companies).
+function refreshCompanyBuildingHighlights() {
+  const src3d = map.getSource("co-buildings-3d"), src2d = map.getSource("co-buildings-2d");
+  if (!src3d || !src2d) return;
+  clearCoBuildingHover(); // ids get reassigned below — stale feature-state would stick to the wrong building
+  if (map.getZoom() < 13) { src3d.setData({ type: "FeatureCollection", features: [] }); src2d.setData({ type: "FeatureCollection", features: [] }); return; }
+
+  const w = map.getCanvas().clientWidth, h = map.getCanvas().clientHeight;
+  const seen3d = new Set(), seen2d = new Set();
+  const feats3d = [], feats2d = [];
+  COMPANIES.forEach((c) => {
+    const pt = map.project([c.lng, c.lat]);
+    if (pt.x < 0 || pt.y < 0 || pt.x > w || pt.y > h) return;
+    try {
+      map.queryRenderedFeatures(pt, { layers: ["building-3d"] }).forEach((f) => {
+        if (!isBuildingSizedGeometry(f.geometry)) return;
+        const key = JSON.stringify(f.geometry.coordinates);
+        if (seen3d.has(key)) return; seen3d.add(key);
+        feats3d.push({ type: "Feature", id: feats3d.length, geometry: f.geometry, properties: { height: f.properties.render_height || 6, base: f.properties.render_min_height || 0 } });
+      });
+    } catch (e) {}
+    try {
+      map.queryRenderedFeatures(pt, { layers: ["building"] }).forEach((f) => {
+        if (!isBuildingSizedGeometry(f.geometry)) return;
+        const key = JSON.stringify(f.geometry.coordinates);
+        if (seen2d.has(key)) return; seen2d.add(key);
+        feats2d.push({ type: "Feature", id: feats2d.length, geometry: f.geometry, properties: {} });
+      });
+    } catch (e) {}
+  });
+  src3d.setData({ type: "FeatureCollection", features: feats3d });
+  src2d.setData({ type: "FeatureCollection", features: feats2d });
 }
 
 // ---------- Companies (single source of truth: companies.json) ----------
@@ -460,9 +795,9 @@ async function loadCompanies() {
   } catch (err) {
     console.error("[grid] failed to load companies.json", err);
     const g = document.getElementById("gridStatus"); if (g) g.textContent = " FAIL";
-    document.getElementById("coCount").textContent = "ERROR";
+    document.getElementById("coCount").textContent = t("error");
     document.getElementById("coList").innerHTML =
-      `<div class="panel-err"><b>// GRID OFFLINE</b>Could not load companies.json. Ensure the site is served over http (python3 -m http.server) and the file exists alongside index.html.</div>`;
+      `<div class="panel-err"><b>${t("gridOffline")}</b>${t("gridOfflineBody")}</div>`;
   }
 }
 
@@ -605,7 +940,7 @@ map.on("click", () => {
 function buildSidebar() {
   const list = document.getElementById("coList");
   list.innerHTML = "";
-  document.getElementById("coCount").textContent = `${COMPANIES.length} PLACES INDEXED`;
+  document.getElementById("coCount").textContent = t("placesIndexed")(COMPANIES.length);
   const order = COMPANIES.map((c, i) => i);
   if (sortMode === "alpha") order.sort((a, b) => COMPANIES[a].name.localeCompare(COMPANIES[b].name));
   order.forEach((i) => {
@@ -615,7 +950,7 @@ function buildSidebar() {
     row.dataset.idx = i;
     const src = logoSrc(c);
     const logoHtml = src
-      ? `<img class="${c.logoDark ? 'logo-dark' : ''}" src="${src}" onerror="this.parentNode.innerHTML='<span class=\\'initial\\'>${c.name[0]}</span>'">`
+      ? `<img class="${c.logoDark ? 'logo-dark' : ''}" src="${src}" loading="lazy" decoding="async" width="64" height="64" onerror="this.parentNode.innerHTML='<span class=\\'initial\\'>${c.name[0]}</span>'">`
       : `<span class="initial">${c.name[0]}</span>`;
     row.innerHTML = `
       <span class="prefix">></span>
@@ -626,6 +961,7 @@ function buildSidebar() {
     list.appendChild(row);
   });
 }
+window.__pgRefreshSidebar = buildSidebar;
 
 // ---------- Controls ----------
 document.querySelectorAll(".barbtn[data-city]").forEach((btn) => {
@@ -662,6 +998,8 @@ function set3D(on) {
   btn.classList.toggle("on", on);
   if (map.getLayer("building")) setL("building", "visibility", on ? "none" : "visible");
   if (map.getLayer("building-3d")) setL("building-3d", "visibility", on ? "visible" : "none");
+  if (map.getLayer("co-buildings-3d-highlight")) setL("co-buildings-3d-highlight", "visibility", on ? "visible" : "none");
+  if (map.getLayer("co-buildings-2d-highlight")) setL("co-buildings-2d-highlight", "visibility", on ? "none" : "visible");
   if (on) map.easeTo({ pitch: 55, bearing: -17, duration: 800 });
   else map.easeTo({ pitch: 0, duration: 800 });
 }
@@ -676,9 +1014,10 @@ function startStatusBar() {
       `<span><span class="k">LAT</span> ${c.lat.toFixed(4)}</span>` +
       `<span><span class="k">LNG</span> ${c.lng.toFixed(4)}</span>` +
       `<span><span class="k">Z</span> ${z.toFixed(1)}</span>` +
-      `<span><span class="k">N</span> ${COMPANIES.length} ${CITIES[currentCity].label}</span>` +
-      `<span class="live"><span class="b"></span>LIVE</span>`;
+      `<span><span class="k">N</span> ${COMPANIES.length} ${t("statCompanies")}</span>` +
+      `<span class="live"><span class="b"></span>${t("statLive")}</span>`;
   };
+  window.__pgUpdateStatusbar = update;
   map.on("move", () => { if (!sbQueued) { sbQueued = true; requestAnimationFrame(update); } });
   update();
 }
@@ -720,7 +1059,9 @@ map.on("click", (e) => {
 document.getElementById("coForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const btn = document.getElementById("submitBtn");
-  btn.textContent = "Submitting…"; btn.disabled = true;
+  btn.textContent = t("submitting"); btn.disabled = true;
+  const errEl = document.getElementById("formError");
+  errEl.style.display = "none";
   const data = Object.fromEntries(new FormData(e.target).entries());
   data._subject = "New company submission — Peru Grid";
   data._template = "table";
@@ -731,8 +1072,9 @@ document.getElementById("coForm").addEventListener("submit", async (e) => {
     document.getElementById("formSuccess").classList.add("show");
     if (tempPin) { tempPin.remove(); tempPin = null; }
   } catch (err) {
-    btn.textContent = "Try Again"; btn.disabled = false;
-    alert("Something went wrong submitting the form. (Is FORM_ENDPOINT configured yet?)");
+    btn.textContent = t("tryAgain"); btn.disabled = false;
+    errEl.textContent = t("submitError");
+    errEl.style.display = "block";
   }
 });
 
@@ -751,16 +1093,18 @@ function tick() {
   if (!reduce) { spinI = (spinI + 1) % 4; spinEl.textContent = SPIN[spinI]; }
   if (pct < 90) requestAnimationFrame(tick);
 }
-if (reduce) { spinEl.textContent = ""; pctEl.textContent = "LOADING"; } else requestAnimationFrame(tick);
+if (reduce) { spinEl.textContent = ""; pctEl.textContent = t("loading"); } else requestAnimationFrame(tick);
 
 function dismissLoader() {
   if (dismissed) return; dismissed = true;
   pct = 100; pctEl.textContent = "100%"; spinEl.textContent = "";
-  document.getElementById("bootBar").textContent = "GRID ONLINE ✓";
+  document.getElementById("bootBar").textContent = t("bootOnline");
   setTimeout(() => loader.classList.add("done"), 220);
 }
 map.once("idle", dismissLoader);
 setTimeout(dismissLoader, 9000);
+}
+window.__mapLibReady(bootApp);
 </script>
 </body>
 </html>
