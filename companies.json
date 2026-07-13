@@ -18,6 +18,15 @@
     "tag": "Peru's first fully digital currency exchange house — buy/sell dollars and soles online at live rates."
   },
   {
+    "name": "SeguroSimple",
+    "domain": "segurosimple.com",
+    "city": "lima",
+    "address": "Av. Manuel Olguín 335, Santiago de Surco, Lima",
+    "lat": -12.0884, "lng": -76.9733,
+    "funding": { "type": "Startup" },
+    "tag": "Digital insurance broker comparing auto, health, life and SOAT policies across Peru's major insurers, expanded into Mexico."
+  },
+  {
     "name": "Yape",
     "domain": "yape.com.pe",
     "city": "lima",
