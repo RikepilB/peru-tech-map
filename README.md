@@ -2,8 +2,6 @@
 
 An interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa, rendered as a terminal-style operations console. Click a place to fly to it, click its marker for details, switch cities from the sidebar.
 
-Cloned in structure/style from [MapleBudget/toronto-tech-map](https://github.com/MapleBudget/toronto-tech-map) (BUILD416) — same stack, same no-backend philosophy, extended with a city switcher.
-
 ---
 
 ## What It Is
