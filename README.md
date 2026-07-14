@@ -4,52 +4,52 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 
-An interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa, rendered as a terminal-style operations console. Click a place to fly to it, click its marker for details, switch cities from the sidebar. Live at **[perugrid.com](https://perugrid.com)**.
+Un mapa interactivo de startups, consultoras tecnológicas, espacios de coworking e incubadoras en Lima y Arequipa, presentado como una consola de operaciones estilo terminal. Haz clic en un lugar para volar hacia él, haz clic en su marcador para ver detalles, cambia de ciudad desde la barra lateral. En vivo en **[perugrid.com](https://perugrid.com)**.
 
 ---
 
-## What It Is
+## Qué Es
 
-A single self-contained web app with no build step, no framework, no backend. It renders an open-source vector map (MapLibre GL) and overlays a researched dataset of Peruvian tech companies, consultancies, coworking spaces and incubators. The whole thing is three data files plus one HTML file, served as static assets.
+Una aplicación web autocontenida sin paso de compilación, sin framework, sin backend. Renderiza un mapa vectorial de código abierto (MapLibre GL) y superpone un conjunto de datos investigado de empresas tecnológicas, consultoras, espacios de coworking e incubadoras peruanas. Todo el proyecto son tres archivos de datos más un archivo HTML, servidos como assets estáticos.
 
 **Stack:**
-- **[MapLibre GL JS](https://maplibre.org/)** — open-source WebGL map renderer (the open fork of Mapbox GL).
-- **[OpenFreeMap](https://openfreemap.org/)** — free vector tile host and base styles. No API key, no usage limits.
-- Vector tiles follow the **[OpenMapTiles schema](https://openmaptiles.org/schema/)** (source-layers: `building`, `water`, `transportation`, `place`, `poi`, etc.).
-- **[Geist Mono](https://vercel.com/font)** for all UI typography.
-- **[FormSubmit](https://formsubmit.co/)** for the "add a company" form (static-site email relay, no server) — **not wired up yet**, see below.
+- **[MapLibre GL JS](https://maplibre.org/)** — renderizador de mapas WebGL de código abierto (el fork abierto de Mapbox GL).
+- **[OpenFreeMap](https://openfreemap.org/)** — hosting gratuito de tiles vectoriales y estilos base. Sin API key, sin límites de uso.
+- Los tiles vectoriales siguen el **[esquema OpenMapTiles](https://openmaptiles.org/schema/)** (source-layers: `building`, `water`, `transportation`, `place`, `poi`, etc.).
+- **[Geist Mono](https://vercel.com/font)** para toda la tipografía de la interfaz.
+- **[FormSubmit](https://formsubmit.co/)** para el formulario "agregar empresa" (relay de email para sitios estáticos, sin servidor) — **aún no configurado**, ver abajo.
 
-**Design:** monochrome near-black console with Solarium green (`#056540`) as the only accent. Top-down 2D blueprint view by default, with a `[3D]` toggle. Street labels appear only on major roads; default map POIs are hidden so only company markers show.
+**Diseño:** consola monocromática casi negra con verde Solarium (`#056540`) como único acento. Vista 2D tipo plano en picado por defecto, con un toggle `[3D]`. Las etiquetas de calles solo aparecen en vías principales; los POI por defecto del mapa están ocultos para que solo se vean los marcadores de empresas.
 
 ---
 
-## Repository Layout
+## Estructura Del Repositorio
 
 ```
 peru-tech-map/
-├── index.html              # The entire app: map, sidebar, city switcher, popovers, form, loader
-├── companies.json          # Company dataset — the heart of the project
-├── ticker.json             # Scrolling headline ticker
-├── README.md               # You are here
-├── LICENSE                 # MIT — covers the code
-├── LICENSE-DATA            # CC BY 4.0 — covers the datasets
-├── CODEOWNERS              # Routes every PR to the maintainer for review
-├── CONTRIBUTING.md         # How to add a place, fix data, or change code
+├── index.html              # Toda la app: mapa, barra lateral, selector de ciudad, popovers, formulario, loader
+├── companies.json          # Dataset de empresas — el corazón del proyecto
+├── ticker.json             # Ticker de titulares con scroll
+├── README.md               # Estás aquí
+├── LICENSE                 # MIT — cubre el código
+├── LICENSE-DATA            # CC BY 4.0 — cubre los datasets
+├── CODEOWNERS              # Enruta cada PR al mantenedor para revisión
+├── CONTRIBUTING.md         # Cómo agregar un lugar, corregir datos, o cambiar código
 ├── CODE_OF_CONDUCT.md      # Contributor Covenant 2.1
-├── SECURITY.md             # Responsible disclosure
+├── SECURITY.md             # Divulgación responsable
 └── .github/
     ├── PULL_REQUEST_TEMPLATE.md
-    ├── ISSUE_TEMPLATE/         # Add A Company / Bug Report / Feature Request
-    └── workflows/ci.yml        # Validates companies.json/ticker.json on every PR
+    ├── ISSUE_TEMPLATE/         # Agregar Empresa / Reportar Bug / Solicitar Funcionalidad
+    └── workflows/ci.yml        # Valida companies.json/ticker.json en cada PR
 ```
 
 ---
 
-## Data Format
+## Formato De Datos
 
 ### `companies.json`
 
-An array of place objects. This is the file most contributions will touch.
+Un array de objetos de lugar. Este es el archivo que la mayoría de las contribuciones van a tocar.
 
 ```json
 {
@@ -63,71 +63,71 @@ An array of place objects. This is the file most contributions will touch.
 }
 ```
 
-| Field | Required | Notes |
+| Campo | Requerido | Notas |
 |---|---|---|
-| `name` | ✅ | Display name. |
-| `city` | ✅ | `"lima"` or `"arequipa"` — drives the city switcher and bbox validation. |
-| `lat`, `lng` | ✅ | Decimal degrees. Must fall inside that city's core bbox (see validation below). |
-| `funding` | ✅ | Object with `type`. We repurpose BUILD416's funding-round field as a category, since most entries here aren't VC-funded: `Startup`, `Consultancy`, `Coworking`, `Incubator`, `Nonprofit`, `Fund` render as a muted chip; `Acquired` (or `Public`) renders as the green "notable outcome" chip. |
-| `domain` | ⬜ | Bare domain (no `https://`, no `www`). Used to fetch the logo and link the website. Omit entirely if unknown — the marker falls back to an initial-letter tile instead of guessing. |
-| `address` | ⬜ | Human-readable, for provenance. |
-| `tag` | ⬜ | One-sentence description shown in the popover and used as the sidebar's secondary line. |
+| `name` | ✅ | Nombre a mostrar. |
+| `city` | ✅ | `"lima"` o `"arequipa"` — controla el selector de ciudad y la validación de bbox. |
+| `lat`, `lng` | ✅ | Grados decimales. Debe caer dentro del bbox central de esa ciudad (ver validación abajo). |
+| `funding` | ✅ | Objeto con `type`. Reutilizamos el campo de ronda de financiamiento de BUILD416 como categoría, ya que la mayoría de las entradas aquí no tienen financiamiento VC: `Startup`, `Consultancy`, `Coworking`, `Incubator`, `Nonprofit`, `Fund` se muestran como chip neutro; `Acquired` (o `Public`) se muestra como el chip verde de "resultado destacado". |
+| `domain` | ⬜ | Dominio simple (sin `https://`, sin `www`). Se usa para obtener el logo y enlazar el sitio web. Omítelo por completo si no lo sabes — el marcador cae de vuelta a un tile con inicial en lugar de adivinar. |
+| `address` | ⬜ | Legible por humanos, para trazabilidad. |
+| `tag` | ⬜ | Descripción de una oración mostrada en el popover y usada como línea secundaria en la barra lateral. |
 
-**Coordinate Validation:** every entry must sit within its city's bounding box —
+**Validación De Coordenadas:** cada entrada debe caer dentro del bounding box de su ciudad —
 
 - Lima: `[-77.20, -12.35]` → `[-76.90, -11.95]`
 - Arequipa: `[-71.60, -16.50]` → `[-71.45, -16.30]`
 
-Entries outside their declared city's bbox are skipped at load with a console warning.
+Las entradas fuera del bbox de su ciudad declarada se omiten al cargar, con una advertencia en consola.
 
 ### `ticker.json`
 
-An array of headline objects scrolling across the top:
+Un array de objetos de titular que se desplazan en la parte superior:
 
 ```json
 { "label": "BIOTECH", "text": "Le Qara wins the H&M Foundation Global Change Award for Arequipa-made bio-leather" }
 ```
 
-Keep `label` short (one or two words, uppercased in the UI) and `text` to a single sentence. Not filtered by city — it's a shared reel across both.
+Mantén `label` corto (una o dos palabras, en mayúsculas en la interfaz) y `text` en una sola oración. No se filtra por ciudad — es un reel compartido entre ambas.
 
 ---
 
-## Running It Locally
+## Ejecutarlo Localmente
 
-The app fetches `companies.json` and `ticker.json` at runtime, so it **must be served over HTTP** — opening `index.html` directly with `file://` will fail on CORS. Any static server works:
+La app obtiene `companies.json` y `ticker.json` en tiempo de ejecución, así que **debe servirse por HTTP** — abrir `index.html` directamente con `file://` fallará por CORS. Cualquier servidor estático funciona:
 
 ```bash
 python3 -m http.server 8000
-# or
+# o
 npx serve .
 ```
 
-Then open **http://localhost:8000**.
+Luego abre **http://localhost:8000**.
 
 ---
 
-## Known TODOs Before Shipping
+## TODOs Conocidos Antes De Lanzar
 
-- **`FORM_ENDPOINT` in `index.html`** is a placeholder (`https://formsubmit.co/ajax/YOUR_EMAIL_HERE`). The "Add A Company" modal is built but inert until you swap in your own [FormSubmit](https://formsubmit.co/)-verified email — first real submission triggers FormSubmit's one-time verification email.
-- Favicon is a self-contained inline SVG (data URI, no file needed). **The social-share image is still a placeholder**: `og:image`/`twitter:image` point to `https://perugrid.com/assets/og-image.jpg`, but that file doesn't exist yet — add a real screenshot/graphic at `assets/og-image.jpg` (1342×896 or similar 3:2 ratio) to make link previews (Slack, Twitter, WhatsApp) show an image instead of nothing.
-- No `assets/` folder yet for local company-logo overrides — markers fall back to Google's favicon service or an initial-letter tile, which is enough to ship.
-
----
-
-## Contributing
-
-Contributions are welcome — especially adding places, fixing coordinates, and correcting categories. **Anyone can open a pull request or issue; all PRs are reviewed and merged by the maintainer.**
-
-See **[CONTRIBUTING.md](./CONTRIBUTING.md)** for the full workflow (branching, validation,
-PR checklist), and **[CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)** for community standards.
-Found a security issue? See **[SECURITY.md](./SECURITY.md)** instead of opening a public issue.
+- **`FORM_ENDPOINT` en `index.html`** es un placeholder (`https://formsubmit.co/ajax/YOUR_EMAIL_HERE`). El modal "Agregar Empresa" está construido pero inerte hasta que configures tu propio email verificado con [FormSubmit](https://formsubmit.co/) — el primer envío real dispara el email de verificación única de FormSubmit.
+- El favicon es un SVG inline autocontenido (data URI, no requiere archivo). **La imagen para compartir en redes sigue siendo un placeholder**: `og:image`/`twitter:image` apuntan a `https://perugrid.com/assets/og-image.jpg`, pero ese archivo aún no existe — agrega una captura o gráfico real en `assets/og-image.jpg` (1342×896 o proporción similar 3:2) para que las vistas previas de enlaces (Slack, Twitter, WhatsApp) muestren una imagen en vez de nada.
+- Aún no hay carpeta `assets/` para overrides locales de logos de empresas — los marcadores caen de vuelta al servicio de favicons de Google o a un tile con inicial, lo cual es suficiente para lanzar.
 
 ---
 
-## Credits & Data Sources
+## Cómo Contribuir
 
-Map data © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, served via OpenFreeMap. Company data researched and compiled from public sources (company sites, news coverage, university incubator pages). Structure/style adapted from [BUILD416](https://github.com/MapleBudget/toronto-tech-map) by Nelson Lee.
+Las contribuciones son bienvenidas — especialmente agregar lugares, corregir coordenadas, y corregir categorías. **Cualquiera puede abrir un pull request o issue; todos los PRs son revisados y fusionados por el mantenedor.**
 
-## License
+Consulta **[CONTRIBUTING.md](./CONTRIBUTING.md)** para el flujo completo (branching, validación,
+checklist de PR), y **[CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)** para los estándares de la comunidad.
+¿Encontraste un problema de seguridad? Consulta **[SECURITY.md](./SECURITY.md)** en vez de abrir un issue público.
 
-The **code** is [MIT licensed](./LICENSE). The **datasets** (`companies.json`, `ticker.json`) are licensed [CC BY 4.0](./LICENSE-DATA) — standard software licenses don't fit factual data well, so the two are licensed separately. Map base data is © OpenStreetMap contributors under the [ODbL](https://www.openstreetmap.org/copyright); keep the attribution control visible on the map.
+---
+
+## Créditos Y Fuentes De Datos
+
+Datos de mapa © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, servidos vía OpenFreeMap. Datos de empresas investigados y recopilados de fuentes públicas (sitios de las empresas, cobertura de noticias, páginas de incubadoras universitarias). Estructura/estilo adaptados de [BUILD416](https://github.com/MapleBudget/toronto-tech-map) por Nelson Lee.
+
+## Licencia
+
+El **código** tiene [licencia MIT](./LICENSE). Los **datasets** (`companies.json`, `ticker.json`) tienen licencia [CC BY 4.0](./LICENSE-DATA) — las licencias de software estándar no se ajustan bien a datos factuales, por eso se licencian por separado. Los datos base del mapa son © OpenStreetMap contributors bajo [ODbL](https://www.openstreetmap.org/copyright); mantén visible el control de atribución en el mapa.

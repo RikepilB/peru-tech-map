@@ -1,23 +1,23 @@
-name: Add A Company / Place
-description: Suggest a startup, consultancy, coworking space, incubator, fund, or nonprofit to add to the map.
-title: "[Add]: "
+name: Agregar Empresa / Lugar
+description: Sugiere una startup, consultora, coworking, incubadora, fondo, u ONG para agregar al mapa.
+title: "[Agregar]: "
 labels: ["add-company"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for helping grow the map! If you're comfortable with Git, you can skip this
-        and open a PR directly — see [CONTRIBUTING.md](../../CONTRIBUTING.md).
+        ¡Gracias por ayudar a hacer crecer el mapa! Si te sientes cómodo con Git, puedes
+        saltarte esto y abrir un PR directamente — ver [CONTRIBUTING.md](../../CONTRIBUTING.md).
   - type: input
     id: name
     attributes:
-      label: Company / Place Name
+      label: Nombre De La Empresa / Lugar
     validations:
       required: true
   - type: dropdown
     id: city
     attributes:
-      label: City
+      label: Ciudad
       options:
         - Lima
         - Arequipa
@@ -26,19 +26,19 @@ body:
   - type: input
     id: address
     attributes:
-      label: Address
-      description: Human-readable address within the mapped area.
+      label: Dirección
+      description: Dirección legible por humanos dentro del área mapeada.
     validations:
       required: true
   - type: input
     id: domain
     attributes:
-      label: Website / Domain
-      description: Bare domain, no https:// or www — e.g. acme.com
+      label: Sitio Web / Dominio
+      description: Dominio simple, sin https:// ni www — ej. acme.com
   - type: dropdown
     id: category
     attributes:
-      label: Category
+      label: Categoría
       options:
         - Startup
         - Consultancy
@@ -52,11 +52,11 @@ body:
   - type: input
     id: source
     attributes:
-      label: Source
-      description: Link to the company site, press release, or announcement confirming this is real.
+      label: Fuente
+      description: Enlace al sitio de la empresa, comunicado de prensa, o anuncio que confirme que es real.
     validations:
       required: true
   - type: textarea
     id: notes
     attributes:
-      label: Anything Else?
+      label: ¿Algo Más?

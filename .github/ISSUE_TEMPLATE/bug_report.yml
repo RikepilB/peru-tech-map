@@ -1,30 +1,30 @@
-name: Bug Report
-description: Something's broken in the map, sidebar, or add-company flow.
+name: Reportar Bug
+description: Algo está roto en el mapa, la barra lateral, o el flujo de agregar empresa.
 title: "[Bug]: "
 labels: ["bug"]
 body:
   - type: textarea
     id: what-happened
     attributes:
-      label: What Happened?
-      description: What you expected vs. what actually happened.
+      label: ¿Qué Pasó?
+      description: Qué esperabas vs. qué pasó realmente.
     validations:
       required: true
   - type: textarea
     id: repro
     attributes:
-      label: Steps To Reproduce
+      label: Pasos Para Reproducir
     validations:
       required: true
   - type: input
     id: browser
     attributes:
-      label: Browser / Device
-      placeholder: e.g. Chrome 128 on macOS, Safari on iPhone 15
+      label: Navegador / Dispositivo
+      placeholder: ej. Chrome 128 en macOS, Safari en iPhone 15
     validations:
       required: true
   - type: textarea
     id: screenshots
     attributes:
-      label: Screenshots / Console Errors
-      description: If applicable — check DevTools console for JS errors.
+      label: Capturas / Errores De Consola
+      description: Si aplica — revisa la consola de DevTools por errores de JS.

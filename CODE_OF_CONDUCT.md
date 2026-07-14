@@ -1,72 +1,75 @@
-# Contributor Covenant Code of Conduct
+# Código De Conducta Del Contribuyente
 
-## Our Pledge
+## Nuestro Compromiso
 
-We as members, contributors, and leaders pledge to make participation in our community a
-harassment-free experience for everyone, regardless of age, body size, visible or invisible
-disability, ethnicity, sex characteristics, gender identity and expression, level of
-experience, education, socio-economic status, nationality, personal appearance, race,
-religion, or sexual identity and orientation.
+Como miembros, contribuyentes y líderes, nos comprometemos a hacer de la participación en
+nuestra comunidad una experiencia libre de acoso para todos, sin importar edad, tamaño
+corporal, discapacidad visible o invisible, etnia, características sexuales, identidad y
+expresión de género, nivel de experiencia, educación, nivel socioeconómico, nacionalidad,
+apariencia personal, raza, religión, o identidad y orientación sexual.
 
-We pledge to act and interact in ways that contribute to an open, welcoming, diverse,
-inclusive, and healthy community.
+Nos comprometemos a actuar e interactuar de maneras que contribuyan a una comunidad
+abierta, acogedora, diversa, inclusiva y sana.
 
-## Our Standards
+## Nuestros Estándares
 
-Examples of behavior that contributes to a positive environment:
+Ejemplos de comportamiento que contribuye a un ambiente positivo:
 
-- Demonstrating empathy and kindness toward other people
-- Being respectful of differing opinions, viewpoints, and experiences
-- Giving and gracefully accepting constructive feedback
-- Accepting responsibility and apologizing for mistakes, and learning from the experience
-- Focusing on what is best for the community, not just individuals
+- Demostrar empatía y amabilidad hacia otras personas
+- Respetar opiniones, puntos de vista y experiencias diferentes
+- Dar y aceptar con elegancia retroalimentación constructiva
+- Aceptar responsabilidad y disculparse por errores, y aprender de la experiencia
+- Enfocarse en lo que es mejor para la comunidad, no solo para individuos
 
-Examples of unacceptable behavior:
+Ejemplos de comportamiento inaceptable:
 
-- The use of sexualized language or imagery, and sexual attention or advances of any kind
-- Trolling, insulting or derogatory comments, and personal or political attacks
-- Public or private harassment
-- Publishing others' private information (physical or email address) without explicit permission
-- Other conduct which could reasonably be considered inappropriate in a professional setting
+- El uso de lenguaje o imágenes sexualizadas, y atención o insinuaciones sexuales de
+  cualquier tipo
+- Trolling, comentarios insultantes o despectivos, y ataques personales o políticos
+- Acoso público o privado
+- Publicar información privada de otras personas (dirección física o de email) sin permiso
+  explícito
+- Otra conducta que razonablemente podría considerarse inapropiada en un entorno profesional
 
-## Enforcement Responsibilities
+## Responsabilidades De Aplicación
 
-Project maintainers are responsible for clarifying and enforcing our standards of
-acceptable behavior and will take appropriate and fair corrective action in response to
-any behavior they deem inappropriate, threatening, offensive, or harmful.
+Los mantenedores del proyecto son responsables de clarificar y hacer cumplir nuestros
+estándares de comportamiento aceptable, y tomarán las acciones correctivas apropiadas y
+justas en respuesta a cualquier comportamiento que consideren inapropiado, amenazante,
+ofensivo o dañino.
 
-## Scope
+## Alcance
 
-This Code of Conduct applies within all community spaces (issues, pull requests,
-discussions) and also applies when an individual is officially representing the community
-in public spaces.
+Este Código de Conducta aplica dentro de todos los espacios de la comunidad (issues, pull
+requests, discussions) y también aplica cuando una persona está representando oficialmente
+a la comunidad en espacios públicos.
 
-## Enforcement
+## Aplicación
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the
-maintainer ([@RikepilB](https://github.com/RikepilB)) by opening a
-[private security advisory](../../security/advisories/new) or contacting them directly
-through their GitHub profile. All complaints will be reviewed and investigated promptly
-and fairly.
+Los casos de comportamiento abusivo, de acoso u otro comportamiento inaceptable pueden
+reportarse al mantenedor ([@RikepilB](https://github.com/RikepilB)) abriendo un
+[reporte de seguridad privado](../../security/advisories/new) o contactándolo directamente
+a través de su perfil de GitHub. Todas las quejas serán revisadas e investigadas de manera
+pronta y justa.
 
-All maintainers are obligated to respect the privacy and security of the reporter of any
-incident.
+Todos los mantenedores están obligados a respetar la privacidad y seguridad de quien
+reporta cualquier incidente.
 
-## Enforcement Guidelines
+## Guía De Aplicación
 
-Maintainers will follow these Community Impact Guidelines in determining the consequences
-for any action they deem in violation of this Code of Conduct:
+Los mantenedores seguirán estas Guías de Impacto en la Comunidad para determinar las
+consecuencias de cualquier acción que consideren una violación de este Código de Conducta:
 
-1. **Correction** — a private, written warning, with clarity about the violation.
-2. **Warning** — a warning with consequences for continued behavior, including temporary
-   restriction from interaction.
-3. **Temporary Ban** — a temporary ban from any sort of interaction or public communication
-   with the community for a specified period.
-4. **Permanent Ban** — a permanent ban from any sort of public interaction within the
-   community.
+1. **Corrección** — una advertencia privada por escrito, con claridad sobre la violación.
+2. **Advertencia** — una advertencia con consecuencias por comportamiento continuado,
+   incluyendo restricción temporal de interacción.
+3. **Suspensión Temporal** — una suspensión temporal de cualquier tipo de interacción o
+   comunicación pública con la comunidad por un período específico.
+4. **Suspensión Permanente** — una suspensión permanente de cualquier tipo de interacción
+   pública dentro de la comunidad.
 
-## Attribution
+## Atribución
 
-This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org),
-version 2.1, available at
+Este Código de Conducta está adaptado del [Contributor Covenant](https://www.contributor-covenant.org),
+versión 2.1, disponible en
 https://www.contributor-covenant.org/version/2/1/code_of_conduct.html.

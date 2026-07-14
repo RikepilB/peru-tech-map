@@ -1,27 +1,27 @@
-name: Feature Request
-description: Suggest an improvement to the map, UI, or data model.
-title: "[Feature]: "
+name: Solicitar Funcionalidad
+description: Sugiere una mejora al mapa, la interfaz, o el modelo de datos.
+title: "[Funcionalidad]: "
 labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
       value: |
-        Heads up: this is a **zero-dependency static site** by design — no build step, no
-        framework. Requests that require adding one will likely be declined. See
-        [CONTRIBUTING.md](../../CONTRIBUTING.md#ground-rules).
+        Aviso: este es un **sitio estático sin dependencias** por diseño — sin paso de
+        compilación, sin framework. Es probable que se rechacen solicitudes que requieran
+        agregar uno. Ver [CONTRIBUTING.md](../../CONTRIBUTING.md#reglas-base).
   - type: textarea
     id: problem
     attributes:
-      label: What Problem Does This Solve?
+      label: ¿Qué Problema Resuelve Esto?
     validations:
       required: true
   - type: textarea
     id: proposal
     attributes:
-      label: Proposed Solution
+      label: Solución Propuesta
     validations:
       required: true
   - type: textarea
     id: alternatives
     attributes:
-      label: Alternatives Considered
+      label: Alternativas Consideradas

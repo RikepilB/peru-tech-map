@@ -12,6 +12,13 @@ out of the root listing; `opencode.json`/`AGENTS.md` already point here explicit
 
 ## 2. Style
 
+- **Language: Spanish for everything user/contributor-facing.** This is a Peru-focused
+  project — `README.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, PR/issue
+  templates, and `docs/*.md` are written in Spanish. New docs of these kinds are authored in
+  Spanish from the start, not translated after the fact. Exceptions: code, identifiers,
+  commit messages, and this `.claude/` operating-instructions tree stay English (existing
+  convention, keeps tooling/CI output consistent). The site's own product UI has its own
+  independent EN/ES toggle (`window.I18N`) — that's a separate concern from repo docs.
 - **Rules live in `.claude/rules/`** — `common/` + `typescript/` + `peru-tech-map-architecture.md`
   (this project's own module boundaries — see below). Guardrails (what must never happen)
   are `common/coding-rules.md` + `common/review-checklist.md`.

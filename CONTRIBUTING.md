@@ -1,89 +1,96 @@
-# Contributing to Peru Grid
+# Cómo Contribuir A Peru Grid
 
-Thanks for wanting to help map Peru's tech ecosystem. Anyone can open a pull request or
-issue — the maintainer reviews and merges everything (see [CODEOWNERS](./CODEOWNERS)).
+Gracias por querer ayudar a mapear el ecosistema tech del Perú. Cualquiera puede abrir un
+pull request o issue — el mantenedor revisa y fusiona todo (ver [CODEOWNERS](./CODEOWNERS)).
 
-By participating, you agree to follow the [Code of Conduct](./CODE_OF_CONDUCT.md).
-
----
-
-## Ways To Contribute
-
-- **Add a place** — a startup, consultancy, coworking space, incubator, fund, or nonprofit
-  with a genuine presence in Lima or Arequipa.
-- **Fix an entry** — wrong coordinates, stale domain, outdated category.
-- **Report a bug** — something broken in the map, sidebar, or add-company flow.
-- **Improve the code** — `index.html` is the entire app (no build step, no framework).
-
-No contribution is too small. Typo fixes and single-field corrections are welcome.
+Al participar, aceptas seguir el [Código de Conducta](./CODE_OF_CONDUCT.md).
 
 ---
 
-## Ground Rules
+## Formas De Contribuir
 
-This is a **zero-dependency static site** — `index.html`, `companies.json`, `ticker.json`,
-nothing else. PRs that introduce a build step, a framework, or an npm dependency will be
-declined regardless of how good the idea is. If you think this constraint needs to change,
-open an issue to discuss it first — don't build against it speculatively.
+- **Agregar un lugar** — una startup, consultora, espacio de coworking, incubadora, fondo,
+  u ONG con presencia real en Lima o Arequipa.
+- **Corregir una entrada** — coordenadas incorrectas, dominio desactualizado, categoría
+  desactualizada.
+- **Reportar un bug** — algo roto en el mapa, la barra lateral, o el flujo de agregar empresa.
+- **Mejorar el código** — `index.html` es toda la app (sin paso de compilación, sin framework).
+
+Ninguna contribución es demasiado pequeña. Correcciones de typos y de un solo campo son
+bienvenidas.
 
 ---
 
-## Adding Or Editing A Place
+## Reglas Base
 
-1. **Fork** the repo and create a branch: `add/<company-name>` or `fix/<what-changed>`.
-2. Edit `companies.json` directly — see the [Data Format](./README.md#data-format) section
-   in the README for the schema and required fields.
-3. Validate your JSON before opening a PR:
+Este es un **sitio estático sin dependencias** — `index.html`, `companies.json`,
+`ticker.json`, nada más. Los PRs que introduzcan un paso de compilación, un framework, o
+una dependencia npm serán rechazados sin importar qué tan buena sea la idea. Si crees que
+esta restricción necesita cambiar, abre un issue para discutirlo primero — no construyas
+en contra de ella especulativamente.
+
+---
+
+## Agregar O Editar Un Lugar
+
+1. Haz **fork** del repo y crea una rama: `add/<nombre-de-la-empresa>` o
+   `fix/<qué-cambió>`.
+2. Edita `companies.json` directamente — ver la sección [Formato De Datos](./README.md#formato-de-datos)
+   en el README para el esquema y campos requeridos.
+3. Valida tu JSON antes de abrir un PR:
    ```bash
    python3 -m json.tool companies.json > /dev/null && echo OK
    ```
-4. Run the site locally and confirm your pin lands in the right spot:
+4. Corre el sitio localmente y confirma que tu pin cae en el lugar correcto:
    ```bash
-   python3 -m http.server 8000   # then open http://localhost:8000
+   python3 -m http.server 8000   # luego abre http://localhost:8000
    ```
-5. Open a PR using the template — fill in the **name, city, coordinates, source**. A source
-   link (company site, press release, LinkedIn) speeds up review a lot.
+5. Abre un PR usando la plantilla — llena **nombre, ciudad, coordenadas, fuente**. Un
+   enlace de fuente (sitio de la empresa, comunicado de prensa, LinkedIn) acelera mucho la
+   revisión.
 
-**What gets accepted:**
-- ✅ Real companies/places with a genuine, sourceable presence in Lima or Arequipa.
-- ✅ Coordinate/detail corrections to existing entries.
-- ❌ Entries outside the two cities' bounding boxes (see README).
-- ❌ Unverifiable claims, marketing copy, or duplicate entries.
-
----
-
-## Code / Design Changes
-
-1. Branch off `master` — never commit directly to it.
-2. Keep the single-file architecture: everything lives in `index.html`'s inline `<script>`
-   and `<style>` blocks. Don't split it into modules or add a bundler.
-3. Keep Solarium green (`#056540` / `#0FA968`) as the only accent color.
-4. Test locally over HTTP (not `file://` — the app fetches JSON at runtime and needs CORS).
-5. Open a PR describing what changed and how you tested it.
+**Qué se acepta:**
+- ✅ Empresas/lugares reales con presencia genuina y verificable en Lima o Arequipa.
+- ✅ Correcciones de coordenadas/detalles a entradas existentes.
+- ❌ Entradas fuera de los bounding boxes de las dos ciudades (ver README).
+- ❌ Afirmaciones no verificables, copy de marketing, o entradas duplicadas.
 
 ---
 
-## Pull Request Process
+## Cambios De Código / Diseño
 
-- CI validates that `companies.json`/`ticker.json` are well-formed JSON and every company
-  entry has its required fields. A red CI check blocks merge.
-- [CODEOWNERS](./CODEOWNERS) auto-requests the maintainer's review on every PR — nothing
-  merges without it.
-- Use [Conventional Commits](https://www.conventionalcommits.org/) style for commit
-  messages (`feat:`, `fix:`, `docs:`, `chore:`, etc.) where practical.
-- Keep PRs focused — one company addition, one bug fix, one feature. Large mixed PRs are
-  slower to review.
-
----
-
-## Reporting Issues
-
-Use the [issue templates](../../issues/new/choose) — pick **Add a company**, **Bug report**,
-or **Feature request** depending on what you're filing. For security vulnerabilities, see
-[SECURITY.md](./SECURITY.md) instead of opening a public issue.
+1. Crea una rama desde `master` — nunca hagas commit directo a ella.
+2. Mantén la arquitectura de un solo archivo: todo vive dentro del `<script>` y `<style>`
+   inline de `index.html`. No lo dividas en módulos ni agregues un bundler.
+3. Mantén el verde Solarium (`#056540` / `#0FA968`) como único color de acento.
+4. Prueba localmente por HTTP (no `file://` — la app obtiene JSON en tiempo de ejecución y
+   necesita CORS).
+5. Abre un PR describiendo qué cambió y cómo lo probaste.
 
 ---
 
-## Questions?
+## Proceso De Pull Request
 
-Open a [discussion or issue](../../issues) — no question is too basic.
+- CI valida que `companies.json`/`ticker.json` sean JSON bien formado y que cada entrada
+  de empresa tenga sus campos requeridos. Un check de CI en rojo bloquea el merge.
+- [CODEOWNERS](./CODEOWNERS) solicita automáticamente la revisión del mantenedor en cada
+  PR — nada se fusiona sin ella.
+- Usa el estilo [Conventional Commits](https://www.conventionalcommits.org/) para los
+  mensajes de commit (`feat:`, `fix:`, `docs:`, `chore:`, etc.) cuando sea práctico.
+- Mantén los PRs enfocados — una empresa agregada, un bug corregido, una funcionalidad. Los
+  PRs grandes y mixtos son más lentos de revisar.
+
+---
+
+## Reportar Issues
+
+Usa las [plantillas de issue](../../issues/new/choose) — elige **Agregar Empresa**,
+**Reportar Bug**, o **Solicitar Funcionalidad** según lo que estés reportando. Para
+vulnerabilidades de seguridad, ve a [SECURITY.md](./SECURITY.md) en vez de abrir un issue
+público.
+
+---
+
+## ¿Preguntas?
+
+Abre una [discusión o issue](../../issues) — ninguna pregunta es demasiado básica.
