@@ -109,7 +109,8 @@ Then open **http://localhost:8000**.
 ## Known TODOs Before Shipping
 
 - **`FORM_ENDPOINT` in `index.html`** is a placeholder (`https://formsubmit.co/ajax/YOUR_EMAIL_HERE`). The "Add A Company" modal is built but inert until you swap in your own [FormSubmit](https://formsubmit.co/)-verified email — first real submission triggers FormSubmit's one-time verification email.
-- No `assets/` folder yet (no local logo overrides, no custom favicon/OG image) — markers fall back to Google's favicon service or an initial-letter tile, which is enough to ship, but a custom favicon/meta image would be a nice follow-up.
+- Favicon is a self-contained inline SVG (data URI, no file needed). **The social-share image is still a placeholder**: `og:image`/`twitter:image` point to `https://perugrid.com/assets/og-image.jpg`, but that file doesn't exist yet — add a real screenshot/graphic at `assets/og-image.jpg` (1342×896 or similar 3:2 ratio) to make link previews (Slack, Twitter, WhatsApp) show an image instead of nothing.
+- No `assets/` folder yet for local company-logo overrides — markers fall back to Google's favicon service or an initial-letter tile, which is enough to ship.
 
 ---
 
