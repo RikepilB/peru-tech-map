@@ -1,0 +1,27 @@
+name: Feature Request
+description: Suggest an improvement to the map, UI, or data model.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Heads up: this is a **zero-dependency static site** by design — no build step, no
+        framework. Requests that require adding one will likely be declined. See
+        [CONTRIBUTING.md](../../CONTRIBUTING.md#ground-rules).
+  - type: textarea
+    id: problem
+    attributes:
+      label: What Problem Does This Solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
