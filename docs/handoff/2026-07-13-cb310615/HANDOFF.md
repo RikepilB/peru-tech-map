@@ -251,7 +251,55 @@ adding markitdown as a global skill and Neon DB for the companies data.
 - Run `/export docs/handoff/2026-07-13-cb310615/transcript.md` (user must run this, not
   Claude).
 
+## Check-in — 2026-07-14 (part 4: issues backlog + Spanish translation)
+
+- Ran `/handoff-to-issues`: harvested every pending item across the handoff tree (6 items)
+  plus the 3 new asks the user made in the same message (Spanish default, description
+  translation, category/subcategory taxonomy redesign) into 12 GitHub issues, presented as
+  one proposal table, user confirmed "create all 12". Big items (translation, taxonomy)
+  tracer-bullet sliced into schema/plumbing-first + dependent follow-up so each slice is
+  independently demoable: #16→#18 (i18n plumbing → full translation), #17→#19 (schema →
+  UI/filter rework). Created 2 missing labels (`chore`, `user-action`). Zero pre-existing
+  open issues, so no dedup collisions. Handoff tree itself untouched (skill is read-only on
+  it, per its own rules) — this check-in entry is the first tree write for this batch.
+- New user request: "everything needs to be in Spanish" — this is a Peru-focused repo.
+  Added a standing rule to `.claude/CLAUDE.md` §2 Style (new repo-facing docs authored in
+  Spanish from the start; code/commits/`.claude/` tooling stay English; product UI's own
+  EN/ES toggle is a separate concern). Translated README.md, CONTRIBUTING.md,
+  CODE_OF_CONDUCT.md, SECURITY.md, `.github/PULL_REQUEST_TEMPLATE.md`, and all 4
+  `.github/ISSUE_TEMPLATE/*.yml` files to Spanish — code, identifiers, and JSON field
+  names/enum values (`Startup`, `city: "lima"`, etc.) deliberately left in English since
+  those are literal schema values, not prose. Scanned translated YAML for
+  unquoted-colon-in-value breakage before shipping (clean). Shipped via branch
+  `docs/spanish-translation` → PR #20 → merged
+  (https://github.com/RikepilB/peru-tech-map/pull/20).
+- Note: the site's own product UI language default (still English-first) was **not**
+  touched this check-in — that's tracked separately as issue #15 and offered to the user as
+  a next step, not yet actioned.
+
+## Files changed (part 4)
+- `.claude/CLAUDE.md` — added Spanish-language-for-docs rule to §2 Style.
+- `README.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`,
+  `.github/PULL_REQUEST_TEMPLATE.md`, `.github/ISSUE_TEMPLATE/{add_company,bug_report,
+  feature_request,config}.yml` — full Spanish translation (PR #20, merged).
+- GitHub: 12 issues created (#8–#19), 2 labels created (`chore`, `user-action`). No repo
+  files changed by the issues themselves.
+
+## Failed attempts (part 4)
+- None.
+
+## Next steps (part 4)
+- 12 open issues now track all outstanding work — see #8 through #19 on the repo instead of
+  re-deriving next-steps from prose here going forward. Highest-signal ones: #15 (Spanish
+  default for the product UI, small), #16→#18 (translate company descriptions) and
+  #17→#19 (category/subcategory taxonomy redesign) are the two big features the user
+  actually asked to start next.
+- Run `/export docs/handoff/2026-07-13-cb310615/transcript.md` (user must run this, not
+  Claude) — note: this was already run once mid-session per the local-command log; re-run
+  if the user wants the transcript to include this part-4 work too.
+
 ## Files in this folder
 - `HANDOFF.md` — this file
 - `snapshot-235350.md`, `snapshot-025657.md` — auto PreCompact snapshots
+- `transcript.md` — full `/export` (captured mid-session, before part 4)
 - `.sid` — session id marker
