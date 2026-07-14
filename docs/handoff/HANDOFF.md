@@ -21,35 +21,28 @@ session. Solved tasks → one concrete one-liner (file / PR / command).
 
 ---
 
-## Current state — 2026-07-14 (cb310615, part 2)
+## Current state — 2026-07-14 (cb310615, part 3)
 
-**Taxonomy expansion + landing-view toggles MERGED to `master`** (PR #2:
-https://github.com/RikepilB/peru-tech-map/pull/2). `index.html` defaults to a
-Startups+Consultancies feed with 3 overlay toggle pills (Show Investors / Show Coworking Areas /
-Show Non-Profits & Communities) that blend into the feed rather than replace it — verified live
-(30 → 41 places on toggle). Code-reviewed clean (no CRITICAL/HIGH; 3 MEDIUM/LOW notes, not
-blocking). `companies.json` reached 69 entries in the merged state (added `operating_model` to
-all, `funding.stage` to 5 sourced YC-batch startups, 15 new web-verified entries incl. Comunal
-Coworking — Peru's #1 chain, was missing entirely).
+**LIVE at perugrid.com.** The `deploy_to_vercel` MCP tool's 403 (`project:create` permission
+gap) was never fixable from the Claude side — worked around by importing the GitHub repo
+directly in the Vercel dashboard instead. Project `peru-tech-map` (team
+`rikepilbs-projects`) is now GitHub-linked to `master`, with `perugrid.com` +
+`www.perugrid.com` attached and SSL verified. **Every future push to `master` auto-deploys**
+— no more manual deploy tool needed.
 
-**`companies.json` grew further to 75 entries, UNCOMMITTED.** User-supplied additions after the
-merge: 3 ONGs/Comunidades (Crafter Station, AI Playgrounds, Claude IA Labs — placed at their
-named neighbors' exact coords for spiderfy clustering) + 3 more fintech/healthtech startups
-(Fitia, Hapi, Monnet Payments). Correctly caught that 2 of 5 user-requested startups (Leasy,
-Prestamype) were already in the dataset — skipped the dupes, backfilled Leasy's missing domain.
-Needs its own branch/commit/PR/merge cycle.
+**`companies.json` is 75 entries, all committed.** The 6-entry ONGs/fintech batch from the
+prior check-in shipped via PR #3 (merged).
 
-**Deploy to Vercel CONFIRMED durably BLOCKED — 403 Forbidden creating project.** Retried after
-the PR #2 merge with fresh content from `master`; identical error to the first attempt:
-`"You don't have permission to create a project."` This is the last remaining blocker on the
-original "deploy the map with the domain in vercel" request — `list_teams` returned empty
-(personal account, not a team-scope issue), the Claude↔Vercel MCP connection itself lacks
-`project:create` permission. Needs user to either create an empty Vercel project named
-`perugrid` manually first (then retry deploy against the existing project), or re-authorize the
-Vercel integration with broader scope. No MCP tool exists for attaching a custom domain or
-importing a GitHub repo as a deploy source — domain attachment will need browser automation on
-the Vercel dashboard once a project exists. Spaceship DNS has been ready and pointed at Vercel
-since earlier this session.
+**UI polish shipped (PR #4, merged):** tagline "Where The Builders Are" is now bold
+green-bright (was 10px muted gray); desktop sidebar has a collapse toggle (`#panelToggle`,
+slides the 320px panel off-screen) so the full map is viewable.
+
+**Open-source readiness shipped (PR #5, merged):** added `CONTRIBUTING.md`,
+`CODE_OF_CONDUCT.md`, `SECURITY.md`, structured `.github/ISSUE_TEMPLATE/` (Add A Company /
+Bug Report / Feature Request), enabled GitHub Discussions, README badges, and a small GitHub
+icon/link in the site UI next to the language toggle. Repo already had LICENSE/CODEOWNERS/
+PR-template/CI from earlier sessions. **Not done:** branch-protection rule on `master` — left
+for the user to enable in GitHub Settings → Branches.
 
 **`index.html` is the live Costa Verde rebrand with EN/ES i18n, merged to `master`** (PR #1:
 https://github.com/RikepilB/peru-tech-map/pull/1). Boot-hang watchdog + `__mapLibReady()`
@@ -69,6 +62,13 @@ Configuration" handshake. Full detail in `2026-07-06-initial-build/HANDOFF.md`, 
 
 ## Session index (append-only, newest first)
 
+- 2026-07-13-cb310615 (2026-07-14 check-in, part 3) — Fixed the Vercel deploy for good:
+  worked around the `deploy_to_vercel` tool's unfixable 403 by importing the GitHub repo
+  directly in the Vercel dashboard — `perugrid.com` is now live and auto-deploys on every
+  push to `master`. Shipped the pending 75-entry `companies.json` batch (PR #3), a more
+  prominent tagline + desktop sidebar collapse toggle (PR #4), and a full open-source
+  readiness pass — CONTRIBUTING/CoC/SECURITY/issue templates/Discussions/README badges/
+  GitHub link in the UI (PR #5).
 - 2026-07-13-cb310615 (2026-07-14 check-in, part 2) — Code-reviewed the taxonomy diff (clean),
   shipped it via branch→PR#2→merge to master. Retried Vercel deploy post-merge — confirmed
   durably blocked (403, same `project:create` permission gap). Added 3 user-supplied ONGs/

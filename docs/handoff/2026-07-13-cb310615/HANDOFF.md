@@ -183,7 +183,75 @@ adding markitdown as a global skill and Neon DB for the companies data.
 - Everything else from the part-1 Next steps list still stands (add-company modal form fields,
   remaining Coworking doc entries, Netzum/Juntoz/TuRuta/Tekton Labs/Hub UDEP verification).
 
+## Check-in — 2026-07-14 (part 3: Vercel fix, ship, UI polish, open-source readiness)
+
+- **Vercel deploy 403 finally resolved — root cause was the tool, not permissions.**
+  `deploy_to_vercel` (raw file-upload MCP tool) genuinely lacks `project:create` scope; no
+  Claude-side connector setting fixed it (checked claude.ai → Customize → Connectors →
+  Vercel — the "Blocked"/tool-permission toggles there govern chat confirmation UX, not
+  this). Fix: imported the GitHub repo directly via the Vercel dashboard (browser
+  automation) instead — `vercel.com/new` → Import `RikepilB/peru-tech-map` → deployed as
+  project `peru-tech-map` under team `rikepilbs-projects`. Live at
+  `peru-tech-map.vercel.app`, Valid Configuration. Added `perugrid.com` +
+  `www.perugrid.com` as domains (Project → Settings → Domains) — both verified against the
+  Spaceship DNS from a prior session, SSL auto-generated. **Bonus: GitHub-linked project
+  means every future push to `master` auto-deploys — `deploy_to_vercel` is no longer
+  needed at all going forward.**
+- Shipped the uncommitted 75-entry `companies.json` batch from part 2 (Crafter Station, AI
+  Playgrounds, Claude IA Labs, Fitia, Hapi, Monnet Payments) via branch
+  `add/ongs-and-fintech-startups` → PR #3 → merged
+  (https://github.com/RikepilB/peru-tech-map/pull/3).
+- New user request: made the "Where The Builders Are" tagline more prominent (10px muted
+  gray → 12px bold `var(--green-bright)`) and added a desktop-only sidebar collapse toggle
+  (`#panelToggle`, edge button, `translateX(-100%)` slide, `‹`/`›` arrow flips) so the full
+  map is viewable — mobile bottom-sheet behavior untouched. Verified live via browser
+  automation (collapse/expand both directions). Shipped via branch
+  `feat/prominent-tagline-collapsible-sidebar` → PR #4 → merged
+  (https://github.com/RikepilB/peru-tech-map/pull/4).
+- New user request (via misfired `/security-review` — args were actually an open-source
+  request, not a diff review): prepared the repo for public contributions. Repo already had
+  `LICENSE`/`LICENSE-DATA`/`CODEOWNERS`/PR-template/CI — added the rest: `CONTRIBUTING.md`,
+  `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1, contact via GitHub profile — deliberately
+  did NOT publish the maintainer's personal email into a public file), `SECURITY.md`
+  (private disclosure via GitHub Security Advisories). Replaced the legacy single
+  `.github/ISSUE_TEMPLATE.md` with a structured `.github/ISSUE_TEMPLATE/` directory (Add A
+  Company / Bug Report / Feature Request + `config.yml` routing to Discussions/Security).
+  Enabled GitHub Discussions on the repo (`gh api -X PATCH ... has_discussions=true`) to
+  back the new contact link. README: added CI/License/PRs-welcome badges, de-duplicated the
+  Contributing section into a pointer at `CONTRIBUTING.md`, updated the repo-layout tree.
+  Added a small GitHub mark icon + repo link next to the `ES`/`EN` toggle in `index.html` so
+  visitors can find the source. Verified live locally. Shipped via branch
+  `chore/open-source-readiness` → PR #5 → merged
+  (https://github.com/RikepilB/peru-tech-map/pull/5).
+- Explicitly **not done**: branch-protection rule on `master` (require CI pass +
+  CODEOWNERS review before merge) — that's a repo *setting* change, flagged to the user to
+  do themselves in GitHub Settings → Branches rather than changed unilaterally.
+
+## Files changed (part 3)
+- `companies.json` — 69→75 entries, now committed (PR #3, merged).
+- `index.html` — tagline color/weight, `#panelToggle` collapse button + CSS/JS, `togglePanel`
+  i18n keys (PR #4, merged); GitHub icon/link + `viewOnGithub` i18n keys (PR #5, merged).
+- New: `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`,
+  `.github/ISSUE_TEMPLATE/{add_company,bug_report,feature_request,config}.yml`. Deleted:
+  `.github/ISSUE_TEMPLATE.md` (superseded).
+- `README.md` — badges, trimmed Contributing section, updated repo-layout tree.
+- Repo setting: GitHub Discussions enabled via `gh api`.
+
+## Failed attempts (part 3)
+- None — the Vercel 403 from parts 1–2 was worked around (GitHub-import path) rather than
+  fixed at the `deploy_to_vercel` tool level; that tool's permission gap is still present
+  but no longer matters since the project now auto-deploys from git pushes.
+
+## Next steps (part 3)
+- User to consider enabling branch protection on `master` (require CI + CODEOWNERS review)
+  in GitHub repo settings — not done by Claude, see above.
+- Everything else from part-1/part-2 Next steps still stands: add-company modal form
+  doesn't collect `operating_model` yet, remaining Coworking-doc entries not added,
+  Netzum/Juntoz/TuRuta/Tekton Labs/Hub UDEP still need manual verification.
+- Run `/export docs/handoff/2026-07-13-cb310615/transcript.md` (user must run this, not
+  Claude).
+
 ## Files in this folder
 - `HANDOFF.md` — this file
-- `snapshot-235350.md` — auto PreCompact snapshot
+- `snapshot-235350.md`, `snapshot-025657.md` — auto PreCompact snapshots
 - `.sid` — session id marker
