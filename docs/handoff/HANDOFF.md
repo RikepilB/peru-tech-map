@@ -21,33 +21,42 @@ session. Solved tasks → one concrete one-liner (file / PR / command).
 
 ---
 
-## Current state — 2026-07-14 (cb310615)
+## Current state — 2026-07-14 (cb310615, part 2)
 
-**Taxonomy expansion + landing-view toggles built, UNCOMMITTED.** Following two research docs
-(Startup Ecosystem Directory Structure taxonomy + a Lima coworking market report), `index.html`
-now defaults to a Startups+Consultancies feed with 3 overlay toggle pills (Show Investors /
-Show Coworking Areas / Show Non-Profits & Communities) that blend into the feed rather than
-replace it — verified live via browser automation (30 → 41 places on toggle, additive not
-destructive). `companies.json` grew 54 → 69 entries: added `operating_model` to all existing
-entries, `funding.stage` to 5 sourced YC-batch startups, and 15 new web-verified entries
-(notably Comunal Coworking — Peru's #1 chain, was missing entirely). markitdown was evaluated
-for PDF conversion but SkillSpector scored it CRITICAL (100/100) — not installed; Read tool
-handled the PDF fine without it. Full detail in `2026-07-13-cb310615/HANDOFF.md`.
+**Taxonomy expansion + landing-view toggles MERGED to `master`** (PR #2:
+https://github.com/RikepilB/peru-tech-map/pull/2). `index.html` defaults to a
+Startups+Consultancies feed with 3 overlay toggle pills (Show Investors / Show Coworking Areas /
+Show Non-Profits & Communities) that blend into the feed rather than replace it — verified live
+(30 → 41 places on toggle). Code-reviewed clean (no CRITICAL/HIGH; 3 MEDIUM/LOW notes, not
+blocking). `companies.json` reached 69 entries in the merged state (added `operating_model` to
+all, `funding.stage` to 5 sourced YC-batch startups, 15 new web-verified entries incl. Comunal
+Coworking — Peru's #1 chain, was missing entirely).
 
-**`index.html` is the live Costa Verde rebrand with EN/ES i18n, merged to `master`** (prior
-check-in this session — PR #1: https://github.com/RikepilB/peru-tech-map/pull/1). Boot-hang
-watchdog + `__mapLibReady()` gating, full EN/ES UI-chrome toggle. Company data
-(names/taglines/funding types) intentionally NOT translated.
+**`companies.json` grew further to 75 entries, UNCOMMITTED.** User-supplied additions after the
+merge: 3 ONGs/Comunidades (Crafter Station, AI Playgrounds, Claude IA Labs — placed at their
+named neighbors' exact coords for spiderfy clustering) + 3 more fintech/healthtech startups
+(Fitia, Hapi, Monnet Payments). Correctly caught that 2 of 5 user-requested startups (Leasy,
+Prestamype) were already in the dataset — skipped the dupes, backfilled Leasy's missing domain.
+Needs its own branch/commit/PR/merge cycle.
 
-**Deploy to Vercel still BLOCKED — 403 Forbidden creating project.** `deploy_to_vercel` MCP call
-(target `production`, name `perugrid`, full file upload) failed:
-`"You don't have permission to create a project."` `list_teams` returned empty (personal
-account, not a team-scope issue) — the Claude↔Vercel MCP connection itself lacks
+**Deploy to Vercel CONFIRMED durably BLOCKED — 403 Forbidden creating project.** Retried after
+the PR #2 merge with fresh content from `master`; identical error to the first attempt:
+`"You don't have permission to create a project."` This is the last remaining blocker on the
+original "deploy the map with the domain in vercel" request — `list_teams` returned empty
+(personal account, not a team-scope issue), the Claude↔Vercel MCP connection itself lacks
 `project:create` permission. Needs user to either create an empty Vercel project named
 `perugrid` manually first (then retry deploy against the existing project), or re-authorize the
 Vercel integration with broader scope. No MCP tool exists for attaching a custom domain or
 importing a GitHub repo as a deploy source — domain attachment will need browser automation on
-the Vercel dashboard once a project exists.
+the Vercel dashboard once a project exists. Spaceship DNS has been ready and pointed at Vercel
+since earlier this session.
+
+**`index.html` is the live Costa Verde rebrand with EN/ES i18n, merged to `master`** (PR #1:
+https://github.com/RikepilB/peru-tech-map/pull/1). Boot-hang watchdog + `__mapLibReady()`
+gating, full EN/ES UI-chrome toggle. Company data (names/taglines/funding types) intentionally
+NOT translated.
+
+Full detail in `2026-07-13-cb310615/HANDOFF.md` (both check-ins).
 
 **DNS: Spaceship side done, Vercel side still pending.** Added `A @ → 76.76.21.21` and
 `CNAME www → cname.vercel-dns.com` in Spaceship's Advanced DNS for `perugrid.com` (both
@@ -60,6 +69,12 @@ Configuration" handshake. Full detail in `2026-07-06-initial-build/HANDOFF.md`, 
 
 ## Session index (append-only, newest first)
 
+- 2026-07-13-cb310615 (2026-07-14 check-in, part 2) — Code-reviewed the taxonomy diff (clean),
+  shipped it via branch→PR#2→merge to master. Retried Vercel deploy post-merge — confirmed
+  durably blocked (403, same `project:create` permission gap). Added 3 user-supplied ONGs/
+  Comunidades entries (sourced via WebFetch, placed at named-neighbor coords) and 3 new
+  user-supplied startups (correctly deduped 2 of 5 already in the dataset). `companies.json`
+  69→75, uncommitted.
 - 2026-07-13-cb310615 (2026-07-14 check-in) — Read + analyzed two research docs (Startup
   Ecosystem taxonomy PDF, Lima coworking market report). SkillSpector-scanned markitdown for
   install (CRITICAL, blocked). Web-verified 17 candidate companies via background agent, added
@@ -113,8 +128,8 @@ Configuration" handshake. Full detail in `2026-07-06-initial-build/HANDOFF.md`, 
   working baseline only (not final) — session closed by user.
 
 <!-- compact-handoff:auto-snapshot -->
-<!-- Latest auto-snapshot: docs/handoff/2026-07-13-cb310615/snapshot-235350.md -->
-## Latest auto snapshot — 2026-07-13T23:53:50.680Z
+<!-- Latest auto-snapshot: docs/handoff/2026-07-13-cb310615/snapshot-025657.md -->
+## Latest auto snapshot — 2026-07-14T02:56:57.432Z
 - Session folder: `docs/handoff/2026-07-13-cb310615/`
-- Snapshot file: `docs/handoff/2026-07-13-cb310615/snapshot-235350.md`
+- Snapshot file: `docs/handoff/2026-07-13-cb310615/snapshot-025657.md`
 - Branch: master
