@@ -1,6 +1,10 @@
 # Peru Grid
 
-An interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa, rendered as a terminal-style operations console. Click a place to fly to it, click its marker for details, switch cities from the sidebar.
+[![CI](https://github.com/RikepilB/peru-tech-map/actions/workflows/ci.yml/badge.svg)](https://github.com/RikepilB/peru-tech-map/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
+
+An interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa, rendered as a terminal-style operations console. Click a place to fly to it, click its marker for details, switch cities from the sidebar. Live at **[perugrid.com](https://perugrid.com)**.
 
 ---
 
@@ -30,8 +34,13 @@ peru-tech-map/
 ├── LICENSE                 # MIT — covers the code
 ├── LICENSE-DATA            # CC BY 4.0 — covers the datasets
 ├── CODEOWNERS              # Routes every PR to the maintainer for review
+├── CONTRIBUTING.md         # How to add a place, fix data, or change code
+├── CODE_OF_CONDUCT.md      # Contributor Covenant 2.1
+├── SECURITY.md             # Responsible disclosure
 └── .github/
-    └── PULL_REQUEST_TEMPLATE.md
+    ├── PULL_REQUEST_TEMPLATE.md
+    ├── ISSUE_TEMPLATE/         # Add A Company / Bug Report / Feature Request
+    └── workflows/ci.yml        # Validates companies.json/ticker.json on every PR
 ```
 
 ---
@@ -106,27 +115,11 @@ Then open **http://localhost:8000**.
 
 ## Contributing
 
-Contributions are welcome — especially adding places, fixing coordinates, and correcting categories. **Anyone can open a pull request; all PRs are reviewed and merged by the maintainer.**
+Contributions are welcome — especially adding places, fixing coordinates, and correcting categories. **Anyone can open a pull request or issue; all PRs are reviewed and merged by the maintainer.**
 
-### Adding Or Editing A Place
-
-1. **Fork** the repo and create a branch (`add-acme-corp`).
-2. Edit `companies.json`. Keep the array readable — one entry per block.
-3. Make sure your JSON is valid:
-   ```bash
-   python3 -m json.tool companies.json > /dev/null && echo OK
-   ```
-4. Run it locally and confirm your pin lands in the right spot (correct city!) and the logo loads.
-5. Open a PR. Fill out the template. The maintainer reviews and merges.
-
-### What Gets Accepted
-
-- ✅ Real companies/places with a genuine presence in Lima or Arequipa.
-- ✅ Accurate, sourceable category/funding info.
-- ✅ Coordinate and detail corrections to existing entries.
-- ❌ Entries outside the two cities' bounding boxes.
-- ❌ Unverifiable claims or marketing copy.
-- ❌ Duplicate entries.
+See **[CONTRIBUTING.md](./CONTRIBUTING.md)** for the full workflow (branching, validation,
+PR checklist), and **[CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)** for community standards.
+Found a security issue? See **[SECURITY.md](./SECURITY.md)** instead of opening a public issue.
 
 ---
 

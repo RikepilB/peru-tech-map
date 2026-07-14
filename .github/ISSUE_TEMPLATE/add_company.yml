@@ -1,0 +1,62 @@
+name: Add A Company / Place
+description: Suggest a startup, consultancy, coworking space, incubator, fund, or nonprofit to add to the map.
+title: "[Add]: "
+labels: ["add-company"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping grow the map! If you're comfortable with Git, you can skip this
+        and open a PR directly — see [CONTRIBUTING.md](../../CONTRIBUTING.md).
+  - type: input
+    id: name
+    attributes:
+      label: Company / Place Name
+    validations:
+      required: true
+  - type: dropdown
+    id: city
+    attributes:
+      label: City
+      options:
+        - Lima
+        - Arequipa
+    validations:
+      required: true
+  - type: input
+    id: address
+    attributes:
+      label: Address
+      description: Human-readable address within the mapped area.
+    validations:
+      required: true
+  - type: input
+    id: domain
+    attributes:
+      label: Website / Domain
+      description: Bare domain, no https:// or www — e.g. acme.com
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Startup
+        - Consultancy
+        - Coworking
+        - Incubator
+        - Nonprofit
+        - Fund
+        - Acquired
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source
+      description: Link to the company site, press release, or announcement confirming this is real.
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything Else?
