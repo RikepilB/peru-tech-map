@@ -48,6 +48,7 @@ window.I18N = {
     catStartup: "Startup", catConsultancy: "Consultancy", catCoworking: "Coworking",
     catIncubator: "Incubator", catNonprofit: "Nonprofit", catFund: "Fund",
     showInvestors: "Show Investors", showCoworking: "Show Coworking Areas", showNonProfits: "Show Non-Profits & Communities",
+    togglePanel: "Collapse sidebar",
   },
   es: {
     tagline: "Donde Están Los Builders",
@@ -88,6 +89,7 @@ window.I18N = {
     catStartup: "Startup", catConsultancy: "Consultoría", catCoworking: "Coworking",
     catIncubator: "Incubadora", catNonprofit: "Sin Fines De Lucro", catFund: "Fondo",
     showInvestors: "Mostrar Inversionistas", showCoworking: "Mostrar Coworkings", showNonProfits: "Mostrar ONGs Y Comunidades",
+    togglePanel: "Colapsar barra lateral",
   },
 };
 window.getLang = function () {
@@ -226,7 +228,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
     backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
   }
   .panel-head { padding: 16px 16px 13px; border-bottom: 1.5px solid var(--line); }
-  .panel-head .eyebrow { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+  .panel-head .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--green-bright); }
   .panel-head h1 { margin: 7px 0 3px; font-size: 18px; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; }
   .cursor { display: inline-block; width: 9px; height: 15px; background: var(--green-bright); margin-left: 3px; vertical-align: -2px; animation: blink 1.1s step-end infinite; }
   @keyframes blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
@@ -268,6 +270,22 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   .btn.ghost:hover { border-color: var(--green-bright); color: var(--green-bright); }
 
   .drag-handle { display: none; }
+
+  #panelToggle {
+    position: absolute; top: 14px; left: 334px; z-index: 8;
+    width: 26px; height: 42px; display: grid; place-items: center; cursor: pointer;
+    background: var(--panel); border: 1.5px solid var(--line); border-left: 0; border-radius: 0 8px 8px 0;
+    color: var(--text); font-size: 13px; font-family: var(--sans);
+    backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
+    transition: left .32s cubic-bezier(.32,.72,0,1), border-color .15s, color .15s;
+  }
+  #panelToggle:hover { border-color: var(--green-bright); color: var(--green-bright); }
+
+  @media (min-width: 768px) {
+    #panel { transition: transform .32s cubic-bezier(.32,.72,0,1); }
+    #panel.collapsed { transform: translateX(-100%); }
+    #panel.collapsed ~ #panelToggle { left: 0; border-left: 1.5px solid var(--line); }
+  }
 
   /* ---------- Status bar ---------- */
   .statusbar {
@@ -375,6 +393,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
     #panel.expanded { transform: translateY(0); }
     .drag-handle { display: block; width: 38px; height: 3px; background: var(--line); margin: 8px auto 2px; }
     .panel-head { cursor: pointer; padding-top: 4px; }
+    #panelToggle { display: none; }
   }
 </style>
 </head>
@@ -428,6 +447,8 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
       <button class="btn" id="addBtn" data-i18n="addCompany">+ Add A Company</button>
     </div>
   </aside>
+
+  <button type="button" id="panelToggle" data-i18n-title="togglePanel" data-i18n-aria="togglePanel" title="Collapse sidebar" aria-label="Collapse sidebar">‹</button>
 
   <div class="add-hint" id="addHint" data-i18n="addHint">Tap the map to drop a pin</div>
 
@@ -1060,6 +1081,11 @@ function startStatusBar() {
 const panel = document.getElementById("panel");
 document.getElementById("panelHead").addEventListener("click", () => { if (isMobile()) panel.classList.toggle("expanded"); });
 document.getElementById("handle").addEventListener("click", () => panel.classList.toggle("expanded"));
+
+document.getElementById("panelToggle").addEventListener("click", (e) => {
+  const collapsed = panel.classList.toggle("collapsed");
+  e.currentTarget.textContent = collapsed ? "›" : "‹";
+});
 
 // ---------- Add-company modal ----------
 const scrim = document.getElementById("scrim");
