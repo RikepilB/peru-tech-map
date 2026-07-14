@@ -47,6 +47,7 @@ window.I18N = {
     metaDesc: "Peru Grid — an interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa.",
     catStartup: "Startup", catConsultancy: "Consultancy", catCoworking: "Coworking",
     catIncubator: "Incubator", catNonprofit: "Nonprofit", catFund: "Fund",
+    showInvestors: "Show Investors", showCoworking: "Show Coworking Areas", showNonProfits: "Show Non-Profits & Communities",
   },
   es: {
     tagline: "Donde Están Los Builders",
@@ -86,6 +87,7 @@ window.I18N = {
     metaDesc: "Peru Grid — un mapa interactivo de startups, consultoras cloud, coworkings e incubadoras en Lima y Arequipa.",
     catStartup: "Startup", catConsultancy: "Consultoría", catCoworking: "Coworking",
     catIncubator: "Incubadora", catNonprofit: "Sin Fines De Lucro", catFund: "Fondo",
+    showInvestors: "Mostrar Inversionistas", showCoworking: "Mostrar Coworkings", showNonProfits: "Mostrar ONGs Y Comunidades",
   },
 };
 window.getLang = function () {
@@ -230,6 +232,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   @keyframes blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
   .panel-head .count { font-size: 11px; color: var(--muted); letter-spacing: .05em; }
   .barrow { display: flex; align-items: center; gap: 7px; margin-top: 11px; }
+  .barrow.wrap { flex-wrap: wrap; }
   .barrow .barlabel { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
   .barbtn { font-family: var(--sans); font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
     padding: 4px 9px; background: transparent; color: var(--muted); border: 1.5px solid var(--line); border-radius: 8px; cursor: pointer; }
@@ -413,6 +416,11 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
         <span class="barlabel" data-i18n="sort">Sort</span>
         <button class="barbtn active" data-sort="default" data-i18n="default">Default</button>
         <button class="barbtn" data-sort="alpha" data-i18n="alpha">A–Z</button>
+      </div>
+      <div class="barrow wrap">
+        <button class="barbtn pill" data-view="showInvestors" data-i18n="showInvestors">Show Investors</button>
+        <button class="barbtn pill" data-view="showCoworking" data-i18n="showCoworking">Show Coworking Areas</button>
+        <button class="barbtn pill" data-view="showNonProfits" data-i18n="showNonProfits">Show Non-Profits & Communities</button>
       </div>
     </div>
     <div class="panel-list" id="coList"></div>
@@ -785,6 +793,19 @@ let openPopup = null;
 let selected = -1;
 let sortMode = "default"; // "default" (JSON order) | "alpha" (A–Z)
 
+// Landing view: Startups + Consultancies (+ Acquired, same bucket) render by default with
+// zero clicks. Investors/Coworking/Non-Profits are overlay toggles — each blends its own
+// funding.type(s) into the same feed rather than replacing it (PDF spec: "wildcard overlay").
+const viewState = { showInvestors: false, showCoworking: false, showNonProfits: false };
+const DEFAULT_VISIBLE_TYPES = new Set(["Startup", "Consultancy", "Acquired"]);
+function typeVisible(type) {
+  if (DEFAULT_VISIBLE_TYPES.has(type)) return true;
+  if ((type === "Fund" || type === "Incubator") && viewState.showInvestors) return true;
+  if (type === "Coworking" && viewState.showCoworking) return true;
+  if (type === "Nonprofit" && viewState.showNonProfits) return true;
+  return false;
+}
+
 async function loadCompanies() {
   try {
     const res = await fetch("./companies.json", { cache: "no-cache" });
@@ -808,6 +829,7 @@ function applyCity(city, opts = {}) {
 
   COMPANIES = ALL_COMPANIES.filter(c => {
     if (c.city !== city) return false;
+    if (!typeVisible(c.funding && c.funding.type)) return false;
     const ok = c.lng >= cfg.bbox[0] && c.lng <= cfg.bbox[2] && c.lat >= cfg.bbox[1] && c.lat <= cfg.bbox[3];
     if (!ok) console.warn(`[grid] skipped ${c.name} — coords ${c.lat},${c.lng} outside ${city} core bbox`);
     return ok;
@@ -979,6 +1001,18 @@ document.querySelectorAll(".barbtn[data-sort]").forEach((btn) => {
     sortMode = btn.dataset.sort;
     document.querySelectorAll(".barbtn[data-sort]").forEach((b) => b.classList.toggle("active", b === btn));
     buildSidebar();
+  });
+});
+
+// Overlay toggles — each pill flips independently and blends into the same feed (no exclusive
+// selection, unlike city/sort). Re-runs applyCity with skipFly so the camera doesn't jump.
+document.querySelectorAll(".barbtn[data-view]").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const key = btn.dataset.view;
+    viewState[key] = !viewState[key];
+    btn.classList.toggle("active", viewState[key]);
+    applyCity(currentCity, { skipFly: true });
   });
 });
 

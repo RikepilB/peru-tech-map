@@ -21,59 +21,58 @@ session. Solved tasks → one concrete one-liner (file / PR / command).
 
 ---
 
-## Current state — 2026-07-13
+## Current state — 2026-07-14 (cb310615)
 
-Peru Grid built and working: MapLibre GL + OpenFreeMap map of **54** real Lima/Arequipa places
-(added SeguroSimple this session; Aviva/Paqta/MrPink VC cross-checked against the reference doc
-and excluded — wrong city or no confirmed address), city switcher, verified live, zero
-bbox-skip warnings. Public GitHub repo `RikepilB/peru-tech-map`. All prior session work (Costa
-Verde docs/prototype, handoff tree) committed + pushed on branch `chore/session-2026-07-08-sync`
-(never pushed to `master` directly, per repo rule) — not yet merged/PR'd. Newest changes (hover
-differentiator + companies.json update) still uncommitted on that branch.
+**Taxonomy expansion + landing-view toggles built, UNCOMMITTED.** Following two research docs
+(Startup Ecosystem Directory Structure taxonomy + a Lima coworking market report), `index.html`
+now defaults to a Startups+Consultancies feed with 3 overlay toggle pills (Show Investors /
+Show Coworking Areas / Show Non-Profits & Communities) that blend into the feed rather than
+replace it — verified live via browser automation (30 → 41 places on toggle, additive not
+destructive). `companies.json` grew 54 → 69 entries: added `operating_model` to all existing
+entries, `funding.stage` to 5 sourced YC-batch startups, and 15 new web-verified entries
+(notably Comunal Coworking — Peru's #1 chain, was missing entirely). markitdown was evaluated
+for PDF conversion but SkillSpector scored it CRITICAL (100/100) — not installed; Read tool
+handled the PDF fine without it. Full detail in `2026-07-13-cb310615/HANDOFF.md`.
 
-**Rebrand status: Costa Verde v3 — highlight/latency bugs fixed, hover differentiator added,
-two more real bugs found + fixed, still under review.** Company-building highlight now has a
-subtle idle tint + a bright emerald hover pop (MapLibre feature-state), not just an always-on
-solid block. Adding the hover feature surfaced two pre-existing bugs that were silently blocking
-the highlight from ever showing at the zoom users actually use: (1) the base style's `building`
-layer capped at `maxzoom:14`, but clicking a company flies to zoom 16 — extended the layer's
-zoom range; (2) `fill-extrusion-opacity` doesn't support MapLibre feature-state expressions,
-which was silently failing `addLayer` for the 3D highlight every load (console error, no crash)
-— fixed by keeping 3D opacity constant and driving hover off color only. Both verified fixed via
-live screenshots + direct feature-state checks in 2D and 3D modes, zero console errors. Also
-surveyed the Spaceship Domain Manager for `perugrid.com` (read-only): default nameservers,
-WHOIS private, no URL redirect or email forwarding configured yet — domain is idle, ready
-whenever a deploy is approved.
+**`index.html` is the live Costa Verde rebrand with EN/ES i18n, merged to `master`** (prior
+check-in this session — PR #1: https://github.com/RikepilB/peru-tech-map/pull/1). Boot-hang
+watchdog + `__mapLibReady()` gating, full EN/ES UI-chrome toggle. Company data
+(names/taglines/funding types) intentionally NOT translated.
 
-**Not yet approved as final** — user is reviewing the fixed version live before any promotion.
-HARD GATE still applies, no edits to the real `index.html` yet. Local dev server intentionally
-left running (port 8000). Deploy target: Vercel + Spaceship domain `perugrid.com` (only domain
-on the account, already registered).
+**Deploy to Vercel still BLOCKED — 403 Forbidden creating project.** `deploy_to_vercel` MCP call
+(target `production`, name `perugrid`, full file upload) failed:
+`"You don't have permission to create a project."` `list_teams` returned empty (personal
+account, not a team-scope issue) — the Claude↔Vercel MCP connection itself lacks
+`project:create` permission. Needs user to either create an empty Vercel project named
+`perugrid` manually first (then retry deploy against the existing project), or re-authorize the
+Vercel integration with broader scope. No MCP tool exists for attaching a custom domain or
+importing a GitHub repo as a deploy source — domain attachment will need browser automation on
+the Vercel dashboard once a project exists.
 
-**Boot-hang bug found + fixed (uncommitted).** `index-costaverde.html` had a real, reproducible
-silent-hang bug: it trusted `<script defer>` ordering to guarantee MapLibre GL (from unpkg CDN)
-loaded before the app used it — when unpkg hiccupped, the browser silently skipped the failed
-defer script (spec behavior, no error), leaving `maplibregl` undefined and the loader frozen
-forever at "MOUNTING COMPANY GRID… 0%" with zero feedback. Fixed: app now waits for an explicit
-`window.__mapLibReady()` signal instead of trusting script order, auto-retries once from jsDelivr
-on unpkg failure, and a new boot watchdog shows a visible error + Reload button on any future
-failure (thrown error, rejected promise, or 15s timeout) instead of hanging silently. Verified
-across 4 independent fresh reloads. Uncommitted on `chore/session-2026-07-08-sync` — awaiting
-user go-ahead to commit.
-
-**DNS: Spaceship side done, Vercel side pending.** Added `A @ → 76.76.21.21` and
+**DNS: Spaceship side done, Vercel side still pending.** Added `A @ → 76.76.21.21` and
 `CNAME www → cname.vercel-dns.com` in Spaceship's Advanced DNS for `perugrid.com` (both
-ADDED / IN PROPAGATION as of 2026-07-13). Still needed: create/link a Vercel project for this
-repo and add `perugrid.com` as a custom domain there (Project → Settings → Domains) to
-complete the "Valid Configuration" handshake — not done yet, no `.vercel/project.json` in repo.
-Full detail in `2026-07-06-initial-build/HANDOFF.md` (2026-07-08 continuation sections) and
-`2026-07-08-4609ae8d/HANDOFF.md` (this continuation's bug-fix + hover-feature + DNS-setup
-detail).
+ADDED / IN PROPAGATION as of 2026-07-13). Still needed once a Vercel project exists: add
+`perugrid.com` as a custom domain (Project → Settings → Domains) to complete the "Valid
+Configuration" handshake. Full detail in `2026-07-06-initial-build/HANDOFF.md`, and
+`2026-07-08-4609ae8d/HANDOFF.md` (bug-fix + hover-feature + DNS-setup detail).
 
 ---
 
 ## Session index (append-only, newest first)
 
+- 2026-07-13-cb310615 (2026-07-14 check-in) — Read + analyzed two research docs (Startup
+  Ecosystem taxonomy PDF, Lima coworking market report). SkillSpector-scanned markitdown for
+  install (CRITICAL, blocked). Web-verified 17 candidate companies via background agent, added
+  15 sourced entries + fixed a real gap (Comunal Coworking, #1 in the market, was missing).
+  `companies.json` 54→69. Built the landing-view default (Startups+Consultancies) + 3 overlay
+  toggle pills (Investors/Coworking/Non-Profits) in `index.html`, verified live. Declined Neon
+  DB again (static JSON stays source of truth). Work uncommitted — pending review.
+- 2026-07-13-cb310615 — Added full EN/ES UI-chrome i18n to the Costa Verde rebrand (toggle
+  button, `I18N` dict, `localStorage` persistence; company data left untranslated). Promoted
+  `index-costaverde.html` → `index.html`, committed everything pending, opened + merged PR #1 to
+  `master`. Attempted Vercel deploy (`deploy_to_vercel`) — blocked by a 403 (MCP connection
+  lacks `project:create` permission); domain attachment and actual deploy still pending user
+  action.
 - 2026-07-08-4609ae8d (2026-07-13 check-in, part 2) — Reproduced and root-caused a real silent
   boot-hang bug in `index-costaverde.html` (unpkg `defer`-script race left `maplibregl`
   undefined with zero error). Fixed with an explicit `__mapLibReady()` gate, jsDelivr CDN
@@ -114,8 +113,8 @@ detail).
   working baseline only (not final) — session closed by user.
 
 <!-- compact-handoff:auto-snapshot -->
-<!-- Latest auto-snapshot: docs/handoff/2026-07-08-4609ae8d/snapshot-041419.md -->
-## Latest auto snapshot — 2026-07-09T04:14:19.229Z
-- Session folder: `docs/handoff/2026-07-08-4609ae8d/`
-- Snapshot file: `docs/handoff/2026-07-08-4609ae8d/snapshot-041419.md`
-- Branch: chore/session-2026-07-08-sync
+<!-- Latest auto-snapshot: docs/handoff/2026-07-13-cb310615/snapshot-235350.md -->
+## Latest auto snapshot — 2026-07-13T23:53:50.680Z
+- Session folder: `docs/handoff/2026-07-13-cb310615/`
+- Snapshot file: `docs/handoff/2026-07-13-cb310615/snapshot-235350.md`
+- Branch: master
