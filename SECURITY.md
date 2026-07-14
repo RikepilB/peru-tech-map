@@ -1,31 +1,33 @@
-# Security Policy
+# Política De Seguridad
 
-Peru Grid is a static, zero-dependency site (`index.html` + two JSON data files, no
-backend, no database, no auth). The attack surface is small, but if you find something,
-please report it responsibly.
+Peru Grid es un sitio estático, sin dependencias (`index.html` + dos archivos de datos
+JSON, sin backend, sin base de datos, sin autenticación). La superficie de ataque es
+pequeña, pero si encuentras algo, repórtalo de manera responsable.
 
-## Reporting A Vulnerability
+## Reportar Una Vulnerabilidad
 
-**Do not open a public issue for security reports.** Instead, use GitHub's private
-reporting flow:
+**No abras un issue público para reportes de seguridad.** En su lugar, usa el flujo de
+reporte privado de GitHub:
 
-👉 [Report a vulnerability](../../security/advisories/new)
+👉 [Reportar una vulnerabilidad](../../security/advisories/new)
 
-This includes things like:
-- XSS or injection vectors in `index.html`'s rendering of `companies.json`/`ticker.json`
-- Issues with the "Add A Company" form submission flow
-- Any way to make the site load/execute untrusted content
+Esto incluye cosas como:
+- Vectores de XSS o inyección en cómo `index.html` renderiza `companies.json`/`ticker.json`
+- Problemas con el flujo de envío del formulario "Agregar Empresa"
+- Cualquier forma de hacer que el sitio cargue/ejecute contenido no confiable
 
-You'll get a response as soon as the maintainer sees it — this is a solo-maintained
-project, so there's no formal SLA, but reports are taken seriously and prioritized over
-feature work.
+Recibirás una respuesta tan pronto como el mantenedor lo vea — este es un proyecto
+mantenido por una sola persona, así que no hay un SLA formal, pero los reportes se toman en
+serio y se priorizan por encima del trabajo de nuevas funcionalidades.
 
-## Supported Versions
+## Versiones Soportadas
 
-There's only one deployed version (`master`, live at [perugrid.com](https://perugrid.com)).
-Fixes land there directly — there's no older version to backport to.
+Solo hay una versión desplegada (`master`, en vivo en [perugrid.com](https://perugrid.com)).
+Las correcciones se aplican ahí directamente — no hay una versión anterior a la cual
+retroportar.
 
-## Scope
+## Alcance
 
-Out of scope: the third-party services this site depends on (MapLibre GL, OpenFreeMap
-tile hosting, FormSubmit, Vercel). Report those upstream to their own maintainers.
+Fuera de alcance: los servicios de terceros de los que depende este sitio (MapLibre GL,
+hosting de tiles de OpenFreeMap, FormSubmit, Vercel). Repórtalos directamente a sus propios
+mantenedores.

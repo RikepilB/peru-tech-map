@@ -1,55 +1,55 @@
 <!--
-Thanks for contributing to Peru Grid! Fill out the relevant section below.
-All PRs are reviewed by the maintainer before merging.
+¡Gracias por contribuir a Peru Grid! Completa la sección correspondiente abajo.
+Todos los PRs son revisados por el mantenedor antes de fusionarse.
 -->
 
-## What Kind Of Change Is This?
+## ¿Qué Tipo De Cambio Es Este?
 
-- [ ] Adding a new company/place
-- [ ] Correcting an existing entry (coordinates, funding/category, domain, etc.)
-- [ ] Updating the ticker
-- [ ] Code / design change
-- [ ] Other (describe below)
+- [ ] Agregar una nueva empresa/lugar
+- [ ] Corregir una entrada existente (coordenadas, funding/categoría, dominio, etc.)
+- [ ] Actualizar el ticker
+- [ ] Cambio de código / diseño
+- [ ] Otro (describir abajo)
 
 ---
 
-## If Adding Or Editing A Company
+## Si Agregas O Editas Una Empresa
 
-**Name:**
+**Nombre:**
 
-**City:** <!-- Lima or Arequipa -->
+**Ciudad:** <!-- Lima o Arequipa -->
 
-**Address (In The Mapped Area):**
+**Dirección (Dentro Del Área Mapeada):**
 
-**Website / Domain:**
+**Sitio Web / Dominio:**
 
-**Category:** <!-- Startup, Consultancy, Coworking, Incubator, Nonprofit, Fund, or Acquired -->
+**Categoría:** <!-- Startup, Consultancy, Coworking, Incubator, Nonprofit, Fund, o Acquired -->
 
-**Source:** <!-- link to announcement, company site, press release, etc. -->
+**Fuente:** <!-- enlace al anuncio, sitio de la empresa, comunicado de prensa, etc. -->
 
 ### Checklist
 
-- [ ] Coordinates fall inside the city's core bbox — Lima `[-77.20,-12.35]→[-76.90,-11.95]`, Arequipa `[-71.60,-16.50]→[-71.45,-16.30]`
-- [ ] `domain` (if set) is a bare domain (no `https://`, no `www`) that resolves to a real favicon
-- [ ] This entry isn't already in `companies.json` (no duplicate)
-- [ ] JSON is valid: `python3 -m json.tool companies.json > /dev/null` passes
-- [ ] I ran it locally and confirmed the pin lands in the right place
+- [ ] Las coordenadas caen dentro del bbox central de la ciudad — Lima `[-77.20,-12.35]→[-76.90,-11.95]`, Arequipa `[-71.60,-16.50]→[-71.45,-16.30]`
+- [ ] `domain` (si está definido) es un dominio simple (sin `https://`, sin `www`) que resuelve a un favicon real
+- [ ] Esta entrada no está ya en `companies.json` (sin duplicados)
+- [ ] El JSON es válido: `python3 -m json.tool companies.json > /dev/null` pasa
+- [ ] Lo corrí localmente y confirmé que el pin cae en el lugar correcto
 
 ---
 
-## If A Code / Design Change
+## Si Es Un Cambio De Código / Diseño
 
-**What Does It Do?**
+**¿Qué Hace?**
 
-**How Did You Test It?**
+**¿Cómo Lo Probaste?**
 
-- [ ] Ran locally over HTTP and confirmed the map loads and the loader dismisses
-- [ ] Markers stay pixel-locked when panning/zooming
-- [ ] No new dependencies; still a single self-contained `index.html`
-- [ ] Solarium green (`#056540`) remains the only accent color
+- [ ] Lo corrí localmente por HTTP y confirmé que el mapa carga y el loader desaparece
+- [ ] Los marcadores se mantienen fijos al hacer pan/zoom
+- [ ] Sin dependencias nuevas; sigue siendo un `index.html` único y autocontenido
+- [ ] El verde Solarium (`#056540`) sigue siendo el único color de acento
 
 ---
 
-## Anything Else?
+## ¿Algo Más?
 
-<!-- Context, screenshots, questions for the maintainer -->
+<!-- Contexto, capturas, preguntas para el mantenedor -->

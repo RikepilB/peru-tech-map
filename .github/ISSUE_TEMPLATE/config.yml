@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Questions / Discussion
+  - name: Preguntas / Discusión
     url: https://github.com/RikepilB/peru-tech-map/discussions
-    about: Ask a question or discuss an idea before filing an issue.
-  - name: Security Vulnerability
+    about: Haz una pregunta o discute una idea antes de abrir un issue.
+  - name: Vulnerabilidad De Seguridad
     url: https://github.com/RikepilB/peru-tech-map/security/advisories/new
-    about: Report a security issue privately — do not open a public issue.
+    about: Reporta un problema de seguridad de forma privada — no abras un issue público.
