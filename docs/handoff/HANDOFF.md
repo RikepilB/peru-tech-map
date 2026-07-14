@@ -21,7 +21,23 @@ session. Solved tasks → one concrete one-liner (file / PR / command).
 
 ---
 
-## Current state — 2026-07-14 (cb310615, part 3)
+## Current state — 2026-07-14 (cb310615, part 4)
+
+**All outstanding work now tracked as 12 GitHub issues (#8–#19)**, filed via
+`/handoff-to-issues` — see that skill's mirrored copy on the repo instead of re-deriving
+next-steps from this file's prose. Two are pending big features the user explicitly asked to
+start next: **#16→#18** (translate all 75 company `tag` descriptions to Spanish — schema
+slice first, then content) and **#17→#19** (redesign categories: `Startup` w/ funding
+subcategory Pre-Seed/Seed/Bootstrap/Series A+, plus sibling categories
+Incubator/Accelerator/VC/Nonprofit/Consultancy/Coworking — schema+data slice first, then
+sidebar filter rework). **#15** (flip product-UI default language to Spanish) is small and
+still open, not yet actioned.
+
+**Repo docs are now fully Spanish** — README, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY, PR
+template, all issue templates (PR #20, merged). Standing rule added to `.claude/CLAUDE.md`:
+this is a Peru-focused project, new repo-facing docs get authored in Spanish from the start.
+Code/commits/`.claude/` tooling and the product UI's own independent EN/ES toggle are
+unaffected — separate concern.
 
 **LIVE at perugrid.com.** The `deploy_to_vercel` MCP tool's 403 (`project:create` permission
 gap) was never fixable from the Claude side — worked around by importing the GitHub repo
@@ -62,6 +78,12 @@ Configuration" handshake. Full detail in `2026-07-06-initial-build/HANDOFF.md`, 
 
 ## Session index (append-only, newest first)
 
+- 2026-07-13-cb310615 (2026-07-14 check-in, part 4) — Ran `/handoff-to-issues`: filed 12
+  GitHub issues (#8–#19) covering everything left in the tree plus 3 new asks (Spanish
+  default, description translation, category/subcategory taxonomy), tracer-bullet sliced
+  where big (schema-first issues block their content/UI follow-ups). Translated all
+  repo-facing docs (README/CONTRIBUTING/CODE_OF_CONDUCT/SECURITY/PR+issue templates) to
+  Spanish and added a standing Spanish-docs rule to `.claude/CLAUDE.md` — PR #20, merged.
 - 2026-07-13-cb310615 (2026-07-14 check-in, part 3) — Fixed the Vercel deploy for good:
   worked around the `deploy_to_vercel` tool's unfixable 403 by importing the GitHub repo
   directly in the Vercel dashboard — `perugrid.com` is now live and auto-deploys on every
