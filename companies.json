@@ -6,6 +6,7 @@
     "address": "San Isidro, Lima",
     "lat": -12.0930, "lng": -77.0270,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Online payment gateway (Credicorp/BCP group) letting businesses accept card payments in-store and online."
   },
   {
@@ -15,6 +16,7 @@
     "address": "Miraflores, Lima",
     "lat": -12.1040, "lng": -77.0225,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Peru's first fully digital currency exchange house — buy/sell dollars and soles online at live rates."
   },
   {
@@ -24,6 +26,7 @@
     "address": "Av. Manuel Olguín 335, Santiago de Surco, Lima",
     "lat": -12.0884, "lng": -76.9733,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Digital insurance broker comparing auto, health, life and SOAT policies across Peru's major insurers, expanded into Mexico."
   },
   {
@@ -33,6 +36,7 @@
     "address": "Chorrillos, Lima (BCP Centro de Innovación Tecnológica)",
     "lat": -12.1770, "lng": -77.0130,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Peru's largest digital wallet/payments app (19M+ users), built out of BCP's innovation center."
   },
   {
@@ -42,6 +46,7 @@
     "address": "San Isidro, Lima",
     "lat": -12.1225, "lng": -77.0295,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Lima-founded edtech platform — online courses for creative, business and tech professionals across LatAm and Spain."
   },
   {
@@ -51,6 +56,7 @@
     "address": "San Isidro, Lima",
     "lat": -12.0913, "lng": -77.0280,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Colombian quick-commerce/delivery unicorn with a major Lima operation and corporate office in San Isidro."
   },
   {
@@ -59,6 +65,7 @@
     "city": "lima",
     "lat": -12.1080, "lng": -76.9990,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Peruvian last-mile logistics/delivery startup connecting e-commerce companies with couriers across LatAm."
   },
   {
@@ -68,6 +75,7 @@
     "address": "Miraflores, Lima",
     "lat": -12.1211, "lng": -77.0297,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Leading online currency exchange house in Peru."
   },
   {
@@ -77,6 +85,7 @@
     "address": "San Isidro, Lima",
     "lat": -12.0958, "lng": -77.0335,
     "funding": { "type": "Consultancy" },
+    "operating_model": "On-Site",
     "tag": "AWS/Oracle cloud consulting partner — migration, infrastructure and AWS re/Start training."
   },
   {
@@ -86,6 +95,7 @@
     "address": "Magdalena del Mar, Lima",
     "lat": -12.0930, "lng": -77.0730,
     "funding": { "type": "Consultancy" },
+    "operating_model": "On-Site",
     "tag": "AWS Advanced Tier Services Partner (est. 2013) — cloud migration, DevOps and generative AI on AWS."
   },
   {
@@ -95,6 +105,7 @@
     "address": "San Isidro, Lima",
     "lat": -12.0975, "lng": -77.0295,
     "funding": { "type": "Consultancy" },
+    "operating_model": "On-Site",
     "tag": "Nearshore software development and digital product engineering firm, part of the global Encora group."
   },
   {
@@ -104,6 +115,7 @@
     "address": "San Isidro, Lima",
     "lat": -12.0913, "lng": -77.0280,
     "funding": { "type": "Consultancy" },
+    "operating_model": "On-Site",
     "tag": "IT consulting firm helping small and medium Peruvian businesses with digital transformation."
   },
   {
@@ -113,6 +125,7 @@
     "address": "San Isidro, Lima",
     "lat": -12.0985, "lng": -77.0364,
     "funding": { "type": "Acquired" },
+    "operating_model": "On-Site",
     "tag": "Custom software development studio acquired by Globant in 2019; Lima delivery presence."
   },
   {
@@ -122,6 +135,7 @@
     "address": "Barranco, Lima",
     "lat": -12.1480, "lng": -77.0210,
     "funding": { "type": "Incubator" },
+    "operating_model": "On-Site",
     "tag": "Startup accelerator run by Universidad de Ingeniería y Tecnología (UTEC)."
   },
   {
@@ -131,6 +145,7 @@
     "address": "San Isidro, Lima",
     "lat": -12.1005, "lng": -77.0210,
     "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
     "tag": "WeWork coworking location in San Isidro's financial district, Lima's largest business hub."
   },
   {
@@ -140,6 +155,7 @@
     "address": "San Isidro, Lima",
     "lat": -12.1000, "lng": -77.0230,
     "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
     "tag": "Regus serviced-office and coworking location in the Real Ocho tower."
   },
   {
@@ -148,6 +164,7 @@
     "address": "Cercado de Lima",
     "lat": -12.0570, "lng": -77.0810,
     "funding": { "type": "Incubator" },
+    "operating_model": "On-Site",
     "tag": "University-run startup incubator of Universidad Nacional Mayor de San Marcos."
   },
   {
@@ -157,6 +174,7 @@
     "address": "Miraflores, Lima",
     "lat": -12.1180, "lng": -77.0280,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "POS payment-terminal product line from Niubiz helping small/medium merchants accept digital payments."
   },
   {
@@ -166,6 +184,7 @@
     "address": "San Isidro, Lima",
     "lat": -12.0985, "lng": -77.0364,
     "funding": { "type": "Nonprofit" },
+    "operating_model": "On-Site",
     "tag": "Local chapter of the global Endeavor network, mentoring Peru's high-impact scale-up entrepreneurs."
   },
   {
@@ -175,6 +194,7 @@
     "address": "Magdalena del Mar, Lima",
     "lat": -12.0919, "lng": -77.0757,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "AI-driven social listening and web analytics SaaS delivering enterprise market insight across LatAm."
   },
   {
@@ -183,7 +203,8 @@
     "city": "lima",
     "address": "San Isidro, Lima",
     "lat": -12.0977, "lng": -77.0365,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
+    "operating_model": "On-Site",
     "tag": "Y Combinator (W19) — video-based e-signature and identity-verification platform combining biometrics with legal validity across LatAm."
   },
   {
@@ -193,6 +214,7 @@
     "address": "Santiago de Surco, Lima",
     "lat": -12.1090, "lng": -76.9790,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Cloud-based no-code platform for building and customizing enterprise business applications."
   },
   {
@@ -202,6 +224,7 @@
     "address": "Miraflores, Lima",
     "lat": -12.1211, "lng": -77.0282,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Occupational health and safety (HSE) compliance SaaS digitizing risk reporting and regulatory audits."
   },
   {
@@ -211,6 +234,7 @@
     "address": "San Isidro, Lima",
     "lat": -12.0977, "lng": -77.0365,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "B2B marketplace for construction materials with embedded fintech credit for construction companies."
   },
   {
@@ -219,7 +243,8 @@
     "city": "lima",
     "address": "Calle Chinchón 1018, San Isidro, Lima",
     "lat": -12.0950849, "lng": -77.026154,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
+    "operating_model": "On-Site",
     "tag": "Y Combinator (S19) — fintech offering fast digital microloans using alternative credit-scoring for underbanked Peruvians."
   },
   {
@@ -228,7 +253,8 @@
     "city": "lima",
     "address": "Miraflores, Lima",
     "lat": -12.1211, "lng": -77.0282,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
+    "operating_model": "On-Site",
     "tag": "Y Combinator (W21) — restaurant e-commerce/POS platform enabling WhatsApp ordering and digital menus for LatAm SMEs."
   },
   {
@@ -237,7 +263,8 @@
     "city": "lima",
     "address": "Miraflores, Lima",
     "lat": -12.1211, "lng": -77.0282,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
+    "operating_model": "On-Site",
     "tag": "Y Combinator (S22) — mobile micro-lending and digital wallet platform for the informal economy."
   },
   {
@@ -247,6 +274,7 @@
     "address": "Lima (no specific street address publicly verifiable)",
     "lat": -12.0995, "lng": -77.0375,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Platform connecting Latin American software-engineering talent with US/global companies for hiring and staffing."
   },
   {
@@ -256,6 +284,7 @@
     "address": "Av. José Pardo 434, Miraflores, Lima",
     "lat": -12.1215, "lng": -77.0290,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Y Combinator (S21) — cohort-based upskilling (product management, growth, data analytics) for corporate teams across LatAm."
   },
   {
@@ -265,6 +294,7 @@
     "address": "Lima (no specific street address publicly verifiable)",
     "lat": -12.0995, "lng": -77.0375,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Edtech platform where university students share study materials, expanding into AI-powered tutoring across LatAm."
   },
   {
@@ -274,6 +304,7 @@
     "address": "Av. Almirante Miguel Grau 629, Barranco, Lima",
     "lat": -12.1520, "lng": -77.0195,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Social-impact tech venture training women from underserved backgrounds in software development and UX design."
   },
   {
@@ -283,6 +314,7 @@
     "address": "Av. Arequipa 1155, Lima (Fundación Telefónica building)",
     "lat": -12.0793, "lng": -77.0407,
     "funding": { "type": "Incubator" },
+    "operating_model": "On-Site",
     "tag": "Telefónica/Movistar's corporate venture and open-innovation accelerator arm."
   },
   {
@@ -292,6 +324,7 @@
     "address": "Universidad del Pacífico, Jesús María, Lima",
     "lat": -12.0791, "lng": -77.0472,
     "funding": { "type": "Incubator" },
+    "operating_model": "On-Site",
     "tag": "Universidad del Pacífico's entrepreneurship center — incubation, acceleration, and angel-investor network programs."
   },
   {
@@ -301,6 +334,7 @@
     "address": "PUCP campus, San Miguel, Lima",
     "lat": -12.0692, "lng": -77.0797,
     "funding": { "type": "Incubator" },
+    "operating_model": "On-Site",
     "tag": "PUCP's academic incubator/accelerator (Centro de Innovación y Desarrollo Emprendedor), running the NEXUM incubator."
   },
   {
@@ -310,6 +344,7 @@
     "address": "Calle Toulon 330, La Molina, Lima",
     "lat": -12.0850, "lng": -76.9430,
     "funding": { "type": "Incubator" },
+    "operating_model": "On-Site",
     "tag": "Universidad San Ignacio de Loyola's incubator/accelerator — scale-up and internationalization programs."
   },
   {
@@ -319,6 +354,7 @@
     "address": "Av. La Mar 662, Miraflores, Lima",
     "lat": -12.1145, "lng": -77.0345,
     "funding": { "type": "Fund" },
+    "operating_model": "On-Site",
     "tag": "Early-stage Peruvian VC fund (est. 2012) investing pre-seed to Series A, focused on EdTech, FinTech, AgTech and B2B SaaS."
   },
   {
@@ -328,6 +364,7 @@
     "address": "Lima (no specific address independently verifiable)",
     "lat": -12.0975, "lng": -77.0364,
     "funding": { "type": "Fund" },
+    "operating_model": "On-Site",
     "tag": "Peruvian multi-family office and asset manager running the Winnipeg Startup Fund, a seed-stage vehicle."
   },
   {
@@ -337,6 +374,7 @@
     "address": "Ca. Recavarren 111, Miraflores/San Isidro border, Lima",
     "lat": -12.1002, "lng": -77.0353,
     "funding": { "type": "Fund" },
+    "operating_model": "On-Site",
     "tag": "Peru's largest angel-investor network turned early-stage VC fund (formerly Angel Ventures Peru)."
   },
   {
@@ -346,6 +384,7 @@
     "address": "Cal. G. Lara 328, San Isidro, Lima",
     "lat": -12.0940, "lng": -77.0320,
     "funding": { "type": "Fund" },
+    "operating_model": "On-Site",
     "tag": "Asociación Peruana de Capital Semilla y Emprendedor — the trade association for Peru's angel/seed investor networks."
   },
   {
@@ -353,6 +392,7 @@
     "city": "arequipa",
     "lat": -16.4005, "lng": -71.5375,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Biotech startup producing vegan biocuero (bio-leather) and biotextiles from living microorganism cultures; H&M Foundation Global Change Award winner."
   },
   {
@@ -360,6 +400,7 @@
     "city": "arequipa",
     "lat": -16.3975, "lng": -71.5455,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "UCSM student-founded IoT/automation system helping industrial and agroindustrial companies cut water consumption up to 22%."
   },
   {
@@ -368,6 +409,7 @@
     "city": "arequipa",
     "lat": -16.3970, "lng": -71.5460,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Legaltech/edtech startup — digital simulator of judicial trials used by thousands of law students across Peru."
   },
   {
@@ -375,6 +417,7 @@
     "city": "arequipa",
     "lat": -16.3972, "lng": -71.5458,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Biomaterials for oral-health applications, incubated through UCSM's INNICIA Venture Studio."
   },
   {
@@ -382,6 +425,7 @@
     "city": "arequipa",
     "lat": -16.3968, "lng": -71.5462,
     "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
     "tag": "Inclusive-tourism startup using drones for real-time virtual access to Arequipa sites for people with reduced mobility."
   },
   {
@@ -389,6 +433,7 @@
     "city": "arequipa",
     "lat": -16.4015, "lng": -71.5410,
     "funding": { "type": "Acquired" },
+    "operating_model": "On-Site",
     "tag": "Medtech startup automating dental/medical-office processes; acquired by DocToc Health in 2025."
   },
   {
@@ -397,6 +442,7 @@
     "city": "arequipa",
     "lat": -16.3990, "lng": -71.5350,
     "funding": { "type": "Consultancy" },
+    "operating_model": "On-Site",
     "tag": "Custom software development firm with 10+ years building bespoke business systems."
   },
   {
@@ -406,6 +452,7 @@
     "address": "Av. Obrera, Arequipa",
     "lat": -16.4180, "lng": -71.5300,
     "funding": { "type": "Consultancy" },
+    "operating_model": "On-Site",
     "tag": "IT consultancy and software factory — custom web/mobile development, e-invoicing, hosting."
   },
   {
@@ -414,6 +461,7 @@
     "city": "arequipa",
     "lat": -16.4000, "lng": -71.5360,
     "funding": { "type": "Consultancy" },
+    "operating_model": "On-Site",
     "tag": "Software factory specializing in ERP systems and custom web/mobile solutions."
   },
   {
@@ -422,6 +470,7 @@
     "address": "Yanahuara, Arequipa",
     "lat": -16.3928, "lng": -71.5423,
     "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
     "tag": "Coworking space with shared desks, private offices, and meeting/event rooms in Arequipa's commercial district."
   },
   {
@@ -431,6 +480,7 @@
     "address": "Umacollo, Arequipa",
     "lat": -16.3985, "lng": -71.5455,
     "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
     "tag": "Flexible coworking space with private/shared desks, meeting rooms, and an auditorium."
   },
   {
@@ -439,6 +489,7 @@
     "city": "arequipa",
     "lat": -16.4025, "lng": -71.5415,
     "funding": { "type": "Incubator" },
+    "operating_model": "On-Site",
     "tag": "Universidad Católica San Pablo's business incubator — southern Peru's first (2015), 140+ startups incubated."
   },
   {
@@ -447,6 +498,7 @@
     "city": "arequipa",
     "lat": -16.3970, "lng": -71.5460,
     "funding": { "type": "Incubator" },
+    "operating_model": "On-Site",
     "tag": "UCSM's Venture Studio incubator — 280+ startups supported, including Yak-Bi, Alveoprol and FLY."
   },
   {
@@ -456,6 +508,7 @@
     "address": "Cayma, Arequipa",
     "lat": -16.3900, "lng": -71.5430,
     "funding": { "type": "Consultancy" },
+    "operating_model": "On-Site",
     "tag": "Digital marketing and web development agency serving Arequipa-area businesses."
   },
   {
@@ -465,6 +518,147 @@
     "address": "Umacollo (Yanahuara), Arequipa",
     "lat": -16.3980, "lng": -71.5450,
     "funding": { "type": "Consultancy" },
+    "operating_model": "On-Site",
     "tag": "15+ year web design and SEO agency serving Arequipa clients."
+  },
+  {
+    "name": "Comunal Coworking",
+    "domain": "coworking.comunal.co",
+    "city": "lima",
+    "address": "Cavenecia, San Isidro, Lima",
+    "lat": -12.0965, "lng": -77.0340,
+    "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
+    "tag": "Peru's largest coworking chain (14 sedes, ~25% market share) — Membership Flex from USD 190/mo, Dedicated Desks from USD 250/mo, Private Offices from USD 300/mo."
+  },
+  {
+    "name": "Worx Coworking",
+    "domain": "worx.pe",
+    "city": "lima",
+    "address": "Edificio Larco 880, Av. José Larco 880, Miraflores, Lima",
+    "lat": -12.1225, "lng": -77.0300,
+    "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
+    "tag": "Miraflores coworking with strong natural light — Worx Flex from USD 150/mo, Worx Fijo from USD 250/mo, private offices (24/7) from USD 700/mo."
+  },
+  {
+    "name": "Selina Lima Cowork",
+    "domain": "selina.com",
+    "city": "lima",
+    "address": "Calle Alcanfores 465, Miraflores, Lima",
+    "lat": -12.1230, "lng": -77.0295,
+    "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
+    "tag": "Hostel-hospitality coworking with an international digital-nomad community — day rate S/ 30 for shared workspace."
+  },
+  {
+    "name": "BCP Café x Puku Puku",
+    "city": "lima",
+    "address": "Calle Miguel Dasso 185, San Isidro, Lima",
+    "lat": -12.0960, "lng": -77.0355,
+    "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
+    "tag": "Two-level bank-branch-meets-coworking space with a specialty roastery (Puku Puku) — free community worktable, WiFi, pet-friendly, open 7am–10pm daily."
+  },
+  {
+    "name": "Café de Lima",
+    "city": "lima",
+    "address": "Av. Angamos Oeste 1003, Miraflores, Lima",
+    "lat": -12.1170, "lng": -77.0310,
+    "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
+    "tag": "Tech/creative-worker café hub with independent power outlets per table — open 7am–10pm."
+  },
+  {
+    "name": "Rutina Café",
+    "city": "lima",
+    "address": "Av. Las Begonias 425, San Isidro, Lima",
+    "lat": -12.0965, "lng": -77.0300,
+    "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
+    "tag": "San Isidro financial-district café known for reliable WiFi and natural light — open daily 7am–11pm."
+  },
+  {
+    "name": "Biblioteca Nacional del Perú",
+    "city": "lima",
+    "address": "Av. De La Poesía 160, San Borja, Lima",
+    "lat": -12.1084, "lng": -76.9998,
+    "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
+    "tag": "Peru's national library — free 84-seat outdoor Study Terrace (reservation required), open Mon–Sat 8am–10pm."
+  },
+  {
+    "name": "Biblioteca Municipal Ricardo Palma",
+    "city": "lima",
+    "address": "Av. Larco 770, Miraflores, Lima",
+    "lat": -12.1200, "lng": -77.0280,
+    "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
+    "tag": "Free municipal library with study rooms, WiFi and computers — Mon–Fri 9am–8pm, Sat 9am–1pm."
+  },
+  {
+    "name": "Sinergia Perú",
+    "city": "lima",
+    "address": "Av. Javier Prado Oeste 757, Magdalena del Mar, Lima",
+    "lat": -12.0930, "lng": -77.0715,
+    "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
+    "tag": "Boutique coworking for digital nomads and early founders in Magdalena del Mar."
+  },
+  {
+    "name": "Prestamype",
+    "domain": "prestamype.com",
+    "city": "lima",
+    "address": "Lima (no specific address independently verifiable)",
+    "lat": -12.0970, "lng": -77.0310,
+    "funding": { "type": "Startup", "stage": "Series A+" },
+    "operating_model": "Hybrid",
+    "tag": "Largest MSE-lending fintech in Peru — $650M+ facilitated, latest $27M equity+debt round (March 2026)."
+  },
+  {
+    "name": "Leasy",
+    "city": "lima",
+    "address": "Lima (no specific address independently verifiable)",
+    "lat": -12.0990, "lng": -77.0320,
+    "funding": { "type": "Startup", "stage": "Series A+" },
+    "operating_model": "Hybrid",
+    "tag": "Subscription vehicle-financing fintech for rideshare drivers — raised $28M Series A (2024), profitable since month one."
+  },
+  {
+    "name": "Manzana Verde",
+    "city": "lima",
+    "address": "Lima (no specific address independently verifiable)",
+    "lat": -12.1000, "lng": -77.0330,
+    "funding": { "type": "Startup", "stage": "Seed" },
+    "operating_model": "Hybrid",
+    "tag": "Healthy-food subscription and delivery platform — raised $2M seed (2021), expanded into Mexico and Colombia."
+  },
+  {
+    "name": "Joinnus",
+    "domain": "joinnus.com",
+    "city": "lima",
+    "address": "Lima (no specific address independently verifiable)",
+    "lat": -12.0980, "lng": -77.0350,
+    "funding": { "type": "Acquired" },
+    "operating_model": "Hybrid",
+    "tag": "Peru's largest ticketing and events platform (1M+ users, 25,000+ events) — acquired by Credicorp in 2023."
+  },
+  {
+    "name": "LIQUID Venture Studio",
+    "city": "lima",
+    "address": "Lima (no specific address independently verifiable)",
+    "lat": -12.1000, "lng": -77.0300,
+    "funding": { "type": "Incubator" },
+    "operating_model": "Hybrid",
+    "tag": "Private venture studio and 24-week growth accelerator — ~$300K seed pool, equity-for-services model, ~19 startups supported since 2018."
+  },
+  {
+    "name": "Inca Ventures",
+    "city": "lima",
+    "address": "Lima (no specific address independently verifiable)",
+    "lat": -12.0990, "lng": -77.0340,
+    "funding": { "type": "Fund" },
+    "operating_model": "Hybrid",
+    "tag": "Early-stage pre-seed/seed VC fund focused on fintech, proptech and insurtech across the Andean region."
   }
 ]
