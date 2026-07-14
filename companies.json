@@ -617,6 +617,7 @@
   },
   {
     "name": "Leasy",
+    "domain": "leasy.co",
     "city": "lima",
     "address": "Lima (no specific address independently verifiable)",
     "lat": -12.0990, "lng": -77.0320,
@@ -660,5 +661,65 @@
     "funding": { "type": "Fund" },
     "operating_model": "Hybrid",
     "tag": "Early-stage pre-seed/seed VC fund focused on fintech, proptech and insurtech across the Andean region."
+  },
+  {
+    "name": "Crafter Station",
+    "domain": "crafter.run",
+    "city": "lima",
+    "address": "Barranco, Lima",
+    "lat": -12.1480, "lng": -77.0210,
+    "funding": { "type": "Nonprofit" },
+    "operating_model": "On-Site",
+    "tag": "Community of 800+ LatAm builders — project lab, research and events helping developers, designers and founders meet, learn and build in public."
+  },
+  {
+    "name": "AI Playgrounds",
+    "domain": "linkedin.com/company/ai-playgrounds-tech",
+    "city": "lima",
+    "address": "Near Startup UNI, Universidad Nacional de Ingeniería, Rímac, Lima",
+    "lat": -12.0195, "lng": -77.0503,
+    "funding": { "type": "Nonprofit" },
+    "operating_model": "On-Site",
+    "tag": "Peruvian AI community running hackathons (Hack@Latam) and regional fellowship programs, connecting technical AI talent with real-world social-impact projects across Latin America."
+  },
+  {
+    "name": "Claude IA Labs",
+    "domain": "claude.ialabs.tech",
+    "city": "lima",
+    "address": "Miraflores, Lima",
+    "lat": -12.1211, "lng": -77.0282,
+    "funding": { "type": "Nonprofit" },
+    "operating_model": "On-Site",
+    "tag": "Peruvian community (Claude Perú) sharing real-world Claude/AI use cases through weekly webinars and monthly Lima meetups, from first prompt to production AI products."
+  },
+  {
+    "name": "Fitia",
+    "domain": "fitia.app",
+    "city": "lima",
+    "address": "Lima (no specific address independently verifiable)",
+    "lat": -12.0985, "lng": -77.0325,
+    "funding": { "type": "Startup" },
+    "operating_model": "Hybrid",
+    "tag": "AI-powered healthtech/nutrition app generating custom calorie budgets, macronutrient goals and nutritionist-verified meal plans."
+  },
+  {
+    "name": "Hapi",
+    "domain": "hapi.trade",
+    "city": "lima",
+    "address": "Lima (no specific address independently verifiable; US-incorporated for broker compliance)",
+    "lat": -12.1005, "lng": -77.0345,
+    "funding": { "type": "Startup" },
+    "operating_model": "Hybrid",
+    "tag": "Commission-free retail investment app letting LatAm consumers buy US-listed stocks, ETFs and crypto with zero minimums — operating across 18+ LatAm countries."
+  },
+  {
+    "name": "Monnet Payments",
+    "domain": "monnetpayments.com",
+    "city": "lima",
+    "address": "San Isidro, Lima",
+    "lat": -12.0955, "lng": -77.0305,
+    "funding": { "type": "Startup" },
+    "operating_model": "Hybrid",
+    "tag": "Payment processor for real-time B2B payins/payouts across local banking grids via a unified multi-currency API — live natively in 9 LatAm markets."
   }
 ]

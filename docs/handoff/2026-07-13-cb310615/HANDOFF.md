@@ -139,6 +139,50 @@ adding markitdown as a global skill and Neon DB for the companies data.
 - Vercel deploy still blocked from earlier this session (403, see above) — unresolved.
 - Run `/export docs/handoff/2026-07-13-cb310615/transcript.md` (user must run this, not Claude).
 
+## Check-in — 2026-07-14 (part 2: ship + more data)
+- Ran `/code-review`: no CRITICAL/HIGH findings on the taxonomy-expansion diff. 3
+  MEDIUM/LOW notes (toggle pills missing `aria-pressed`, approximate placeholder coords on
+  unconfirmed-address entries, unknown `funding.type` silently drops with no console warning) —
+  documented, not blocking.
+- Shipped via `/gsd-fast`: branched `feat/taxonomy-landing-toggles` off `master` (repo rule —
+  never push straight to master), committed `companies.json`+`index.html`+handoff docs, pushed,
+  opened PR #2, merged to `master` (https://github.com/RikepilB/peru-tech-map/pull/2), synced
+  local master.
+- Retried `deploy_to_vercel` (target `production`, name `perugrid`, full 3-file payload,
+  content re-read fresh from merged master) — **still 403 Forbidden**, identical error to the
+  earlier attempt this session (`"You don't have permission to create a project."`). Confirmed
+  this is not transient — the Claude↔Vercel MCP connection genuinely lacks `project:create`
+  scope. Unresolved, needs user action (create the Vercel project manually, or re-auth the
+  integration with broader scope).
+- User supplied 3 ONGs/Comunidades (non-profit community) entries with source URLs
+  (crafter.run, claude.ialabs.tech, LinkedIn AI Playgrounds) and explicit placement instructions
+  ("near UTEC Ventures", "near Startup UNI" with exact coords, "near Laus"). Fetched each URL to
+  write sourced one-line descriptions instead of guessing. Added all 3 as `funding.type:
+  "Nonprofit"` (maps to the "Show Non-Profits & Communities" toggle), placed at the exact
+  coordinates of their named neighbor so MapLibre's existing spiderfy fan-out clusters them
+  visually. `companies.json` 69→72.
+- User supplied 5 more startups (Fitia, Leasy, Hapi, Monnet Payments, Prestamype) with
+  website/location/description. Leasy and Prestamype were **already in the dataset** (added
+  earlier this session) — cross-checked by name before adding, skipped the dupes, backfilled
+  Leasy's missing `domain: "leasy.co"` field instead. Added the 3 genuinely new ones (Fitia,
+  Hapi, Monnet Payments) as `Startup`/`Hybrid` (no confirmed street address for any of the
+  three, consistent with the existing no-fabrication precedent — Monnet at least has a
+  confirmed district, San Isidro). `companies.json` 72→75.
+
+## Files changed (part 2)
+- `companies.json` — 69→75 entries (3 Nonprofit community orgs + 3 new fintech/healthtech
+  startups + 1 domain backfill on Leasy). **Uncommitted** — not yet pushed/PR'd.
+
+## Next steps (part 2, supersedes/adds to the part-1 list above)
+- `companies.json`'s latest 6-entry batch (Crafter Station, AI Playgrounds, Claude IA Labs,
+  Fitia, Hapi, Monnet Payments) is uncommitted — branch/commit/PR/merge per repo rule before
+  it's lost, same pattern as the taxonomy-expansion PR (#2).
+- Vercel deploy is confirmed durably blocked (403, `project:create` permission missing) — this
+  is now the single remaining blocker on the original "deploy the map with the domain in
+  vercel" request. DNS (Spaceship) has been ready and waiting since earlier in this session.
+- Everything else from the part-1 Next steps list still stands (add-company modal form fields,
+  remaining Coworking doc entries, Netzum/Juntoz/TuRuta/Tekton Labs/Hub UDEP verification).
+
 ## Files in this folder
 - `HANDOFF.md` — this file
 - `snapshot-235350.md` — auto PreCompact snapshot
