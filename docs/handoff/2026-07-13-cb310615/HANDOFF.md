@@ -345,6 +345,47 @@ Read-only — no code touched. Findings:
 - Run `/export docs/handoff/2026-07-13-cb310615/transcript.md` (user must run this, not
   Claude) — re-run to capture part 4 + part 5 if the user wants a full transcript.
 
+## Check-in — 2026-07-18 (part 6: shipped Phase-1 docs translation)
+
+User invoked `/gsd-ship`. Checked GSD state: `phase_found: false`, `planning_exists: false`
+(`gsd-tools.cjs query init.phase-op` output) — this repo has no `.planning/` tree, so the full
+GSD ship workflow (which needs ROADMAP.md/VERIFICATION.md) can't run. Asked user; chose
+"ship manually instead" (branch → commit → PR, this repo's own established convention).
+
+- Deleted the stray `nul` junk file flagged in part 5.
+- Branched `docs/phase1-spanish-internal-docs` off `master`.
+- Staged and committed exactly the part-5 findings: the 11-file Phase-1 Spanish translation
+  diff, the new `PLAN.md`, this session's handoff updates (father + this file through part 5),
+  and the previously-untracked `snapshot-025657.md`/`transcript.md`. Left `.claude/skills/*`,
+  `.agents/`, `.codex/` untouched (unrelated tool-bootstrap output, not this repo's work) —
+  still sitting untracked, unresolved.
+- Pushed, opened **PR #22**: https://github.com/RikepilB/peru-tech-map/pull/22.
+
+## Files changed (part 6)
+- Commit `99a0d9c` on `docs/phase1-spanish-internal-docs`: `AGENTS.md`, `CODEOWNERS`,
+  `README.md`, `docs/architecture.md`, `docs/branding.md` (also fills in previously-empty
+  branding/problem-solution content — partial #13), `docs/decisions.md`, `docs/design.md`,
+  `docs/plans/2026-07-06-costa-verde-rebrand-design.md`, `"docs/🚀 Prominent Tech Startups &
+  Small.md"`, `tests/README.md`, `"Map Project Storybook U.md"` — all translated to Spanish.
+  New: `PLAN.md`, `docs/handoff/2026-07-13-cb310615/snapshot-025657.md`,
+  `docs/handoff/2026-07-13-cb310615/transcript.md`.
+- Deleted (untracked, not a commit): `nul`.
+
+## Failed attempts (part 6)
+- None — GSD ship workflow was correctly identified as inapplicable before attempting it
+  (checked `phase_found`/`planning_exists` first rather than forcing the workflow through).
+
+## Next steps (part 6)
+- **PR #22 needs review + merge** — not done yet, awaiting user/CI.
+- After merge: flip `index.html`'s `getLang()` default to `"es"` (closes #15) — one-line
+  change, identified in part 5, not yet made.
+- Then Phase 2 (#16→#18: add `tag_es` field + render logic, translate 75 tags) before Phase 3
+  (#17→#19: taxonomy), per `PLAN.md`'s own dependency order.
+- Untracked `.claude/skills/*`, `.agents/`, `.codex/` dirs still unresolved — decide keep vs.
+  gitignore vs. remove before they cause noise in a future `git status`/PR.
+- Run `/export docs/handoff/2026-07-13-cb310615/transcript.md` (user must run this, not
+  Claude) — re-run to capture part 5 + part 6, current `transcript.md` predates both.
+
 ## Files in this folder
 - `HANDOFF.md` — this file
 - `snapshot-235350.md`, `snapshot-025657.md` — auto PreCompact snapshots
