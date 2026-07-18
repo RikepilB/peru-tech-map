@@ -1,80 +1,71 @@
-# Decisions (ADR log)
+# Decisiones (registro ADR)
 
-> One entry per significant decision. Newest on top. Append-only.
+> Una entrada por decisión relevante. La más reciente va arriba. Solo se agregan entradas.
 
-## Template
+## Plantilla
+
 ```
-### <YYYY-MM-DD> — <decision title>
-- **Context:** why this came up
-- **Decision:** what we chose
-- **Alternatives:** what we rejected and why
-- **Consequences:** what this commits us to
+### <AAAA-MM-DD> — <título de decisión>
+- **Contexto:** por qué surgió
+- **Decisión:** qué se eligió
+- **Alternativas:** qué se descartó y por qué
+- **Consecuencias:** a qué nos compromete
 ```
 
-### 2026-07-06 — Skipped 6 entities from a user-supplied Lima directory (unverifiable/defunct)
-- **Context:** user supplied a ~30-entry "comprehensive directory" of Lima startups/funds/
-  accelerators to add. Two research agents fact-checked every entry against SUNAT/RUC registry,
-  official sites, Crunchbase/YC/PitchBook, and LinkedIn before adding any pin.
-- **Decision:** added 20 entities (see companies.json), skipped 6:
-  - **Ovenfo** — no LinkedIn, no Crunchbase, no working domain; only source found was a
-    listicle blog reusing generic AI-startup boilerplate across unrelated companies. Likely
-    not a real, distinct, active company.
-  - **Artificio** — real (press-covered, named founders), but zero verifiable office location
-    anywhere (site only lists an email). No pin possible without fabricating coordinates.
-  - **Domus AI** — real (Forbes Perú Top 100, StartUp Perú grant recipient), same problem —
-    no district/address found anywhere.
-  - **Syntax** (usesyntax.com) — was real (Platanus-backed), but its own homepage now reads
-    "click here to read what happened with Syntax" — strong shutdown signal.
-  - **GoJom** — domain now redirects to a parked-domain sales page; PitchBook lists it
-    "Out of Business" (June 2024); LinkedIn shows HQ relocated to Mexico City.
-  - **MrPink VC** — real VC fund, but headquartered in Punta del Este, Uruguay, not Lima —
-    doesn't belong on a Lima map regardless of Peru-based portfolio companies.
-- **Alternatives:** include all of them with a placeholder/city-center pin regardless of
-  verifiability (rejected — violates the "no fabricated coordinates" rule); include them with
-  no pin at all as a text-only sidebar entry (rejected — breaks the map's core interaction
-  model, and the schema has no precedent for a pin-less entry).
-- **Consequences:** if a contributor later finds a real, current address for Artificio, Domus
-  AI, or a revived Syntax, they can be added properly (see PR template checklist). Ovenfo and
-  GoJom should stay excluded unless new evidence surfaces they're real/active again.
-- **Lower-confidence entries added anyway (flagged, not skipped):** Talently and uDocz use a
-  generic Lima-center coordinate (no confirmed street/district found — will render as a
-  co-located, fanned-out pin pair via the existing stacked-pin logic). Winnipeg Capital's
-  address is a single low-reliability directory snippet, discarded in favor of a San Isidro
-  city-center placeholder. MindQube's own domain now redirects to a "Noobelab" rebrand page —
-  added under the MindQube name/description since that's what the source list named, but the
-  current operating brand may have changed; verify before treating this as current.
-- **New funding.type value:** added `"Fund"` (Salkantay Ventures, Winnipeg Capital, AVP
-  Ventures, PECAP) to the existing category set — muted-chip styling, same bucket as
-  Startup/Consultancy/Coworking/Incubator/Nonprofit. Updated `index.html`'s
-  `MUTED_FUNDING_TYPES`, the add-company modal's category `<select>`, `README.md`, and
-  `.github/PULL_REQUEST_TEMPLATE.md` to match.
+### 2026-07-06 — Se omitieron seis entidades de un directorio de Lima aportado por el usuario
 
-### 2026-07-06 — Repurpose `funding.type` as a category field
-- **Context:** cloned BUILD416's schema, which requires a real VC funding-round `type`
-  (Seed/Series A/Public/etc.) per entry. Most Lima/Arequipa entries here are unfunded
-  startups, consultancies, coworking spaces, or university incubators — no real funding-round
-  data was researched for them, and fabricating one would violate the "no invented facts" rule.
-- **Decision:** keep the `funding` object (for chip-rendering compat with the cloned UI code)
-  but populate `type` with a category instead: `Startup`, `Consultancy`, `Coworking`,
-  `Incubator`, `Nonprofit`, or `Acquired` for the one confirmed acquisition (Dentito). Muted
-  chip styling for the first five, green "notable outcome" styling for `Acquired`/`Public`.
-- **Alternatives:** invent plausible-sounding funding amounts (rejected — fabrication);
-  drop the funding chip entirely (rejected — loses a genuinely useful at-a-glance category cue).
-- **Consequences:** the schema diverges from upstream BUILD416's literal meaning of `funding`;
-  documented in `README.md`'s Data Format table and `docs/architecture.md` so this isn't
-  mistaken for real funding data later.
+- **Contexto:** se recibió un directorio de unas 30 startups, fondos y aceleradoras de Lima. Dos
+  agentes de investigación contrastaron cada entrada con SUNAT/RUC, sitios oficiales,
+  Crunchbase/YC/PitchBook y LinkedIn antes de añadir un pin.
+- **Decisión:** se añadieron 20 entidades en `companies.json` y se omitieron seis:
+  - **Ovenfo:** sin LinkedIn, Crunchbase ni dominio funcional; la única fuente era un blog con
+    texto genérico reutilizado. Probablemente no es una empresa activa y diferenciada.
+  - **Artificio:** existe y tiene cobertura, pero no hay oficina verificable; no se pueden crear
+    coordenadas.
+  - **Domus AI:** existe y recibió reconocimiento de Forbes Perú y StartUp Perú, pero no hay
+    distrito ni dirección verificable.
+  - **Syntax** (`usesyntax.com`): existió, pero su propia página principal comunica su cierre.
+  - **GoJom:** el dominio dirige a una venta de dominio; PitchBook la lista como cerrada en junio
+    de 2024 y LinkedIn indica traslado de sede a Ciudad de México.
+  - **MrPink VC:** es un fondo real, pero su sede está en Punta del Este, Uruguay; no corresponde
+    a un mapa de Lima solo por tener inversiones peruanas.
+- **Alternativas:** incluirlas con un pin de centro de ciudad o como fila sin pin. Se rechazaron:
+  la primera inventa coordenadas y la segunda rompe la interacción central del mapa.
+- **Consecuencias:** Artificio, Domus AI o Syntax podrán añadirse si aparece una dirección actual.
+  Ovenfo y GoJom se mantienen excluidos salvo nueva evidencia. Talently y uDocz usan una
+  coordenada genérica del centro de Lima por falta de dirección confirmada; Winnipeg Capital se
+  colocó en San Isidro con evidencia de baja confianza. MindQube conserva el nombre y descripción
+  de la lista original aunque su dominio redirige a Noobelab; debe verificarse antes de tratarlo
+  como actual.
+- **Valor nuevo de `funding.type`:** se añadió `Fund` para Salkantay Ventures, Winnipeg Capital,
+  AVP Ventures y PECAP; usa el chip neutro como Startup, Consultancy, Coworking, Incubator y
+  Nonprofit. Se actualizaron `MUTED_FUNDING_TYPES`, el selector del formulario, README y la
+  plantilla de PR. Esta solución temporal se sustituirá por la taxonomía de `PLAN.md`.
 
-### 2026-07-06 — No local logo assets; favicon-service fallback only
-- **Context:** BUILD416 ships local `assets/logos/*.png` for companies whose favicon doesn't
-  render well. Downloading/repackaging third-party company logos wasn't something to do
-  without per-file confirmation, and most researched entries don't have a public logo asset
-  readily available anyway.
-- **Decision:** rely entirely on Google's `s2/favicons` service keyed off each entry's bare
-  `domain`, falling back to an initial-letter tile when there's no `domain` at all (several
-  Arequipa entries have no confirmed public website).
-- **Alternatives:** download and commit logo images per company (rejected — copyright/consent
-  and file-download-approval overhead for ~30 images); skip logos/initials entirely (rejected
-  — worse UX, no visual differentiation in the sidebar).
-- **Consequences:** visual quality depends on Google's favicon service uptime/coverage; a
-  future contributor can still add `assets/logos/<name>.png` + a `"logo"` field per-entry if
-  they want to override a specific one (the code already supports it).
+### 2026-07-06 — `funding.type` se reutiliza como categoría
+
+- **Contexto:** el esquema de BUILD416 exige una ronda VC real (`Seed`, `Series A`, `Public`,
+  etc.). Muchas entradas de Lima y Arequipa son startups sin financiación conocida, consultoras,
+  coworkings o incubadoras universitarias; inventar rondas contradiría la regla de no inventar
+  hechos.
+- **Decisión:** se conservó el objeto `funding` por compatibilidad visual, pero `type` pasó a
+  contener categorías: `Startup`, `Consultancy`, `Coworking`, `Incubator`, `Nonprofit` o
+  `Acquired` para Dentito. Las cinco primeras usan un chip neutro y `Acquired`/`Public` uno verde.
+- **Alternativas:** inventar importes de financiación o eliminar el chip. Se rechazaron por
+  fabricación de datos y pérdida de una señal visual útil, respectivamente.
+- **Consecuencias:** el esquema se aleja del significado original de BUILD416. Está documentado
+  en README y arquitectura para no confundirlo con financiación real; `PLAN.md` define la salida
+  de esta solución temporal.
+
+### 2026-07-06 — Sin logos locales; solo fallback del servicio de favicons
+
+- **Contexto:** BUILD416 incluye `assets/logos/*.png` para empresas cuyos favicons no se ven bien.
+  Descargar o redistribuir logos de terceros sin confirmar cada archivo no era apropiado y muchas
+  entradas no tienen un activo público disponible.
+- **Decisión:** usar el servicio `s2/favicons` de Google a partir de `domain`; si no existe, usar
+  una ficha con la inicial. Varias entradas de Arequipa no tienen sitio público confirmado.
+- **Alternativas:** descargar logos por empresa o no mostrar logos/iniciales. Se descartaron por
+  derechos, consentimiento, mantenimiento y peor diferenciación visual.
+- **Consecuencias:** la calidad visual depende de la disponibilidad y cobertura de Google. Un
+  colaborador puede añadir `assets/logos/<nombre>.png` y un campo `logo` si necesita reemplazar
+  un caso concreto.

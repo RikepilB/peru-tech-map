@@ -1,6 +1,16 @@
-Map Project: Storybook UI BriefThis document serves as the system source of truth for UI layout agents and code generation tools. It structures the brand concept from watermarked_img_18090315783402885778.png into exact component states, typography hierarchies, and asset tokens following the bold, structured grid presentation style seen in image_fa34a6.jpg.1. Core Tokens & Global SettingsJSON{
-  "project": "Costa Verde Map UI System",
-  "theme": "Dark Tech / Minimalist Grid",
+# Mapa del proyecto: guía Storybook de interfaz
+
+Este documento es la fuente de verdad para agentes de layout y herramientas de generación de
+código. Estructura el concepto de marca de `watermarked_img_18090315783402885778.png` en estados
+de componentes, jerarquías tipográficas y tokens de assets, siguiendo la cuadrícula estructurada
+de `image_fa34a6.jpg`.
+
+## 1. Tokens centrales y configuración global
+
+```json
+{
+  "project": "Sistema de interfaz del mapa Costa Verde",
+  "theme": "Tecnología oscura / cuadrícula minimalista",
   "layout_rules": {
     "grid_unit": "8px",
     "border_radius": "12px",
@@ -18,82 +28,121 @@ Map Project: Storybook UI BriefThis document serves as the system source of trut
     "text_primary": "#F4F6F9"
   }
 }
-2. Component Specifications (Storybook Categories)Category A: Typography SystemAgents must enforce the following hierarchy strictly. Do not use random sizes or weights outside this token set.Display Title (font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;)H1: Size 22pt | Tracking: -0.02em | Case: Uppercase alternateH2: Size 14pt | Tracking: -0.01em | Case: Sentence caseData Readouts (font-family: 'JetBrains Mono', monospace; font-weight: 500;)Telemetry_Label: Size 11pt | Color: #05DC60Coordinates: Size 10pt | Tracking: 0 | Strips trailing whitespace.Category B: Iconography & Asset InventoryWhen embedding system marks or rendering graphics inside panels, agents must use these verbatim filenames and keys:Symbol / Graphic KeyAsset Implementation TargetAssociated Asset Referencelogo_costaverdeHeader Branding Elementwatermarked_img_18090315783402885778.pngicon_lighthouseAnchor / Control Center POIwatermarked_img_18090315783402885778.pngicon_paragliderCoverage Area / Range Indicatorwatermarked_img_18090315783402885778.pngmap_concept_topoTopographic Data Layer Cardwatermarked_img_18090315783402885778.pnglayout_inspirationDark Mode Grid Architectureimage_fa34a6.jpgCategory C: UI Component StatesUse these declarative states for generating button, list, or panel styles.1. Floating Glass Panel (.panel-map-control)Background: rgba(43, 51, 66, 0.65)Border: 1.5px solid #2B3342Backdrop Filter: blur(12px)Layout: Vertical flex container, 16px internal padding.2. Active Telemetry Stream (.data-row-active)Text Color: #F4F6F9Accent Signal: Left-side indicator bar using #05DC60 (Neon Teal).Behavior: Alternating zebra-striping rows using rgba(27, 34, 44, 0.4) on even items.3. Warning / Critical POI Marker (.marker-critical)Color Token: #FF6B6B (Paraglider Coral)UI Asset: Embedded icon_paraglider path vector.Interaction State: Pulsing animation on focus indicator.3. Layout Architecture ConstraintsAgents rendering layout code must follow these three rules:Strict Grid Toggles: Map view must cover 100% viewport width and height. UI control modules sit exclusively on an absolute floating layer aligned to an 8px grid structure.High-Contrast Dividers: When rendering tabular data lists inside cards, use thin 1px horizontal lines colored #2B3342 instead of heavy colored blocks.No Text Shifting: All readouts monitoring real-time telemetry variables must utilize fixed-width layout metrics to ensure numeric strings remain pixel-locked during fast rendering refreshes.
+```
 
-TL;DR
-The Shift: Moving away from a purely sans-serif layout to introduce high-contrast, editorial serif pairs that mimic the dramatic scale of Lima's cliffs.
+## 2. Especificaciones de componentes
 
-The Concept: High-end geospatial data visualization. Merging technical screen indicators with luxury editorial formatting.
+### A. Sistema tipográfico
 
-Primary Pair: Playfair Display (or Bodoni FLF) for primary branding, structural headers, and spatial titles; JetBrains Mono for coordinates and real-time telemetry.
+Los agentes deben respetar esta jerarquía; no usar tamaños ni pesos fuera de estos tokens.
 
-Updated design.md Brief for Layout Agents
-This file has been updated to integrate a high-end typography structure, drawing contrasting inspiration from luxury editorial serifs seen in image_fa3f4e.jpg and image_fa3f50.jpg, alongside the micro-geometry of tech fonts in image_fa3f8c.png.
+- **Título de display:** `Plus Jakarta Sans`, 700.
+  - H1: 22 pt, tracking `-0.02em`, variante de mayúsculas.
+  - H2: 14 pt, tracking `-0.01em`, estilo oración.
+- **Lecturas de datos:** `JetBrains Mono`, 500.
+  - Etiqueta de telemetría: 11 pt, color `#05DC60`.
+  - Coordenadas: 10 pt, tracking `0`, sin espacios finales.
 
-JSON
+### B. Inventario de iconos y assets
+
+Al incluir marcas del sistema o gráficos en paneles, usar estos nombres y claves literalmente.
+
+| Símbolo / clave | Uso | Asset asociado |
+| --- | --- | --- |
+| `logo_costaverde` | Marca del encabezado | `watermarked_img_18090315783402885778.png` |
+| `icon_lighthouse` | POI de anclaje / centro de control | `watermarked_img_18090315783402885778.png` |
+| `icon_paraglider` | Indicador de cobertura / alcance | `watermarked_img_18090315783402885778.png` |
+| `map_concept_topo` | Tarjeta de capa topográfica | `watermarked_img_18090315783402885778.png` |
+| `layout_inspiration` | Arquitectura de cuadrícula oscura | `image_fa34a6.jpg` |
+
+### C. Estados de interfaz
+
+1. **Panel de vidrio flotante (`.panel-map-control`)**
+   - Fondo: `rgba(43, 51, 66, 0.65)`.
+   - Borde: `1.5px solid #2B3342`.
+   - Filtro: `blur(12px)`.
+   - Layout: flex vertical, 16 px de padding interno.
+2. **Flujo de telemetría activo (`.data-row-active`)**
+   - Texto: `#F4F6F9`.
+   - Señal: barra izquierda `#05DC60`.
+   - Filas pares con franja `rgba(27, 34, 44, 0.4)`.
+3. **Marcador POI de aviso/crítico (`.marker-critical`)**
+   - Color: `#FF6B6B`.
+   - Asset: vector `icon_paraglider` embebido.
+   - Estado: animación pulsante al recibir foco.
+
+### Restricciones de layout
+
+- El mapa cubre el 100 % del viewport; los controles viven únicamente en una capa absoluta
+  flotante alineada a una cuadrícula de 8 px.
+- En tarjetas con datos tabulares se usan divisores horizontales de 1 px en `#2B3342`, no
+  bloques de color pesados.
+- Las lecturas de telemetría usan métricas de ancho fijo para que los números no salten durante
+  actualizaciones rápidas.
+
+## Actualización editorial
+
+La propuesta posterior explora una visualización geoespacial editorial de alta gama: serifas de
+alto contraste para reflejar los acantilados de Lima junto a variables monoespaciadas precisas.
+Este enfoque es de referencia; la implementación actual conserva la pareja sans + mono aprobada
+en `docs/plans/2026-07-06-costa-verde-rebrand-design.md`.
+
+```json
 {
-  "project": "Costa Verde Map UI System",
-  "theme": "Editorial Tech / Luxury Geographic Grid",
-  "typography_philosophy": "High-contrast structural collision. We utilize dramatic, high-fashion serifs to represent the towering cliffs and prestige of the Costa Verde, paired tightly with strict monospace variables for tech accuracy."
+  "project": "Sistema de interfaz del mapa Costa Verde",
+  "theme": "Tecnología editorial / cuadrícula geográfica de lujo",
+  "typography_philosophy": "Contraste estructural: serifas dramáticas para la Costa Verde y monoespaciadas estrictas para precisión técnica."
 }
-Category A: Typography System
-Agents must deprecate standard sans-serif fonts for main interfaces and adopt the following multi-class typographic pairing:
+```
 
-1. Editorial Branding & Structural Headers
-Font Selection: Playfair Display (or Bodoni FLF / The Seasons as referenced in image_fa3f4e.jpg)
+### Pareja tipográfica editorial de referencia
 
-Style: Bold Italic or Regular High-Contrast Serif
+1. **Marca y encabezados estructurales:** Playfair Display, Bodoni FLF o The Seasons; serif de
+   alto contraste, negrita o cursiva. Se usaría en logo, zonas geográficas y títulos principales.
 
-Usage: Platform main logo, major geographic zone overlays, primary section titles.
+   ```css
+   h1.brand-title {
+     font-family: 'Playfair Display', 'Bodoni FLF', serif;
+     font-weight: 700;
+     letter-spacing: -0.03em;
+     text-transform: none;
+   }
+   ```
 
-CSS Rule:
+2. **Subencabezados estructurados:** Sánchez, serif slab regular para títulos de tarjetas,
+   telemetría y categorías de filtros.
+3. **Telemetría y salida geoespacial:** JetBrains Mono, Nano Light o Geo Light para latitud,
+   longitud, elevación, escala y registros de estado.
 
-CSS
-h1.brand-title {
-  font-family: 'Playfair Display', 'Bodoni FLF', serif;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  text-transform: none;
-}
-2. Secondary Slab / Structured Subheaders
-Font Selection: Sánchez (As referenced for creative legibility in image_fa3f4e.jpg)
+   ```css
+   .telemetry-readout {
+     font-family: 'JetBrains Mono', monospace;
+     font-weight: 300;
+     text-transform: uppercase;
+     letter-spacing: 0.05em;
+   }
+   ```
 
-Style: Regular Slab Serif
+### Boceto de cuadrícula visual
 
-Usage: Component card titles, telemetry panel labels, map filter category titles.
-
-Intent: Provides an anchor between high-luxury serif headers and mechanical data arrays.
-
-3. Real-Time Telemetry & Geospatial Output
-Font Selection: JetBrains Mono (or Nano Light / Geo Light from image_fa3f8c.png)
-
-Style: Monospace (Light or Medium)
-
-Usage: Latitude, longitude, elevation metrics, scale legends, status logs.
-
-CSS Rule:
-
-CSS
-.telemetry-readout {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 300;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-Category B: Visual Mapping Grid
+```text
 +-----------------------------------------------------------------------+
-|  [COSTA VERDE] (Playfair Display Bold - High Luxury Editorial)         |
-|  El Faro Anchor // Telemetry System v2.06                            |
+|  [COSTA VERDE] (Playfair Display en negrita editorial)                |
+|  Ancla El Faro // sistema de telemetría v2.06                         |
 +-----------------------------------------------------------------------+
 |                                                                       |
-|   [ PANEL: ZONA DE VUELO ] (Sánchez Slab Serif Subheading)             |
+|   [ PANEL: ZONA DE VUELO ] (subencabezado Sánchez)                   |
 |   -----------------------------------------------------------------   |
-|   ALTITUDE: 148m          LAT: -12.1287                               |
-|   SPEED:    24 knots      LON: -77.0315                               |
-|   [JetBrains Mono - Fixed Width Data Blocks]                          |
+|   ALTITUD: 148 m        LAT: -12.1287                                |
+|   VELOCIDAD: 24 nudos   LON: -77.0315                                |
+|   [JetBrains Mono — bloques de datos de ancho fijo]                  |
 |                                                                       |
 +-----------------------------------------------------------------------+
-Category C: Component Refinements for Agents
-Header Module (.ui-header-main): Must align the brand title using a raw serif aesthetic over a dark background canvas. This creates a high-end interface that makes geospatial mapping look like an premium editorial dashboard.
+```
 
-Data Labels (.label-mono-mini): Use tracking adjustments (letter-spacing: 0.1em) to maintain perfect structural balance alongside high-end serif titles. No sans-serif fillers should be utilized.
+### Refinamientos de componentes
+
+- **Encabezado (`.ui-header-main`):** alinea el título de marca con una serifa cruda sobre fondo
+  oscuro para lograr una interfaz geoespacial editorial.
+- **Etiquetas de datos (`.label-mono-mini`):** usa `letter-spacing: 0.1em` para equilibrar las
+  serifas de alto contraste. Evita fuentes sans de relleno.

@@ -1,10 +1,12 @@
-# Tests
+# Pruebas
 
-> Tests define expected behavior — a quality signal the agent reads.
+> Las pruebas definen el comportamiento esperado y son una señal de calidad para los agentes.
 
-- `unit/` — pure functions, components, isolated logic
-- `integration/` — API routes, DB ops, module seams
-- `e2e/` — critical user flows end-to-end
+- `unit/`: funciones puras, componentes y lógica aislada.
+- `integration/`: rutas API, operaciones de base de datos y límites entre módulos.
+- `e2e/`: flujos críticos de usuario de extremo a extremo.
 
-## Running
-_TODO: the test command(s)._ CI runs lint → typecheck → test → build.
+## Ejecución
+
+Todavía no hay una suite de pruebas automatizada. La CI actual valida los dos archivos JSON y
+los campos obligatorios de `companies.json`.

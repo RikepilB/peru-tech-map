@@ -1,25 +1,35 @@
-# Repository Guidelines
+# Guía del repositorio
 
-> Shared instruction file read by **Claude Code** and **Codex**. Keep it tool-agnostic;
-> Claude-Code-specific workflow lives in `.claude/CLAUDE.md`.
+> Instrucciones compartidas por **Claude Code** y **Codex**. Deben ser independientes de la
+> herramienta; el flujo específico de Claude Code vive en `.claude/CLAUDE.md`.
 
-## Project Structure & Module Organization
-_TODO: where source, tests, assets, and config live._
+## Estructura del proyecto y módulos
 
-## Build, Test, and Development Commands
-_TODO: the canonical commands (install / dev / build / lint / typecheck / test)._
+La aplicación vive en `index.html`; los datos están en `companies.json` y `ticker.json`.
+No hay módulos, backend ni paso de compilación. Las pruebas futuras se organizan en `tests/`.
 
-## Coding Style & Naming Conventions
-_TODO: formatter, indentation, naming. Keep it short and enforce via tooling._
+## Ejecución y validación
 
-## Testing Guidelines
-Tests live in `tests/{unit,integration,e2e}`. Add focused tests near changed logic.
-Run lint + typecheck + tests before handing off substantial work.
+Sirve el proyecto mediante HTTP: `python -m http.server 8000`. La CI valida el JSON y los
+campos obligatorios de las empresas en cada push y pull request.
 
-## Commit & Pull Request Guidelines
-Conventional commits (`feat:`, `fix:`, `docs:`, `test:`, `chore:`). PRs include the
-user-facing change, verification commands, linked issue, and migration/UI notes.
+## Estilo y convenciones
 
-## Security & Configuration
-Never commit `.env*`, API keys, OAuth secrets, or uploaded artifacts. Document required
-vars in `.env.example`.
+Respeta la arquitectura de un único archivo y el estilo existente. Usa español en la prosa de
+cara al repositorio; conserva los identificadores y valores literales del esquema cuando sean
+compatibles con el código.
+
+## Pruebas
+
+Agrega pruebas focalizadas cerca de la lógica modificada cuando existan. Ejecuta las
+validaciones aplicables antes de entregar cambios importantes.
+
+## Commits y pull requests
+
+Usa commits convencionales (`feat:`, `fix:`, `docs:`, `test:`, `chore:`). Los PR deben incluir
+el cambio visible, comandos de verificación, issue relacionado y notas de migración o UI.
+
+## Seguridad y configuración
+
+Nunca confirmes `.env*`, claves API, secretos OAuth ni artefactos subidos. Documenta las
+variables requeridas en `.env.example`.

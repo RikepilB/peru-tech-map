@@ -298,6 +298,53 @@ adding markitdown as a global skill and Neon DB for the companies data.
   Claude) — note: this was already run once mid-session per the local-command log; re-run
   if the user wants the transcript to include this part-4 work too.
 
+## Check-in — 2026-07-17 (part 5: deep-catch-up, read-only orientation)
+
+Ran `/deep-catch-up` at start of a new session (this repo's HANDOFF.md was stale >30min).
+Read-only — no code touched. Findings:
+
+- Confirmed via `gh issue list`: all 12 issues (#8-19) from part 4 still open, none closed.
+- Found **uncommitted Phase-1 translation work in progress**, not logged anywhere until now:
+  11 docs files retranslated to Spanish (`AGENTS.md`, `CODEOWNERS`, `README.md`,
+  `docs/architecture.md`, `docs/branding.md`, `docs/decisions.md`, `docs/design.md`,
+  `docs/plans/2026-07-06-costa-verde-rebrand-design.md`, `tests/README.md`,
+  `"Map Project Storybook U.md"`, `"docs/🚀 Prominent Tech Startups & Small.md"` — 490+/383-
+  lines), plus a new untracked `PLAN.md` (Spanish 3-phase plan matching issues #16-19: Phase 1
+  docs/lang, Phase 2 bilingual `tag` field, Phase 3 taxonomy). None of this was branched,
+  committed, or PR'd — sitting in the working tree only.
+- Verified by reading code (not assumed): `index.html`'s `getLang()` (line 109) is still
+  browser-locale-based, confirming #15 (Spanish default) genuinely not done yet. Verified
+  `companies.json` schema unchanged (`tag` single-language, `funding.type` flat string, no
+  subcategory) — confirming #16-19 (i18n descriptions + taxonomy) genuinely not started, only
+  planned in `PLAN.md`.
+- Also untracked, unrelated to project work: large batch of new `.claude/skills/*` dirs,
+  `.agents/`, `.codex/` (look like global skill-sync/tool bootstrap output, not
+  peru-tech-map deliverables — flagged, not touched). Stray `nul` file (73B, dead Windows
+  artifact from an old `> nul` redirect under bash) — flagged for deletion, not deleted.
+- Delivered a full briefing (snapshot/insights/plan) to the user; ended by asking whether to
+  commit the Phase-1 diff or jump straight to Phase 2 schema work — awaiting user's answer.
+
+## Files changed (part 5)
+- None — read-only orientation session. `docs/handoff/HANDOFF.md` (father) and this file
+  updated as part of the mandatory handoff check-in.
+
+## Failed attempts (part 5)
+- None.
+
+## Next steps (part 5)
+- **Immediate fork in the road, unresolved:** user was asked to choose between (a) reviewing
+  and shipping the uncommitted Phase-1 translation diff (branch → PR) or (b) skipping straight
+  to Phase 2 (#16/#18) schema work. Pick this up first next session if no answer landed yet.
+- Before any commit touching this diff: decide what to do with the untracked `.claude/skills/*`,
+  `.agents/`, `.codex/` dirs (likely don't belong in a docs-translation PR) and delete the stray
+  `nul` file.
+- Once Phase 1 ships: flip `getLang()` default to `"es"` (closes #15) — one-line change,
+  identified but not yet made.
+- Then Phase 2 (#16→#18: add `tag_es` field + render logic, translate 75 tags) before Phase 3
+  (#17→#19: taxonomy) per `PLAN.md`'s own stated dependency order.
+- Run `/export docs/handoff/2026-07-13-cb310615/transcript.md` (user must run this, not
+  Claude) — re-run to capture part 4 + part 5 if the user wants a full transcript.
+
 ## Files in this folder
 - `HANDOFF.md` — this file
 - `snapshot-235350.md`, `snapshot-025657.md` — auto PreCompact snapshots

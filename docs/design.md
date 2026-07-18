@@ -1,82 +1,110 @@
-# Costa Verde Map Project: Brand & Design System
+# Proyecto de mapa Costa Verde: marca y sistema de diseño
 
-## TL;DR
-* **Concept:** A digital mapping system blending Lima’s dramatic Costa Verde coastline (cliffs, ocean, urban parks) with a clean, high-performance tech aesthetic.
-* **Palette:** Cyber-emerald, deep oceanic slate, and crisp coastal white, accented by high-visibility neon details.
-* **Visual Identity:** Geometric topography, minimalist iconography, and structured layouts engineered for clarity and fluid user experiences.
+## Resumen
 
----
-
-## 1. Brand Concept & Vision
-
-The Costa Verde Map Project translates the unique geography of Lima’s Pacific coastline into a highly precise, modern digital interface. It balances the raw, organic energy of the seaside cliffs with structural, data-driven technology.
-
-* **The Natural Aspect:** Deep ocean gradients, sheer grey earth cliffs covered in vegetation, and expansive open horizons.
-* **The Tech Aspect:** Vector networks, crisp data overlays, high-contrast UI panels, and seamless interactive telemetry.
-
-This system moves away from typical retro-style maps to create a futuristic, professional platform built for seamless urban navigation and geospatial analysis.
+- **Concepto:** sistema de mapas digitales que mezcla la Costa Verde de Lima —acantilados,
+  océano y parques urbanos— con una estética tecnológica limpia y de alto rendimiento.
+- **Paleta:** esmeralda cibernético, pizarra oceánica profunda y blanco costero, con detalles de
+  neón de alta visibilidad.
+- **Identidad visual:** topografía geométrica, iconografía minimalista y layouts estructurados
+  para una experiencia clara y fluida.
 
 ---
 
-## 2. Color Palette
+## 1. Concepto y visión de marca
 
-The color system captures the meeting of the Pacific Ocean, coastal greenery, and modern tech infrastructure. It utilizes muted structural tones contrasted with electric highlights for high-readability data displays.
+El proyecto traduce la geografía singular de la costa del Pacífico limeño a una interfaz digital
+precisa y moderna. Equilibra la energía orgánica de los acantilados con tecnología estructural y
+basada en datos.
 
-### Primary Brand Colors
-* **Cyber Emerald (`#1DA842` / `#05DC60`):** Represents the cliffside parks and paragliding zones. Infused with a neon tech glow for UI accents, button states, and active data paths.
-* **Oceanic Slate (`#2B3342` / `#1B222C`):** A dark, deep blue-grey pulled from the Pacific waters on overcast days. Used for main backgrounds, dark-mode panels, and primary text structure.
-* **Cliff Shell (`#F4F6F9`):** A crisp, cool off-white that prevents screen glare while keeping layouts sharp, clean, and modern.
+- **Aspecto natural:** gradientes de océano profundo, acantilados grises con vegetación y
+  horizontes abiertos.
+- **Aspecto tecnológico:** redes vectoriales, superposiciones de datos nítidas, paneles de alto
+  contraste y telemetría interactiva continua.
 
-### Data & Status Accents
-* **Paraglider Coral (`#FF6B6B`):** High-visibility warning indicators, point-of-interest markers, and critical telemetry paths.
-* **Lighthouse Beacon (`#FFB400`):** Search highlights, user location focus states, and secondary interactive layers.
-
----
-
-## 3. Typography & Font System
-
-The typography is built around clean, geometric sans-serif typefaces to ensure readability on digital screens during interactive panning and zooming.
-
-### Primary UI & Display Font: **Inter / Plus Jakarta Sans**
-* **Usage:** Headers, map layers, coordinates, data cards.
-* **Characteristics:** High x-height, open counters, and exceptional clarity at micro-scales.
-* **Scale:**
-  * `H1 (Main Titles)`: 22pt / Bold / Tracking: -0.02em
-  * `H2 (Section Headers)`: 14pt / SemiBold / Tracking: -0.01em
-  * `H3 (Subheadings / Cards)`: 11pt / Medium / Tracking: 0
-  * `Body Text`: 10pt / Regular / Line Height: 1.5
-
-### Monospace / Telemetry Font: **JetBrains Mono / SF Mono**
-* **Usage:** Latitude/longitude readouts, system status logs, layer distances, and calculated metrics.
-* **Characteristics:** Fixed-width design that prevents text shifting during real-time metric updates.
+El sistema se aleja de los mapas retro para crear una plataforma profesional de navegación urbana
+y análisis geoespacial.
 
 ---
 
-## 4. Iconography & Symbols
+## 2. Paleta de color
 
-Icons follow a minimalist, vector-grid approach. Every symbol uses uniform line weights (1.5px or 2px) with open shapes to mirror clean blueprints or heads-up displays (HUD).
+La paleta reúne océano Pacífico, vegetación costera e infraestructura tecnológica. Combina tonos
+estructurales contenidos con acentos eléctricos que facilitan leer datos.
 
-* **The Lighthouse (El Faro):** Represents the central command, anchor points, or user primary base locations. Redesigned as a sharp, tiered vertical rectangle with a single horizontal beam symbol.
-* **The Paraglider Arc:** Used to symbolize range rings, field of view, coverage zones, or real-time elevation changes.
-* **The Cliff Gradient (La Costa):** Parallel topographic line vectors that show terrain elevation shifts, stairs, and access ramps along the coastal wall.
-* **The Coast Road (Circuito de Playas):** Clean, dual-line paths with neon illumination to mark highways, fast-routing paths, and traffic vectors.
+### Colores principales
+
+- **Esmeralda cibernético (`#1DA842` / `#05DC60`):** representa parques de acantilado y zonas
+  de parapente; aporta brillo neón a acentos, botones y rutas de datos activas.
+- **Pizarra oceánica (`#2B3342` / `#1B222C`):** azul grisáceo profundo usado en fondos,
+  paneles oscuros y estructura tipográfica principal.
+- **Concha de acantilado (`#F4F6F9`):** blanco frío que reduce el brillo de pantalla y mantiene
+  los layouts nítidos.
+
+### Acentos de datos y estado
+
+- **Coral de parapente (`#FF6B6B`):** avisos visibles, marcadores POI y rutas críticas de
+  telemetría.
+- **Faro (`#FFB400`):** resaltados de búsqueda, foco de ubicación y capas interactivas
+  secundarias.
 
 ---
 
-## 5. UI Architecture & Grid System
+## 3. Tipografía
 
-Adhering to a minimalist, grid-first approach, the user interface acts as a transparent window over the map canvas.
+La tipografía usa sans serif geométricas y limpias para conservar legibilidad durante el paneo y
+zoom interactivos.
 
-* **Floating Glass Panels:** Modular sidebars and control cards feature subtle background blurs (`backdrop-filter: blur(12px)`) with thin `#2B3342` borders to stay distinct without blocking the terrain.
-* **Component Layout:** Left-aligned panels hold primary tools and layer filters. Bottom-right zones contain structural telemetry, zoom controls, and scale legends.
-* **Zebra Striping & Lists:** Internal tabular data (e.g., coordinate lists, route stops) utilizes alternating subtle tints to keep data readable without adding heavy grid lines.
+### Fuente principal de interfaz y display: **Inter / Plus Jakarta Sans**
+
+- **Uso:** encabezados, capas del mapa, coordenadas y tarjetas de datos.
+- **Características:** altura x alta, contraformas abiertas y claridad en escalas pequeñas.
+- **Escala:**
+  - `H1 (títulos principales)`: 22 pt, negrita, tracking `-0.02em`.
+  - `H2 (encabezados de sección)`: 14 pt, seminegrita, tracking `-0.01em`.
+  - `H3 (subtítulos / tarjetas)`: 11 pt, peso medio, tracking `0`.
+  - `Texto base`: 10 pt, regular, interlineado `1.5`.
+
+### Fuente monoespaciada y telemetría: **JetBrains Mono / SF Mono**
+
+- **Uso:** latitud/longitud, registros de estado, distancias de capas y métricas calculadas.
+- **Características:** ancho fijo para evitar saltos de texto durante actualizaciones de métricas.
 
 ---
 
-## 6. Layout & Photographic Philosophy
+## 4. Iconografía y símbolos
 
-Visuals combine high-contrast drone perspectives of Lima's coast with neat vector graphics. 
+Los iconos siguen un enfoque minimalista de cuadrícula vectorial. Todos usan un grosor uniforme
+(1.5 px o 2 px) y formas abiertas que evocan planos técnicos o un HUD.
 
-* **Angles:** Ultra-wide, high-angle aerial views emphasize the sharp dividing line between city high-rises and the ocean.
-* **Compositions:** Strong diagonal alignments follow the natural curve of the cliffs. This adds motion and energy to the digital layout.
-* **Textures:** Smooth sea surfaces contrast with sharp, geometric concrete blocks and organized asphalt lines below.
+- **El faro:** representa comando central, puntos de anclaje o ubicaciones base del usuario.
+- **Arco de parapente:** simboliza anillos de alcance, campo de visión, cobertura o cambios de
+  elevación en tiempo real.
+- **Gradiente del acantilado:** vectores topográficos paralelos que muestran elevación, escaleras
+  y rampas de acceso en la costa.
+- **Vía costera (Circuito de Playas):** rutas dobles con iluminación neón para autopistas,
+  trayectos rápidos y vectores de tráfico.
+
+---
+
+## 5. Arquitectura de interfaz y cuadrícula
+
+La interfaz minimalista, orientada a cuadrícula, funciona como una ventana transparente sobre el
+mapa.
+
+- **Paneles de vidrio flotante:** barras laterales y controles con `backdrop-filter: blur(12px)`
+  y bordes finos `#2B3342`, legibles sin bloquear el terreno.
+- **Composición:** paneles a la izquierda para herramientas y filtros; zonas inferiores derechas
+  para telemetría, zoom y escala.
+- **Listas con franjas:** datos tabulares con tintes alternos sutiles, sin líneas pesadas.
+
+---
+
+## 6. Filosofía de composición y fotografía
+
+Los visuales mezclan tomas de dron de alto contraste de la costa limeña con gráficos vectoriales
+limpios.
+
+- **Ángulos:** vistas aéreas amplias y elevadas que enfatizan el borde entre ciudad y océano.
+- **Composición:** diagonales fuertes que siguen la curva de los acantilados para aportar ritmo.
+- **Texturas:** mar suave frente a concreto geométrico y asfalto organizado.
