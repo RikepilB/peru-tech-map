@@ -59,7 +59,7 @@ Un array de objetos de lugar. Este es el archivo que la mayoría de las contribu
   "address": "San Isidro, Lima",
   "lat": -12.0930, "lng": -77.0270,
   "funding": { "type": "Startup" },
-  "tag": "Online payment gateway (Credicorp/BCP group) letting businesses accept card payments in-store and online."
+  "tag": "Pasarela de pagos de Credicorp/BCP para aceptar tarjetas en tienda y en línea."
 }
 ```
 
@@ -85,7 +85,7 @@ Las entradas fuera del bbox de su ciudad declarada se omiten al cargar, con una 
 Un array de objetos de titular que se desplazan en la parte superior:
 
 ```json
-{ "label": "BIOTECH", "text": "Le Qara wins the H&M Foundation Global Change Award for Arequipa-made bio-leather" }
+{ "label": "BIOTECH", "text": "Le Qara gana el H&M Foundation Global Change Award por su biomaterial de Arequipa" }
 ```
 
 Mantén `label` corto (una o dos palabras, en mayúsculas en la interfaz) y `text` en una sola oración. No se filtra por ciudad — es un reel compartido entre ambas.
@@ -108,7 +108,9 @@ Luego abre **http://localhost:8000**.
 
 ## TODOs Conocidos Antes De Lanzar
 
-- **`FORM_ENDPOINT` en `index.html`** es un placeholder (`https://formsubmit.co/ajax/YOUR_EMAIL_HERE`). El modal "Agregar Empresa" está construido pero inerte hasta que configures tu propio email verificado con [FormSubmit](https://formsubmit.co/) — el primer envío real dispara el email de verificación única de FormSubmit.
+- **El formulario "Agregar Empresa" usa FormSubmit.** `FORM_ENDPOINT` ya está configurado en
+  `index.html`; el destinatario debe mantener activa la verificación de [FormSubmit](https://formsubmit.co/).
+  Cada envío se revisa manualmente antes de incorporarse al dataset.
 - El favicon es un SVG inline autocontenido (data URI, no requiere archivo). **La imagen para compartir en redes sigue siendo un placeholder**: `og:image`/`twitter:image` apuntan a `https://perugrid.com/assets/og-image.jpg`, pero ese archivo aún no existe — agrega una captura o gráfico real en `assets/og-image.jpg` (1342×896 o proporción similar 3:2) para que las vistas previas de enlaces (Slack, Twitter, WhatsApp) muestren una imagen en vez de nada.
 - Aún no hay carpeta `assets/` para overrides locales de logos de empresas — los marcadores caen de vuelta al servicio de favicons de Google o a un tile con inicial, lo cual es suficiente para lanzar.
 

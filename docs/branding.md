@@ -1,26 +1,33 @@
-# Branding
+# Marca
 
-> Name, voice, audience, visual identity. Fill this before calling the project "documented" —
-> an agent writing copy, error messages, or marketing pages reads this to stay on-brand.
+> Nombre, voz, audiencia e identidad visual. Quien escriba textos, mensajes de error o páginas
+> de difusión debe usar este documento para mantener la coherencia de la marca.
 
-## Name & tagline
-Peru Grid — "Where the builders are" (in Lima and Arequipa).
+## Nombre y lema
 
-## Audience
-Anyone exploring Peru's tech ecosystem: founders scouting where peers/consultancies/coworking
-spaces cluster, job-seekers, or the just-curious. Not a lead-gen tool or a directory product.
+Peru Grid — «Donde están quienes construyen», en Lima y Arequipa.
 
-## Voice & tone
-Terminal-operator, direct, no-hype, technical. Example: "GRID ONLINE ✓", "18 PLACES INDEXED",
-"[grid] skipped Foo — coords outside core bbox." No marketing adjectives, no exclamation points.
+## Audiencia
 
-## Visual identity
-Monochrome near-black console (`#070A08` background) with Solarium green as the only accent —
-`#056540` (fills: CTAs, chips, active states) and `#0FA968` (lightened: major-road lines, links,
-cursor blink, hairlines). Typography: Geist Mono everywhere. No logo yet.
+Personas que exploran el ecosistema tecnológico peruano: fundadores que buscan pares,
+consultoras o coworkings; quienes buscan trabajo; y público curioso. No es una herramienta de
+captación de leads ni un directorio comercial.
 
-## Problem & solution
-Peru's startup/tech scene (Lima, and increasingly Arequipa via university incubators) has no
-single visual index of where the builders actually are. Peru Grid answers that with one
-self-contained, no-backend map: pick a city, see every indexed place as a pin, click through
-for what it does and how it's funded/organized.
+## Voz y tono
+
+Operador de terminal, directo, técnico y sin exageraciones. Ejemplos: `GRID ONLINE ✓`,
+`18 LUGARES INDEXADOS`, `[grid] Foo omitida: coordenadas fuera del bbox central`. Sin adjetivos
+de marketing ni signos de exclamación.
+
+## Identidad visual
+
+Consola monocromática casi negra (fondo `#070A08`) con verde Solarium como único acento:
+`#056540` para CTAs, chips y estados activos, y `#0FA968` para vías principales, enlaces,
+parpadeo del cursor y líneas finas. La tipografía es Geist Mono. Aún no hay logo.
+
+## Problema y solución
+
+El ecosistema startup y tecnológico peruano —Lima y, cada vez más, Arequipa mediante incubadoras
+universitarias— no tenía un índice visual único de dónde están quienes construyen. Peru Grid lo
+resuelve con un mapa autocontenido, sin backend: se elige una ciudad, se ven los lugares
+indexados como pines y se consulta su actividad y organización.

@@ -1,52 +1,59 @@
-# Costa Verde rebrand — design (approved 2026-07-08)
+# Rediseño Costa Verde — diseño (aprobado el 2026-07-08)
 
-Supersedes the Nazca Desert direction (`index-nazca.html`, kept for reference only).
-Inspiration: `docs/design.md`, `Map Project Storybook U.md`, `docs/Gemini_Generated_Image_vel0pcvel0pcvel0.png`.
+Sustituye la dirección Nazca Desert (`index-nazca.html`, conservado solo como referencia).
+Inspiración: `docs/design.md`, `Map Project Storybook U.md` y
+`docs/Gemini_Generated_Image_vel0pcvel0pcvel0.png`.
 
-## Root cause fixed
-`index-nazca.html`'s `themeBaseLayers()` recolored water/land/building fills to near-identical
-sand tones, killing contrast → real terrain read as flat desert; `building-3d` extrusion ramp
-(`#D8C9A8`→`#A38E6C`) blended into that same background, so 3D buildings looked "gone" even when
-toggled on.
+## Causa raíz resuelta
 
-## Decisions
-1. **Map terrain: untouched.** New prototype clones the real `index.html` (clean base — natural
-   `openfreemap/liberty` tiles, working 3D buildings). No base-layer recolor loop. Costa Verde
-   styling applies only to floating UI chrome (header, sidebar, controls, statusbar, ticker,
-   modal, loader, markers).
-2. **Typography:** Plus Jakarta Sans (headers/labels/UI) + JetBrains Mono (coordinates/status/
-   data), replacing Geist Mono everywhere. Rejected the storybook doc's later editorial-serif
-   (Playfair Display + Sánchez) pivot — sans+mono matches the reference image and is lower risk.
-3. **Accent color:** single accent, swapped Solarium green (`#056540`/`#0FA968`) → Cyber Emerald
-   (`#1DA842`/`#05DC60`). Dropped design.md's coral/amber status accents to keep the
-   architecture rule ("one accent color") intact.
-4. **File:** new sibling `index-costaverde.html`. `index.html` untouched until this prototype is
-   approved as final (hard gate, per brainstorming skill).
+`themeBaseLayers()` en `index-nazca.html` recoloreaba agua, tierra y edificios con tonos arena
+casi idénticos, eliminando el contraste: el terreno parecía un desierto plano. La rampa 3D de
+`building-3d` (`#D8C9A8` a `#A38E6C`) se mezclaba con el mismo fondo y hacía que los edificios
+parecieran desaparecer aunque el modo 3D estuviera activo.
+
+## Decisiones
+
+1. **Terreno del mapa intacto.** El prototipo clona el `index.html` real: tiles naturales de
+   `openfreemap/liberty` y edificios 3D funcionales. El estilo Costa Verde se aplica solo a la
+   interfaz flotante: encabezado, barra lateral, controles, barra de estado, ticker, modal,
+   cargador y marcadores.
+2. **Tipografía:** Plus Jakarta Sans para encabezados, etiquetas e interfaz; JetBrains Mono para
+   coordenadas, estado y datos. Se descartó el giro posterior a serif editorial del Storybook
+   (Playfair Display + Sánchez): sans + mono coincide mejor con la referencia y supone menos
+   riesgo.
+3. **Color de acento:** un único acento. Se reemplazó Solarium (`#056540`/`#0FA968`) por Cyber
+   Emerald (`#1DA842`/`#05DC60`). Se eliminaron los acentos coral y ámbar para respetar la regla
+   arquitectónica de un solo color de acento.
+4. **Archivo:** se creó `index-costaverde.html` como hermano de `index.html`; el original no se
+   tocó hasta aprobar el prototipo final.
 
 ## Tokens
+
 ```
---bg:       #1B222C   (was #070A08)
---panel:    rgba(43,51,66,0.65)   (glass, was solid #0C110D)
---line:     #2B3342   (was #16281D)
---green:        #1DA842   (was #056540)
---green-bright: #05DC60   (was #0FA968)
---text:     #F4F6F9   (was #D6E2D8)
---muted:    #7C8794   (was #6B7A6E)
---sans:     'Plus Jakarta Sans', system-ui, sans-serif   (new)
---mono:     'JetBrains Mono', ui-monospace, monospace    (was Geist Mono)
---radius:   12px   (new — was 0)
---blur:     12px
+--bg:           #1B222C   (antes #070A08)
+--panel:        rgba(43,51,66,0.65)   (vidrio; antes #0C110D sólido)
+--line:         #2B3342   (antes #16281D)
+--green:        #1DA842   (antes #056540)
+--green-bright: #05DC60   (antes #0FA968)
+--text:         #F4F6F9   (antes #D6E2D8)
+--muted:        #7C8794   (antes #6B7A6E)
+--sans:         'Plus Jakarta Sans', system-ui, sans-serif
+--mono:         'JetBrains Mono', ui-monospace, monospace   (antes Geist Mono)
+--radius:       12px
+--blur:         12px
 ```
 
-## Components touched
-- `.brand`, `.ctl`/`#toggle3d`, `#panel`, `.modal`, `.loader`: square → `border-radius:12px`,
-  solid bg → glass (`var(--panel)` + `backdrop-filter:blur(12px)`), border 1.5px.
-- `.panel-head h1`, `.modal-head h2`, `.brand`: font-family → `--sans` (was mono everywhere;
-  mono now reserved for actual telemetry per storybook rule).
-- `.statusbar`/`.ticker`: keep existing blur, retint to new tokens, keep mono (correct — these
-  are the telemetry surfaces).
-- `.co-marker`, `.co .logo`: recolor ring/border to emerald, shape unchanged.
+## Componentes modificados
 
-## Not touched
-Data files, JS logic (company loading, city switcher, marker positioning math), add-company
-modal fields — visual layer only.
+- `.brand`, `.ctl`/`#toggle3d`, `#panel`, `.modal`, `.loader`: bordes cuadrados a
+  `border-radius: 12px`; fondo sólido a vidrio mediante `var(--panel)` y
+  `backdrop-filter: blur(12px)`; borde de 1.5 px.
+- `.panel-head h1`, `.modal-head h2`, `.brand`: fuente `--sans`; la mono queda reservada para
+  telemetría real.
+- `.statusbar`/`.ticker`: conservan el blur y la fuente mono; se reajustan a los nuevos tokens.
+- `.co-marker`, `.co .logo`: anillo y borde pasan a esmeralda; la forma no cambia.
+
+## Sin cambios
+
+Archivos de datos, lógica JavaScript —carga de empresas, selector de ciudad y cálculo de
+posicionamiento de marcadores— y campos del modal para agregar empresa: solo cambió la capa visual.

@@ -1,6 +1,6 @@
-# Every file in this repo is owned by the maintainer.
-# This auto-requests their review on every pull request, and — when paired
-# with branch protection's "Require review from Code Owners" — blocks any
-# merge until they approve.
+# Todos los archivos de este repositorio pertenecen al mantenedor.
+# Esto solicita automáticamente su revisión en cada pull request y, junto con
+# la protección de rama que exige la revisión de propietarios de código,
+# bloquea cualquier merge hasta su aprobación.
 
 * @RikepilB

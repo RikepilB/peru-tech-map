@@ -21,6 +21,46 @@ session. Solved tasks → one concrete one-liner (file / PR / command).
 
 ---
 
+## Current state — 2026-07-18 (cb310615, part 6)
+
+**Shipped the Phase-1 Spanish-docs translation diff found in part 5 — PR #22, open, not yet
+merged: https://github.com/RikepilB/peru-tech-map/pull/22.** `/gsd-ship` was invoked but this
+repo has no `.planning/` tree (`phase_found: false`), so shipped manually per the repo's own
+branch→PR convention instead: branch `docs/phase1-spanish-internal-docs`, commit `99a0d9c`
+(11 translated docs + new `PLAN.md` + handoff updates + session snapshot/transcript files),
+pushed, PR opened. Deleted the stray `nul` junk file along the way.
+
+**Next once #22 merges:** flip `index.html`'s `getLang()` (line 109) default to `"es"` —
+closes #15, one-liner, not yet made. Then Phase 2 (#16→#18: `tag_es` field + translate 75
+company tags) before Phase 3 (#17→#19: taxonomy redesign), per `PLAN.md`'s own dependency
+order.
+
+**Still unresolved, flagged twice now:** untracked `.claude/skills/*`, `.agents/`, `.codex/`
+dirs sitting in the working tree (look like global skill-sync/tool bootstrap output, not
+peru-tech-map deliverables) — need a keep/gitignore/remove decision before they cause noise
+in a future PR.
+
+Full detail in `2026-07-13-cb310615/HANDOFF.md` part 6.
+
+## Current state — 2026-07-17 (cb310615, part 5)
+
+**Ran a read-only `/deep-catch-up` this session — no code shipped, but surfaced an
+uncommitted Phase-1 translation diff (11 files, 490+/383-) plus a new `PLAN.md` sitting in
+the working tree with no branch.** `PLAN.md` (Spanish) lays out 3 phases matching issues
+#16-19: Phase 1 (docs+default-lang, in progress uncommitted), Phase 2 (bilingual `tag`
+field, not started), Phase 3 (category/subcategory taxonomy, not started, depends on Phase 2
+per the plan). Verified by reading code: `index.html`'s `getLang()` (line 109) is still
+browser-locale-based (#15 not done), `companies.json` schema unchanged (`tag` single-lang,
+`funding.type` flat string — #16-19 not started). All 12 issues (#8-19) confirmed still open
+via `gh issue list`. **User was asked to choose next move (ship Phase-1 diff vs. jump to
+Phase 2) — answer not yet received when this check-in was written.**
+
+Also flagged, not actioned: a pile of new untracked `.claude/skills/*`, `.agents/`, `.codex/`
+dirs (looks like global skill-sync output, not project work) and a stray dead `nul` file —
+both need a decision before the next commit touches this working tree.
+
+Full detail in `2026-07-13-cb310615/HANDOFF.md` part 5.
+
 ## Current state — 2026-07-14 (cb310615, part 4)
 
 **All outstanding work now tracked as 12 GitHub issues (#8–#19)**, filed via
@@ -78,6 +118,14 @@ Configuration" handshake. Full detail in `2026-07-06-initial-build/HANDOFF.md`, 
 
 ## Session index (append-only, newest first)
 
+- 2026-07-13-cb310615 (2026-07-18 check-in, part 6) — `/gsd-ship` invoked but this repo has no
+  `.planning/` tree; shipped manually instead — branched, committed the part-5 Phase-1
+  translation diff + `PLAN.md` + handoff files, pushed, opened PR #22 (open, unmerged).
+- 2026-07-13-cb310615 (2026-07-17 check-in, part 5) — Read-only `/deep-catch-up`: found an
+  uncommitted Phase-1 Spanish-translation diff (11 docs files) and a new `PLAN.md` sitting
+  unbranched in the tree, confirmed by code inspection that #15 (default lang) and #16-19
+  (i18n descriptions + taxonomy) are genuinely not started, delivered a full briefing, asked
+  user to pick the next move — awaiting answer.
 - 2026-07-13-cb310615 (2026-07-14 check-in, part 4) — Ran `/handoff-to-issues`: filed 12
   GitHub issues (#8–#19) covering everything left in the tree plus 3 new asks (Spanish
   default, description translation, category/subcategory taxonomy), tracer-bullet sliced
