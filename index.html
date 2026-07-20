@@ -965,7 +965,11 @@ function buildMarkers() {
       const img = document.createElement("img");
       img.src = src;
       if (c.logoDark) img.classList.add("logo-dark");
-      img.onerror = () => { tile.innerHTML = `<span class="initial">${c.name[0]}</span>`; };
+      const showInitial = () => { tile.innerHTML = `<span class="initial">${c.name[0]}</span>`; };
+      img.onerror = showInitial;
+      // Google's favicon service never 404s — a domain with no indexed favicon still
+      // returns a 200 with its generic 16x16 default icon, so onerror never fires for it.
+      img.onload = () => { if (img.naturalWidth <= 16 && img.naturalHeight <= 16) showInitial(); };
       tile.appendChild(img);
     } else {
       tile.innerHTML = `<span class="initial">${c.name[0]}</span>`;
@@ -1032,7 +1036,7 @@ function buildSidebar() {
     row.dataset.idx = i;
     const src = logoSrc(c);
     const logoHtml = src
-      ? `<img class="${c.logoDark ? 'logo-dark' : ''}" src="${src}" loading="lazy" decoding="async" width="64" height="64" onerror="this.parentNode.innerHTML='<span class=\\'initial\\'>${c.name[0]}</span>'">`
+      ? `<img class="${c.logoDark ? 'logo-dark' : ''}" src="${src}" loading="lazy" decoding="async" width="64" height="64" onerror="this.parentNode.innerHTML='<span class=\\'initial\\'>${c.name[0]}</span>'" onload="if(this.naturalWidth<=16&&this.naturalHeight<=16)this.parentNode.innerHTML='<span class=\\'initial\\'>${c.name[0]}</span>'">`
       : `<span class="initial">${c.name[0]}</span>`;
     row.innerHTML = `
       <span class="prefix">></span>
