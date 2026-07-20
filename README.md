@@ -128,7 +128,7 @@ checklist de PR), y **[CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)** para los est�
 
 ## Créditos Y Fuentes De Datos
 
-Datos de mapa © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, servidos vía OpenFreeMap. Datos de empresas investigados y recopilados de fuentes públicas (sitios de las empresas, cobertura de noticias, páginas de incubadoras universitarias). Estructura/estilo adaptados de [BUILD416](https://github.com/MapleBudget/toronto-tech-map) por Nelson Lee.
+Datos de mapa © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors, servidos vía OpenFreeMap. Datos de empresas investigados y recopilados de fuentes públicas (sitios de las empresas, cobertura de noticias, páginas de incubadoras universitarias).
 
 ## Licencia
 
