@@ -800,6 +800,7 @@
   {
     "name": "Dialogus",
     "domain": "dialoguslabs.com",
+    "logo": "assets/logos/dialogus.png",
     "city": "lima",
     "address": "San Isidro, Lima (YC S26 — Peruvian founders, operating in San Francisco)",
     "lat": -12.0975, "lng": -77.0364,
