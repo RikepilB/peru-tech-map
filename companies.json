@@ -5,9 +5,10 @@
     "city": "lima",
     "address": "San Isidro, Lima",
     "lat": -12.0930, "lng": -77.0270,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Series A+" },
     "operating_model": "On-Site",
-    "tag": "Online payment gateway (Credicorp/BCP group) letting businesses accept card payments in-store and online."
+    "tag": "Online payment gateway (Credicorp/BCP group) letting businesses accept card payments in-store and online.",
+    "tag_es": "Pasarela de pagos online del grupo Credicorp/BCP que permite a negocios aceptar pagos con tarjeta en tienda y online."
   },
   {
     "name": "Kambista",
@@ -15,9 +16,10 @@
     "city": "lima",
     "address": "Miraflores, Lima",
     "lat": -12.1040, "lng": -77.0225,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "Peru's first fully digital currency exchange house — buy/sell dollars and soles online at live rates."
+    "tag": "Peru's first fully digital currency exchange house — buy/sell dollars and soles online at live rates.",
+    "tag_es": "Primera casa de cambio totalmente digital del Perú — compra/venta de dólares y soles online con tasas en vivo."
   },
   {
     "name": "SeguroSimple",
@@ -25,9 +27,10 @@
     "city": "lima",
     "address": "Av. Manuel Olguín 335, Santiago de Surco, Lima",
     "lat": -12.0884, "lng": -76.9733,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "Digital insurance broker comparing auto, health, life and SOAT policies across Peru's major insurers, expanded into Mexico."
+    "tag": "Digital insurance broker comparing auto, health, life and SOAT policies across Peru's major insurers, expanded into Mexico.",
+    "tag_es": "Corredor de seguros digital que compara pólizas de autos, salud, vida y SOAT de las principales aseguradoras del Perú, expandido a México."
   },
   {
     "name": "Yape",
@@ -35,9 +38,10 @@
     "city": "lima",
     "address": "Chorrillos, Lima (BCP Centro de Innovación Tecnológica)",
     "lat": -12.1770, "lng": -77.0130,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Revenue" },
     "operating_model": "On-Site",
-    "tag": "Peru's largest digital wallet/payments app (19M+ users), built out of BCP's innovation center."
+    "tag": "Peru's largest digital wallet/payments app (19M+ users), built out of BCP's innovation center.",
+    "tag_es": "La billetera digital más grande del Perú (19M+ usuarios), creada desde el centro de innovación del BCP."
   },
   {
     "name": "Crehana",
@@ -45,9 +49,10 @@
     "city": "lima",
     "address": "San Isidro, Lima",
     "lat": -12.1225, "lng": -77.0295,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Series A+" },
     "operating_model": "On-Site",
-    "tag": "Lima-founded edtech platform — online courses for creative, business and tech professionals across LatAm and Spain."
+    "tag": "Lima-founded edtech platform — online courses for creative, business and tech professionals across LatAm and Spain.",
+    "tag_es": "Plataforma edtech fundada en Lima — cursos online para profesionales creativos, de negocios y tecnología en LatAm y España."
   },
   {
     "name": "Rappi Perú",
@@ -55,18 +60,20 @@
     "city": "lima",
     "address": "San Isidro, Lima",
     "lat": -12.0913, "lng": -77.0280,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Series A+" },
     "operating_model": "On-Site",
-    "tag": "Colombian quick-commerce/delivery unicorn with a major Lima operation and corporate office in San Isidro."
+    "tag": "Colombian quick-commerce/delivery unicorn with a major Lima operation and corporate office in San Isidro.",
+    "tag_es": "Unicornio colombiano de quick-commerce/delivery con gran operación en Lima y oficina corporativa en San Isidro."
   },
   {
     "name": "Chazki",
     "domain": "chazki.com",
     "city": "lima",
     "lat": -12.1080, "lng": -76.9990,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "Peruvian last-mile logistics/delivery startup connecting e-commerce companies with couriers across LatAm."
+    "tag": "Peruvian last-mile logistics/delivery startup connecting e-commerce companies with couriers across LatAm.",
+    "tag_es": "Startup peruana de logística/entrega de última milla que conecta empresas de e-commerce con couriers en toda LatAm."
   },
   {
     "name": "Rextie",
@@ -74,9 +81,10 @@
     "city": "lima",
     "address": "Miraflores, Lima",
     "lat": -12.1211, "lng": -77.0297,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "Leading online currency exchange house in Peru."
+    "tag": "Leading online currency exchange house in Peru.",
+    "tag_es": "Casa de cambio online líder en Perú."
   },
   {
     "name": "Manantial Tecnológico",
@@ -86,7 +94,8 @@
     "lat": -12.0958, "lng": -77.0335,
     "funding": { "type": "Consultancy" },
     "operating_model": "On-Site",
-    "tag": "AWS/Oracle cloud consulting partner — migration, infrastructure and AWS re/Start training."
+    "tag": "AWS/Oracle cloud consulting partner — migration, infrastructure and AWS re/Start training.",
+    "tag_es": "Partner consultor en cloud AWS/Oracle — migración, infraestructura y entrenamiento AWS re/Start."
   },
   {
     "name": "Caleidos",
@@ -96,7 +105,8 @@
     "lat": -12.0930, "lng": -77.0730,
     "funding": { "type": "Consultancy" },
     "operating_model": "On-Site",
-    "tag": "AWS Advanced Tier Services Partner (est. 2013) — cloud migration, DevOps and generative AI on AWS."
+    "tag": "AWS Advanced Tier Services Partner (est. 2013) — cloud migration, DevOps and generative AI on AWS.",
+    "tag_es": "AWS Advanced Tier Services Partner (desde 2013) — migración cloud, DevOps e IA generativa en AWS."
   },
   {
     "name": "Avantica (Encora)",
@@ -106,7 +116,8 @@
     "lat": -12.0975, "lng": -77.0295,
     "funding": { "type": "Consultancy" },
     "operating_model": "On-Site",
-    "tag": "Nearshore software development and digital product engineering firm, part of the global Encora group."
+    "tag": "Nearshore software development and digital product engineering firm, part of the global Encora group.",
+    "tag_es": "Empresa nearshore de desarrollo de software e ingeniería de productos digitales, parte del grupo global Encora."
   },
   {
     "name": "Innoteam Perú",
@@ -116,7 +127,8 @@
     "lat": -12.0913, "lng": -77.0280,
     "funding": { "type": "Consultancy" },
     "operating_model": "On-Site",
-    "tag": "IT consulting firm helping small and medium Peruvian businesses with digital transformation."
+    "tag": "IT consulting firm helping small and medium Peruvian businesses with digital transformation.",
+    "tag_es": "Consultora TI que ayuda a pequeñas y medianas empresas peruanas con su transformación digital."
   },
   {
     "name": "Belatrix (Globant)",
@@ -126,7 +138,8 @@
     "lat": -12.0985, "lng": -77.0364,
     "funding": { "type": "Acquired" },
     "operating_model": "On-Site",
-    "tag": "Custom software development studio acquired by Globant in 2019; Lima delivery presence."
+    "tag": "Custom software development studio acquired by Globant in 2019; Lima delivery presence.",
+    "tag_es": "Estudio de desarrollo de software adquirido por Globant en 2019; presencia de entrega en Lima."
   },
   {
     "name": "UTEC Ventures",
@@ -136,7 +149,8 @@
     "lat": -12.1480, "lng": -77.0210,
     "funding": { "type": "Incubator" },
     "operating_model": "On-Site",
-    "tag": "Startup accelerator run by Universidad de Ingeniería y Tecnología (UTEC)."
+    "tag": "Startup accelerator run by Universidad de Ingeniería y Tecnología (UTEC).",
+    "tag_es": "Aceleradora de startups operada por la Universidad de Ingeniería y Tecnología (UTEC)."
   },
   {
     "name": "WeWork San Isidro",
@@ -146,7 +160,8 @@
     "lat": -12.1005, "lng": -77.0210,
     "funding": { "type": "Coworking" },
     "operating_model": "On-Site",
-    "tag": "WeWork coworking location in San Isidro's financial district, Lima's largest business hub."
+    "tag": "WeWork coworking location in San Isidro's financial district, Lima's largest business hub.",
+    "tag_es": "Espacio WeWork en el distrito financiero de San Isidro, el hub corporativo más grande de Lima."
   },
   {
     "name": "Regus Real Ocho",
@@ -156,7 +171,8 @@
     "lat": -12.1000, "lng": -77.0230,
     "funding": { "type": "Coworking" },
     "operating_model": "On-Site",
-    "tag": "Regus serviced-office and coworking location in the Real Ocho tower."
+    "tag": "Regus serviced-office and coworking location in the Real Ocho tower.",
+    "tag_es": "Oficina serviciada y coworking de Regus en la torre Real Ocho."
   },
   {
     "name": "1551 Incubadora (UNMSM)",
@@ -165,7 +181,8 @@
     "lat": -12.0570, "lng": -77.0810,
     "funding": { "type": "Incubator" },
     "operating_model": "On-Site",
-    "tag": "University-run startup incubator of Universidad Nacional Mayor de San Marcos."
+    "tag": "University-run startup incubator of Universidad Nacional Mayor de San Marcos.",
+    "tag_es": "Incubadora universitaria de startups de la Universidad Nacional Mayor de San Marcos."
   },
   {
     "name": "VendeMás (Niubiz)",
@@ -173,9 +190,10 @@
     "city": "lima",
     "address": "Miraflores, Lima",
     "lat": -12.1180, "lng": -77.0280,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Revenue" },
     "operating_model": "On-Site",
-    "tag": "POS payment-terminal product line from Niubiz helping small/medium merchants accept digital payments."
+    "tag": "POS payment-terminal product line from Niubiz helping small/medium merchants accept digital payments.",
+    "tag_es": "Línea de terminales de pago POS de Niubiz que ayuda a pequeños y medianos comercios a aceptar pagos digitales."
   },
   {
     "name": "Endeavor Perú",
@@ -185,7 +203,8 @@
     "lat": -12.0985, "lng": -77.0364,
     "funding": { "type": "Nonprofit" },
     "operating_model": "On-Site",
-    "tag": "Local chapter of the global Endeavor network, mentoring Peru's high-impact scale-up entrepreneurs."
+    "tag": "Local chapter of the global Endeavor network, mentoring Peru's high-impact scale-up entrepreneurs.",
+    "tag_es": "Capítulo local de la red global Endeavor, mentorando a emprendedores peruanos de alto impacto."
   },
   {
     "name": "Quantico AI",
@@ -193,9 +212,10 @@
     "city": "lima",
     "address": "Magdalena del Mar, Lima",
     "lat": -12.0919, "lng": -77.0757,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "AI-driven social listening and web analytics SaaS delivering enterprise market insight across LatAm."
+    "tag": "AI-driven social listening and web analytics SaaS delivering enterprise market insight across LatAm.",
+    "tag_es": "SaaS de social listening y analítica web impulsado por IA que brinda inteligencia de mercado empresarial en LatAm."
   },
   {
     "name": "Keynua",
@@ -205,7 +225,8 @@
     "lat": -12.0977, "lng": -77.0365,
     "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "Y Combinator (W19) — video-based e-signature and identity-verification platform combining biometrics with legal validity across LatAm."
+    "tag": "Y Combinator (W19) — video-based e-signature and identity-verification platform combining biometrics with legal validity across LatAm.",
+    "tag_es": "Y Combinator (W19) — plataforma de firma electrónica y verificación de identidad por video que combina biometría con validez legal en LatAm."
   },
   {
     "name": "MindQube",
@@ -213,9 +234,10 @@
     "city": "lima",
     "address": "Santiago de Surco, Lima",
     "lat": -12.1090, "lng": -76.9790,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "Cloud-based no-code platform for building and customizing enterprise business applications."
+    "tag": "Cloud-based no-code platform for building and customizing enterprise business applications.",
+    "tag_es": "Plataforma no-code en la nube para construir y personalizar aplicaciones empresariales."
   },
   {
     "name": "Laus",
@@ -223,9 +245,10 @@
     "city": "lima",
     "address": "Miraflores, Lima",
     "lat": -12.1211, "lng": -77.0282,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "Occupational health and safety (HSE) compliance SaaS digitizing risk reporting and regulatory audits."
+    "tag": "Occupational health and safety (HSE) compliance SaaS digitizing risk reporting and regulatory audits.",
+    "tag_es": "SaaS de cumplimiento en salud y seguridad ocupacional (HSE) que digitaliza reportes de riesgos y auditorías regulatorias."
   },
   {
     "name": "EQUIP",
@@ -233,9 +256,10 @@
     "city": "lima",
     "address": "San Isidro, Lima",
     "lat": -12.0977, "lng": -77.0365,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "B2B marketplace for construction materials with embedded fintech credit for construction companies."
+    "tag": "B2B marketplace for construction materials with embedded fintech credit for construction companies.",
+    "tag_es": "Marketplace B2B de materiales de construcción con crédito fintech integrado para empresas constructoras."
   },
   {
     "name": "Apurata",
@@ -245,7 +269,8 @@
     "lat": -12.0950849, "lng": -77.026154,
     "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "Y Combinator (S19) — fintech offering fast digital microloans using alternative credit-scoring for underbanked Peruvians."
+    "tag": "Y Combinator (S19) — fintech offering fast digital microloans using alternative credit-scoring for underbanked Peruvians.",
+    "tag_es": "Y Combinator (S19) — fintech que ofrece micropréstamos digitales rápidos usando scoring crediticio alternativo para peruanos no bancarizados."
   },
   {
     "name": "OlaClick",
@@ -255,7 +280,8 @@
     "lat": -12.1211, "lng": -77.0282,
     "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "Y Combinator (W21) — restaurant e-commerce/POS platform enabling WhatsApp ordering and digital menus for LatAm SMEs."
+    "tag": "Y Combinator (W21) — restaurant e-commerce/POS platform enabling WhatsApp ordering and digital menus for LatAm SMEs.",
+    "tag_es": "Y Combinator (W21) — plataforma e-commerce/POS para restaurantes que permite pedidos por WhatsApp y menús digitales para PyMEs latinas."
   },
   {
     "name": "Kashin",
@@ -265,7 +291,8 @@
     "lat": -12.1211, "lng": -77.0282,
     "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "Y Combinator (S22) — mobile micro-lending and digital wallet platform for the informal economy."
+    "tag": "Y Combinator (S22) — mobile micro-lending and digital wallet platform for the informal economy.",
+    "tag_es": "Y Combinator (S22) — plataforma móvil de microcréditos y billetera digital para la economía informal."
   },
   {
     "name": "Talently",
@@ -273,9 +300,10 @@
     "city": "lima",
     "address": "Lima (no specific street address publicly verifiable)",
     "lat": -12.0995, "lng": -77.0375,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "Platform connecting Latin American software-engineering talent with US/global companies for hiring and staffing."
+    "tag": "Platform connecting Latin American software-engineering talent with US/global companies for hiring and staffing.",
+    "tag_es": "Plataforma que conecta talento latinoamericano en ingeniería de software con empresas de EE.UU. y el mundo para contratación y staffing."
   },
   {
     "name": "Kurios",
@@ -283,9 +311,10 @@
     "city": "lima",
     "address": "Av. José Pardo 434, Miraflores, Lima",
     "lat": -12.1215, "lng": -77.0290,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "Y Combinator (S21) — cohort-based upskilling (product management, growth, data analytics) for corporate teams across LatAm."
+    "tag": "Y Combinator (S21) — cohort-based upskilling (product management, growth, data analytics) for corporate teams across LatAm.",
+    "tag_es": "Y Combinator (S21) — upskilling por cohortes (product management, growth, data analytics) para equipos corporativos en LatAm."
   },
   {
     "name": "uDocz",
@@ -293,9 +322,10 @@
     "city": "lima",
     "address": "Lima (no specific street address publicly verifiable)",
     "lat": -12.0995, "lng": -77.0375,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "Edtech platform where university students share study materials, expanding into AI-powered tutoring across LatAm."
+    "tag": "Edtech platform where university students share study materials, expanding into AI-powered tutoring across LatAm.",
+    "tag_es": "Plataforma edtech donde estudiantes universitarios compartematerial de estudio, expandiéndose a tutoría con IA en LatAm."
   },
   {
     "name": "Laboratoria",
@@ -303,9 +333,10 @@
     "city": "lima",
     "address": "Av. Almirante Miguel Grau 629, Barranco, Lima",
     "lat": -12.1520, "lng": -77.0195,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Revenue" },
     "operating_model": "On-Site",
-    "tag": "Social-impact tech venture training women from underserved backgrounds in software development and UX design."
+    "tag": "Social-impact tech venture training women from underserved backgrounds in software development and UX design.",
+    "tag_es": "Emprendimiento tech de impacto social que capacita a mujeres de contextos subrepresentados en desarrollo de software y diseño UX."
   },
   {
     "name": "Wayra Perú",
@@ -315,7 +346,8 @@
     "lat": -12.0793, "lng": -77.0407,
     "funding": { "type": "Incubator" },
     "operating_model": "On-Site",
-    "tag": "Telefónica/Movistar's corporate venture and open-innovation accelerator arm."
+    "tag": "Telefónica/Movistar's corporate venture and open-innovation accelerator arm.",
+    "tag_es": "Brazo de corporate venture y aceleración de innovación abierta de Telefónica/Movistar."
   },
   {
     "name": "Emprende UP",
@@ -325,7 +357,8 @@
     "lat": -12.0791, "lng": -77.0472,
     "funding": { "type": "Incubator" },
     "operating_model": "On-Site",
-    "tag": "Universidad del Pacífico's entrepreneurship center — incubation, acceleration, and angel-investor network programs."
+    "tag": "Universidad del Pacífico's entrepreneurship center — incubation, acceleration, and angel-investor network programs.",
+    "tag_es": "Centro de emprendimiento de la Universidad del Pacífico — programas de incubación, aceleración y red de inversionistas ángel."
   },
   {
     "name": "PUCP Emprende (CIDE)",
@@ -335,7 +368,8 @@
     "lat": -12.0692, "lng": -77.0797,
     "funding": { "type": "Incubator" },
     "operating_model": "On-Site",
-    "tag": "PUCP's academic incubator/accelerator (Centro de Innovación y Desarrollo Emprendedor), running the NEXUM incubator."
+    "tag": "PUCP's academic incubator/accelerator (Centro de Innovación y Desarrollo Emprendedor), running the NEXUM incubator.",
+    "tag_es": "Incubadora/aceleradora académica de la PUCP (Centro de Innovación y Desarrollo Emprendedor), a cargo de la incubadora NEXUM."
   },
   {
     "name": "USIL Ventures",
@@ -345,7 +379,8 @@
     "lat": -12.0850, "lng": -76.9430,
     "funding": { "type": "Incubator" },
     "operating_model": "On-Site",
-    "tag": "Universidad San Ignacio de Loyola's incubator/accelerator — scale-up and internationalization programs."
+    "tag": "Universidad San Ignacio de Loyola's incubator/accelerator — scale-up and internationalization programs.",
+    "tag_es": "Incubadora/aceleradora de la Universidad San Ignacio de Loyola — programas de scale-up e internacionalización."
   },
   {
     "name": "Salkantay Ventures",
@@ -355,7 +390,8 @@
     "lat": -12.1145, "lng": -77.0345,
     "funding": { "type": "Fund" },
     "operating_model": "On-Site",
-    "tag": "Early-stage Peruvian VC fund (est. 2012) investing pre-seed to Series A, focused on EdTech, FinTech, AgTech and B2B SaaS."
+    "tag": "Early-stage Peruvian VC fund (est. 2012) investing pre-seed to Series A, focused on EdTech, FinTech, AgTech and B2B SaaS.",
+    "tag_es": "Fondo VC peruano early-stage (desde 2012) invirtiendo pre-seed a Series A, enfocado en EdTech, FinTech, AgTech y B2B SaaS."
   },
   {
     "name": "Winnipeg Capital",
@@ -365,7 +401,8 @@
     "lat": -12.0975, "lng": -77.0364,
     "funding": { "type": "Fund" },
     "operating_model": "On-Site",
-    "tag": "Peruvian multi-family office and asset manager running the Winnipeg Startup Fund, a seed-stage vehicle."
+    "tag": "Peruvian multi-family office and asset manager running the Winnipeg Startup Fund, a seed-stage vehicle.",
+    "tag_es": "Multi-family office y gestor de activos peruano que opera el Winnipeg Startup Fund, un vehículo seed-stage."
   },
   {
     "name": "AVP Ventures",
@@ -375,7 +412,8 @@
     "lat": -12.1002, "lng": -77.0353,
     "funding": { "type": "Fund" },
     "operating_model": "On-Site",
-    "tag": "Peru's largest angel-investor network turned early-stage VC fund (formerly Angel Ventures Peru)."
+    "tag": "Peru's largest angel-investor network turned early-stage VC fund (formerly Angel Ventures Peru).",
+    "tag_es": "La red de inversionistas ángel más grande del Perú convertida en fondo VC early-stage (antes Angel Ventures Peru)."
   },
   {
     "name": "PECAP",
@@ -385,48 +423,54 @@
     "lat": -12.0940, "lng": -77.0320,
     "funding": { "type": "Fund" },
     "operating_model": "On-Site",
-    "tag": "Asociación Peruana de Capital Semilla y Emprendedor — the trade association for Peru's angel/seed investor networks."
+    "tag": "Asociación Peruana de Capital Semilla y Emprendedor — the trade association for Peru's angel/seed investor networks.",
+    "tag_es": "Asociación Peruana de Capital Semilla y Emprendedor — el gremio de las redes de inversionistas ángel y seed del Perú."
   },
   {
     "name": "Le Qara",
     "city": "arequipa",
     "lat": -16.4005, "lng": -71.5375,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "Biotech startup producing vegan biocuero (bio-leather) and biotextiles from living microorganism cultures; H&M Foundation Global Change Award winner."
+    "tag": "Biotech startup producing vegan biocuero (bio-leather) and biotextiles from living microorganism cultures; H&M Foundation Global Change Award winner.",
+    "tag_es": "Biotech que produce biocuero vegano y biotextiles a partir de cultivos de microorganismos vivos; ganadora del H&M Foundation Global Change Award."
   },
   {
     "name": "Yak-Bi",
     "city": "arequipa",
     "lat": -16.3975, "lng": -71.5455,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Pre-Seed" },
     "operating_model": "On-Site",
-    "tag": "UCSM student-founded IoT/automation system helping industrial and agroindustrial companies cut water consumption up to 22%."
+    "tag": "UCSM student-founded IoT/automation system helping industrial and agroindustrial companies cut water consumption up to 22%.",
+    "tag_es": "Sistema IoT/automatización fundado por estudiantes de la UCSM que ayuda a empresas industriales y agroindustriales a reducir el consumo de agua hasta un 22%."
   },
   {
     "name": "sTemis",
     "domain": "stemis.pe",
     "city": "arequipa",
     "lat": -16.3970, "lng": -71.5460,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "On-Site",
-    "tag": "Legaltech/edtech startup — digital simulator of judicial trials used by thousands of law students across Peru."
+    "tag": "Legaltech/edtech startup — digital simulator of judicial trials used by thousands of law students across Peru.",
+    "tag_es": "Legaltech/edtech — simulador digital de juicios judiciales usado por miles de estudiantes de derecho en todo el Perú."
   },
   {
     "name": "Alveoprol",
     "city": "arequipa",
     "lat": -16.3972, "lng": -71.5458,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Pre-Seed" },
     "operating_model": "On-Site",
-    "tag": "Biomaterials for oral-health applications, incubated through UCSM's INNICIA Venture Studio."
+    "tag": "Biomaterials for oral-health applications, incubated through UCSM's INNICIA Venture Studio.",
+    "tag_es": "Biomateriales para aplicaciones de salud oral, incubados a través del Venture Studio INNICIA de la UCSM."
   },
   {
     "name": "FLY",
     "city": "arequipa",
     "lat": -16.3968, "lng": -71.5462,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Pre-Seed" },
     "operating_model": "On-Site",
-    "tag": "Inclusive-tourism startup using drones for real-time virtual access to Arequipa sites for people with reduced mobility."
+    "tag": "Inclusive-tourism startup using drones for real-time virtual access to Arequipa sites for people with reduced mobility.",
+    "tag_es": "Startup de turismo inclusivo que usa drones para acceso virtual en tiempo real a sitios de Arequipa para personas con movilidad reducida."
   },
   {
     "name": "Dentito",
@@ -434,7 +478,8 @@
     "lat": -16.4015, "lng": -71.5410,
     "funding": { "type": "Acquired" },
     "operating_model": "On-Site",
-    "tag": "Medtech startup automating dental/medical-office processes; acquired by DocToc Health in 2025."
+    "tag": "Medtech startup automating dental/medical-office processes; acquired by DocToc Health in 2025.",
+    "tag_es": "Medtech que automatiza procesos de consultorios dentales/médicos; adquirida por DocToc Health en 2025."
   },
   {
     "name": "AM Software",
@@ -443,7 +488,8 @@
     "lat": -16.3990, "lng": -71.5350,
     "funding": { "type": "Consultancy" },
     "operating_model": "On-Site",
-    "tag": "Custom software development firm with 10+ years building bespoke business systems."
+    "tag": "Custom software development firm with 10+ years building bespoke business systems.",
+    "tag_es": "Empresa de desarrollo de software a medida con más de 10 años construyendo sistemas empresariales personalizados."
   },
   {
     "name": "Netfyks",
@@ -453,7 +499,8 @@
     "lat": -16.4180, "lng": -71.5300,
     "funding": { "type": "Consultancy" },
     "operating_model": "On-Site",
-    "tag": "IT consultancy and software factory — custom web/mobile development, e-invoicing, hosting."
+    "tag": "IT consultancy and software factory — custom web/mobile development, e-invoicing, hosting.",
+    "tag_es": "Consultoría TI y fábrica de software — desarrollo web/mobile a medida, facturación electrónica, hosting."
   },
   {
     "name": "Ingenia 3 Perú",
@@ -462,7 +509,8 @@
     "lat": -16.4000, "lng": -71.5360,
     "funding": { "type": "Consultancy" },
     "operating_model": "On-Site",
-    "tag": "Software factory specializing in ERP systems and custom web/mobile solutions."
+    "tag": "Software factory specializing in ERP systems and custom web/mobile solutions.",
+    "tag_es": "Fábrica de software especializada en sistemas ERP y soluciones web/mobile a medida."
   },
   {
     "name": "La Pera Coworking",
@@ -471,7 +519,8 @@
     "lat": -16.3928, "lng": -71.5423,
     "funding": { "type": "Coworking" },
     "operating_model": "On-Site",
-    "tag": "Coworking space with shared desks, private offices, and meeting/event rooms in Arequipa's commercial district."
+    "tag": "Coworking space with shared desks, private offices, and meeting/event rooms in Arequipa's commercial district.",
+    "tag_es": "Coworking con escritorios compartidos, oficinas privadas y salas de reuniones/eventos en el distrito comercial de Arequipa."
   },
   {
     "name": "Conexa Coworking",
@@ -481,7 +530,8 @@
     "lat": -16.3985, "lng": -71.5455,
     "funding": { "type": "Coworking" },
     "operating_model": "On-Site",
-    "tag": "Flexible coworking space with private/shared desks, meeting rooms, and an auditorium."
+    "tag": "Flexible coworking space with private/shared desks, meeting rooms, and an auditorium.",
+    "tag_es": "Coworking flexible con escritorios privados/compartidos, salas de reuniones y auditorio."
   },
   {
     "name": "Kaman (UCSP)",
@@ -490,7 +540,8 @@
     "lat": -16.4025, "lng": -71.5415,
     "funding": { "type": "Incubator" },
     "operating_model": "On-Site",
-    "tag": "Universidad Católica San Pablo's business incubator — southern Peru's first (2015), 140+ startups incubated."
+    "tag": "Universidad Católica San Pablo's business incubator — southern Peru's first (2015), 140+ startups incubated.",
+    "tag_es": "Incubadora de negocios de la Universidad Católica San Pablo — la primera del sur del Perú (2015), 140+ startups incubadas."
   },
   {
     "name": "INNICIA (UCSM)",
@@ -499,7 +550,8 @@
     "lat": -16.3970, "lng": -71.5460,
     "funding": { "type": "Incubator" },
     "operating_model": "On-Site",
-    "tag": "UCSM's Venture Studio incubator — 280+ startups supported, including Yak-Bi, Alveoprol and FLY."
+    "tag": "UCSM's Venture Studio incubator — 280+ startups supported, including Yak-Bi, Alveoprol and FLY.",
+    "tag_es": "Venture Studio incubador de la UCSM — 280+ startups apoyadas, incluyendo Yak-Bi, Alveoprol y FLY."
   },
   {
     "name": "Marketing Singular",
@@ -509,7 +561,8 @@
     "lat": -16.3900, "lng": -71.5430,
     "funding": { "type": "Consultancy" },
     "operating_model": "On-Site",
-    "tag": "Digital marketing and web development agency serving Arequipa-area businesses."
+    "tag": "Digital marketing and web development agency serving Arequipa-area businesses.",
+    "tag_es": "Agencia de marketing digital y desarrollo web que atiende empresas del área de Arequipa."
   },
   {
     "name": "Predacom",
@@ -519,7 +572,8 @@
     "lat": -16.3980, "lng": -71.5450,
     "funding": { "type": "Consultancy" },
     "operating_model": "On-Site",
-    "tag": "15+ year web design and SEO agency serving Arequipa clients."
+    "tag": "15+ year web design and SEO agency serving Arequipa clients.",
+    "tag_es": "Agencia de diseño web y SEO con más de 15 años atendiendo clientes en Arequipa."
   },
   {
     "name": "Comunal Coworking",
@@ -529,7 +583,8 @@
     "lat": -12.0965, "lng": -77.0340,
     "funding": { "type": "Coworking" },
     "operating_model": "On-Site",
-    "tag": "Peru's largest coworking chain (14 sedes, ~25% market share) — Membership Flex from USD 190/mo, Dedicated Desks from USD 250/mo, Private Offices from USD 300/mo."
+    "tag": "Peru's largest coworking chain (14 sedes, ~25% market share) — Membership Flex from USD 190/mo, Dedicated Desks from USD 250/mo, Private Offices from USD 300/mo.",
+    "tag_es": "Cadena de coworking más grande del Perú (14 sedes, ~25% de participación de mercado) — Membresía Flex desde USD 190/mes, Dedicado desde USD 250/mes, Oficinas desde USD 300/mes."
   },
   {
     "name": "Worx Coworking",
@@ -539,7 +594,8 @@
     "lat": -12.1225, "lng": -77.0300,
     "funding": { "type": "Coworking" },
     "operating_model": "On-Site",
-    "tag": "Miraflores coworking with strong natural light — Worx Flex from USD 150/mo, Worx Fijo from USD 250/mo, private offices (24/7) from USD 700/mo."
+    "tag": "Miraflores coworking with strong natural light — Worx Flex from USD 150/mo, Worx Fijo from USD 250/mo, private offices (24/7) from USD 700/mo.",
+    "tag_es": "Coworking en Miraflores con buena luz natural — Worx Flex desde USD 150/mes, Worx Fijo desde USD 250/mes, oficinas privadas (24/7) desde USD 700/mes."
   },
   {
     "name": "Selina Lima Cowork",
@@ -549,7 +605,8 @@
     "lat": -12.1230, "lng": -77.0295,
     "funding": { "type": "Coworking" },
     "operating_model": "On-Site",
-    "tag": "Hostel-hospitality coworking with an international digital-nomad community — day rate S/ 30 for shared workspace."
+    "tag": "Hostel-hospitality coworking with an international digital-nomad community — day rate S/ 30 for shared workspace.",
+    "tag_es": "Coworking hostel-hotelero con comunidad internacional de nómadas digitales — tarifa diaria S/ 30 por espacio compartido."
   },
   {
     "name": "BCP Café x Puku Puku",
@@ -558,7 +615,8 @@
     "lat": -12.0960, "lng": -77.0355,
     "funding": { "type": "Coworking" },
     "operating_model": "On-Site",
-    "tag": "Two-level bank-branch-meets-coworking space with a specialty roastery (Puku Puku) — free community worktable, WiFi, pet-friendly, open 7am–10pm daily."
+    "tag": "Two-level bank-branch-meets-coworking space with a specialty roastery (Puku Puku) — free community worktable, WiFi, pet-friendly, open 7am–10pm daily.",
+    "tag_es": "Espacio de dos niveles que combina sucursal bancaria y coworking con una cafetería de especialidad (Puku Puku) — mesa comunitaria gratis, WiFi, pet-friendly, abierto 7am–10pm."
   },
   {
     "name": "Café de Lima",
@@ -567,7 +625,8 @@
     "lat": -12.1170, "lng": -77.0310,
     "funding": { "type": "Coworking" },
     "operating_model": "On-Site",
-    "tag": "Tech/creative-worker café hub with independent power outlets per table — open 7am–10pm."
+    "tag": "Tech/creative-worker café hub with independent power outlets per table — open 7am–10pm.",
+    "tag_es": "Café hub para trabajadores tech/creativos con tomacorrientes independientes por mesa — abierto 7am–10pm."
   },
   {
     "name": "Rutina Café",
@@ -576,7 +635,8 @@
     "lat": -12.0965, "lng": -77.0300,
     "funding": { "type": "Coworking" },
     "operating_model": "On-Site",
-    "tag": "San Isidro financial-district café known for reliable WiFi and natural light — open daily 7am–11pm."
+    "tag": "San Isidro financial-district café known for reliable WiFi and natural light — open daily 7am–11pm.",
+    "tag_es": "Café del distrito financiero de San Isidro conocido por su WiFi confiable y luz natural — abierto 7am–11pm."
   },
   {
     "name": "Biblioteca Nacional del Perú",
@@ -585,7 +645,8 @@
     "lat": -12.1084, "lng": -76.9998,
     "funding": { "type": "Coworking" },
     "operating_model": "On-Site",
-    "tag": "Peru's national library — free 84-seat outdoor Study Terrace (reservation required), open Mon–Sat 8am–10pm."
+    "tag": "Peru's national library — free 84-seat outdoor Study Terrace (reservation required), open Mon–Sat 8am–10pm.",
+    "tag_es": "Biblioteca Nacional del Perú — Terraza de Estudio gratuita con 84 asientos (requiere reserva), abierta Lun–Sáb 8am–10pm."
   },
   {
     "name": "Biblioteca Municipal Ricardo Palma",
@@ -594,7 +655,8 @@
     "lat": -12.1200, "lng": -77.0280,
     "funding": { "type": "Coworking" },
     "operating_model": "On-Site",
-    "tag": "Free municipal library with study rooms, WiFi and computers — Mon–Fri 9am–8pm, Sat 9am–1pm."
+    "tag": "Free municipal library with study rooms, WiFi and computers — Mon–Fri 9am–8pm, Sat 9am–1pm.",
+    "tag_es": "Biblioteca municipal gratuita con salas de estudio, WiFi y computadoras — Lun–Vie 9am–8pm, Sáb 9am–1pm."
   },
   {
     "name": "Sinergia Perú",
@@ -603,7 +665,8 @@
     "lat": -12.0930, "lng": -77.0715,
     "funding": { "type": "Coworking" },
     "operating_model": "On-Site",
-    "tag": "Boutique coworking for digital nomads and early founders in Magdalena del Mar."
+    "tag": "Boutique coworking for digital nomads and early founders in Magdalena del Mar.",
+    "tag_es": "Coworking boutique para nómadas digitales y founders early-stage en Magdalena del Mar."
   },
   {
     "name": "Prestamype",
@@ -613,7 +676,8 @@
     "lat": -12.0970, "lng": -77.0310,
     "funding": { "type": "Startup", "stage": "Series A+" },
     "operating_model": "Hybrid",
-    "tag": "Largest MSE-lending fintech in Peru — $650M+ facilitated, latest $27M equity+debt round (March 2026)."
+    "tag": "Largest MSE-lending fintech in Peru — $650M+ facilitated, latest $27M equity+debt round (March 2026).",
+    "tag_es": "Fintech de préstamos MYPE más grande del Perú — $650M+ facilitados, última ronda de $27M equity+deuda (marzo 2026)."
   },
   {
     "name": "Leasy",
@@ -623,7 +687,8 @@
     "lat": -12.0990, "lng": -77.0320,
     "funding": { "type": "Startup", "stage": "Series A+" },
     "operating_model": "Hybrid",
-    "tag": "Subscription vehicle-financing fintech for rideshare drivers — raised $28M Series A (2024), profitable since month one."
+    "tag": "Subscription vehicle-financing fintech for rideshare drivers — raised $28M Series A (2024), profitable since month one.",
+    "tag_es": "Fintech de financiamiento vehicular por suscripción para conductores de rideshare — recaudó $28M Serie A (2024), rentable desde el mes uno."
   },
   {
     "name": "Manzana Verde",
@@ -632,7 +697,8 @@
     "lat": -12.1000, "lng": -77.0330,
     "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "Hybrid",
-    "tag": "Healthy-food subscription and delivery platform — raised $2M seed (2021), expanded into Mexico and Colombia."
+    "tag": "Healthy-food subscription and delivery platform — raised $2M seed (2021), expanded into Mexico and Colombia.",
+    "tag_es": "Plataforma de suscripción y delivery de comida saludable — recaudó $2M seed (2021), expandida a México y Colombia."
   },
   {
     "name": "Joinnus",
@@ -642,7 +708,8 @@
     "lat": -12.0980, "lng": -77.0350,
     "funding": { "type": "Acquired" },
     "operating_model": "Hybrid",
-    "tag": "Peru's largest ticketing and events platform (1M+ users, 25,000+ events) — acquired by Credicorp in 2023."
+    "tag": "Peru's largest ticketing and events platform (1M+ users, 25,000+ events) — acquired by Credicorp in 2023.",
+    "tag_es": "Plataforma de ticketing y eventos más grande del Perú (1M+ usuarios, 25,000+ eventos) — adquirida por Credicorp en 2023."
   },
   {
     "name": "LIQUID Venture Studio",
@@ -651,7 +718,8 @@
     "lat": -12.1000, "lng": -77.0300,
     "funding": { "type": "Incubator" },
     "operating_model": "Hybrid",
-    "tag": "Private venture studio and 24-week growth accelerator — ~$300K seed pool, equity-for-services model, ~19 startups supported since 2018."
+    "tag": "Private venture studio and 24-week growth accelerator — ~$300K seed pool, equity-for-services model, ~19 startups supported since 2018.",
+    "tag_es": "Venture studio privado y acelerador de crecimiento de 24 semanas — ~$300K de pool seed, modelo equity-for-services, ~19 startups apoyadas desde 2018."
   },
   {
     "name": "Inca Ventures",
@@ -660,7 +728,8 @@
     "lat": -12.0990, "lng": -77.0340,
     "funding": { "type": "Fund" },
     "operating_model": "Hybrid",
-    "tag": "Early-stage pre-seed/seed VC fund focused on fintech, proptech and insurtech across the Andean region."
+    "tag": "Early-stage pre-seed/seed VC fund focused on fintech, proptech and insurtech across the Andean region.",
+    "tag_es": "Fondo VC early-stage pre-seed/seed enfocado en fintech, proptech e insurtech en la región andina."
   },
   {
     "name": "Crafter Station",
@@ -670,7 +739,8 @@
     "lat": -12.1480, "lng": -77.0210,
     "funding": { "type": "Nonprofit" },
     "operating_model": "On-Site",
-    "tag": "Community of 800+ LatAm builders — project lab, research and events helping developers, designers and founders meet, learn and build in public."
+    "tag": "Community of 800+ LatAm builders — project lab, research and events helping developers, designers and founders meet, learn and build in public.",
+    "tag_es": "Comunidad de 800+ builders latinoamericanos — laboratorio de proyectos, investigación y eventos donde developers, diseñadores y founders se encuentran, aprenden y construyen en público."
   },
   {
     "name": "AI Playgrounds",
@@ -680,7 +750,8 @@
     "lat": -12.0195, "lng": -77.0503,
     "funding": { "type": "Nonprofit" },
     "operating_model": "On-Site",
-    "tag": "Peruvian AI community running hackathons (Hack@Latam) and regional fellowship programs, connecting technical AI talent with real-world social-impact projects across Latin America."
+    "tag": "Peruvian AI community running hackathons (Hack@Latam) and regional fellowship programs, connecting technical AI talent with real-world social-impact projects across Latin America.",
+    "tag_es": "Comunidad peruana de IA que organiza hackathons (Hack@Latam) y programas regionales de fellowship, conectando talento técnico en IA con proyectos de impacto social en Latinoamérica."
   },
   {
     "name": "Claude IA Labs",
@@ -690,7 +761,8 @@
     "lat": -12.1211, "lng": -77.0282,
     "funding": { "type": "Nonprofit" },
     "operating_model": "On-Site",
-    "tag": "Peruvian community (Claude Perú) sharing real-world Claude/AI use cases through weekly webinars and monthly Lima meetups, from first prompt to production AI products."
+    "tag": "Peruvian community (Claude Perú) sharing real-world Claude/AI use cases through weekly webinars and monthly Lima meetups, from first prompt to production AI products.",
+    "tag_es": "Comunidad peruana (Claude Perú) compartiendo casos de uso reales de Claude/IA a través de webinars semanales y meetups mensuales en Lima, del primer prompt a productos IA en producción."
   },
   {
     "name": "Fitia",
@@ -698,9 +770,10 @@
     "city": "lima",
     "address": "Lima (no specific address independently verifiable)",
     "lat": -12.0985, "lng": -77.0325,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "Hybrid",
-    "tag": "AI-powered healthtech/nutrition app generating custom calorie budgets, macronutrient goals and nutritionist-verified meal plans."
+    "tag": "AI-powered healthtech/nutrition app generating custom calorie budgets, macronutrient goals and nutritionist-verified meal plans.",
+    "tag_es": "Healthtech/nutrición impulsada por IA que genera presupuestos calóricos personalizados, metas de macronutrientes y planes de comidas verificados por nutricionistas."
   },
   {
     "name": "Hapi",
@@ -708,9 +781,10 @@
     "city": "lima",
     "address": "Lima (no specific address independently verifiable; US-incorporated for broker compliance)",
     "lat": -12.1005, "lng": -77.0345,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "Hybrid",
-    "tag": "Commission-free retail investment app letting LatAm consumers buy US-listed stocks, ETFs and crypto with zero minimums — operating across 18+ LatAm countries."
+    "tag": "Commission-free retail investment app letting LatAm consumers buy US-listed stocks, ETFs and crypto with zero minimums — operating across 18+ LatAm countries.",
+    "tag_es": "App de inversión retail sin comisiones que permite a consumidores latinos comprar acciones, ETFs y cripto listados en EE.UU. sin mínimos — operando en 18+ países de LatAm."
   },
   {
     "name": "Monnet Payments",
@@ -718,8 +792,20 @@
     "city": "lima",
     "address": "San Isidro, Lima",
     "lat": -12.0955, "lng": -77.0305,
-    "funding": { "type": "Startup" },
+    "funding": { "type": "Startup", "stage": "Seed" },
     "operating_model": "Hybrid",
-    "tag": "Payment processor for real-time B2B payins/payouts across local banking grids via a unified multi-currency API — live natively in 9 LatAm markets."
+    "tag": "Payment processor for real-time B2B payins/payouts across local banking grids via a unified multi-currency API — live natively in 9 LatAm markets.",
+    "tag_es": "Procesador de pagos para payins/payouts B2B en tiempo real a través de redes bancarias locales vía una API multi-moneda unificada — activo nativamente en 9 mercados de LatAm."
+  },
+  {
+    "name": "Dialogus",
+    "domain": "dialoguslabs.com",
+    "city": "lima",
+    "address": "San Isidro, Lima (YC S26 — Peruvian founders, operating in San Francisco)",
+    "lat": -12.0975, "lng": -77.0364,
+    "funding": { "type": "Startup", "stage": "Pre-Seed" },
+    "operating_model": "Remote",
+    "tag": "Y Combinator (S26) — foundational voice AI lab building agents that resolve live customer conversations across phone, workflow and enterprise systems.",
+    "tag_es": "Y Combinator (S26) — laboratorio de voz AI fundacional que construye agentes que resuelven conversaciones de clientes en vivo a través de teléfono, flujos de trabajo y sistemas empresariales."
   }
 ]

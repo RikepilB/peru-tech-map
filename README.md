@@ -8,6 +8,14 @@ Un mapa interactivo de startups, consultoras tecnológicas, espacios de coworkin
 
 ---
 
+## Mapa Del Codebase
+
+[![Codebase scan](docs/foglamp-scan.png)](https://foglamp.dev/scan/peru-grid-cnhzyw)
+
+Mapa generado por IA de la arquitectura del proyecto (servicios, stores, integraciones) — **[ver interactivo en Foglamp →](https://foglamp.dev/scan/peru-grid-cnhzyw)**
+
+---
+
 ## Qué Es
 
 Una aplicación web autocontenida sin paso de compilación, sin framework, sin backend. Renderiza un mapa vectorial de código abierto (MapLibre GL) y superpone un conjunto de datos investigado de empresas tecnológicas, consultoras, espacios de coworking e incubadoras peruanas. Todo el proyecto son tres archivos de datos más un archivo HTML, servidos como assets estáticos.
