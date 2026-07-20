@@ -21,6 +21,85 @@ session. Solved tasks → one concrete one-liner (file / PR / command).
 
 ---
 
+## Current state — 2026-07-20 (cb310615, part 7)
+
+**FormSubmit activated, live, wired to the hashed endpoint; two real submissions (Orexe,
+Tecretail) reviewed and added; a real UI bug (Stage field not showing) found already-fixed
+uncommitted, shipping it now.**
+
+- FormSubmit's activation email confirmed real (user clicked "Activate Form"). Fixed the
+  underlying issue it existed for: `FORM_ENDPOINT` in `index.html` was posting to the naked
+  email `ridi.pillaca@gmail.com` in public client-side JS — swapped for FormSubmit's hash
+  endpoint (`formsubmit.co/ajax/bbd1d388bad84c6ba3b9b23d6c784867`) so the real address isn't
+  scrapable from page source. Updated `README.md`'s stale "aún no configurado" line to match.
+- Two real submissions arrived once the form activated: **Orexe** (orexe.io — web-verified as
+  a real remote-first Lima cloud/platform-engineering consultancy, classified `Consultancy`
+  not the submitter's self-picked `Startup`, matching this dataset's existing convention) and
+  **Tecretail** (tecretail.org — verified real, San Borja-based retail ERP SaaS, founded 2024).
+  Both added to `companies.json` with bilingual `tag`/`tag_es` (80 entries total).
+- **Found and reverted a real data-corruption bug**: a separate session ("Project Control",
+  `docs/handoff/2026-07-18-project-control/`) had mojibake-corrupted this entire father
+  `HANDOFF.md` file when it edited it — every em-dash/accented char turned to garbage
+  (`ÃƒÆ’Ã‚Â¢...`) via what looks like a UTF-8-as-Latin1 double-encoding round-trip. Reverted to
+  the clean version before committing anything; re-added that session's legitimate content
+  below with correct encoding by hand (their own per-session `HANDOFF.md` file was NOT
+  corrupted, only this shared father file was — worth checking any other tool that writes to
+  this file for the same bug before it happens again).
+- **User flagged (via screenshot) that the add-company modal's Stage selector never
+  appears**, even with Category defaulting to "Startup". Root-caused on the live production
+  site: `index.html`'s `catSelect` only toggled `stageField`'s visibility on the dropdown's
+  `change` event — never on initial page load, so a user who never touches the Category
+  dropdown (it's already "Startup" by default) never sees the Stage field. **This exact fix
+  already existed uncommitted in the working tree** (refactored to a named `toggleStage()`
+  function with an explicit initial call) — not made by this session, just verified correct
+  live via a local server + browser automation (`catSelect.value` = "Startup",
+  `stageField` computed `display: block`) and now included in the ship.
+- `companies.json`/`ticker.json` still valid JSON; CI green on the last few merges.
+
+**Files changed this check-in (about to commit/ship):** `index.html` (FORM_ENDPOINT hash,
+pre-existing stage-field fix + stage-option reorder), `README.md` (FormSubmit status line),
+`companies.json` (+Orexe, +Tecretail).
+
+**Still unresolved, flagged repeatedly:** untracked `.claude/skills/*`, `.agents/`, `.codex/`
+dirs, and a recurring stray `nul` file — same unresolved cleanup item as parts 5/6.
+
+## Current state — 2026-07-18 (Project Control)
+
+Sesión transversal (no específica de peru-tech-map): se implementó `project-control` como
+CLI global local-first, disponible desde Codex, Claude Code, OpenCode y terminales de
+Windows. `project-control status -All` actualiza el inventario de las cuatro raíces
+registradas (PROYECTOS, workspace, Second Brain y project ledger) y muestra el resumen
+global.
+
+Estado verificado: 46 `project_id` únicos, 20 handoffs enlazados y 108 sesiones/exportaciones
+Codex deduplicadas. Las vistas viven en `Second Brain/02_Execution/Project_Control/`; el
+estado mínimo vive en `C:\Users\a2021\.project-control\`. No se cerraron procesos ni se
+eliminaron sesiones.
+
+Mantenimiento temporal instalado: revisión local diaria 22:30 (límite 5 min), inventario
+semanal domingo 18:00 (20 min) y desactivación automática 2026-08-01. `cleanup-plan` y
+`compact-plan` solo proponen cambios; `apply` exige `-Confirm`.
+
+Uso cotidiano simplificado: el atajo global `pc` permite usar `pc`, `pc recursos`, `pc
+semana`, `pc global`, `pc tareas`, `pc salud` y `pc ayuda` sin recordar la interfaz completa.
+No hace falta entrar a cada repo: los proyectos se resuelven desde la carpeta actual y `pc
+global` revisa todas las raíces registradas.
+
+El centro del Second Brain ahora incluye `02_Execution/Project_Control/CHEATSHEET.md` como
+referencia única de rutina, comandos completos, estados y protecciones.
+
+`codex-export` fue corregido para exportar una sesión activa mediante lectura compartida; el
+paquete trazable de esta sesión vive en `docs/handoff/2026-07-18-codex-019f64cf81ed/` y
+conserva el puntero activo del árbol.
+
+El estado de producto de peru-tech-map en el momento de esa sesión: PR #22 abierto (ya
+mergeado desde entonces — ver check-in 2026-07-20 arriba); los cambios de esa sesión no
+tocaron `index.html`, `companies.json` ni el deploy.
+
+*(Nota de la sesión 2026-07-20: el texto de esta sección estaba corrupto por un problema de
+codificación — reescrito arriba con los acentos correctos a partir del original en
+`docs/handoff/2026-07-18-project-control/HANDOFF.md`, que sí quedó íntegro.)*
+
 ## Current state — 2026-07-18 (cb310615, part 6)
 
 **Shipped the Phase-1 Spanish-docs translation diff found in part 5 — PR #22, open, not yet
@@ -118,6 +197,14 @@ Configuration" handshake. Full detail in `2026-07-06-initial-build/HANDOFF.md`, 
 
 ## Session index (append-only, newest first)
 
+- 2026-07-13-cb310615 (2026-07-20 check-in, part 7) — Fixed FormSubmit's exposed-email
+  endpoint, added 2 web-verified real submissions (Orexe, Tecretail), shipped a pre-existing
+  uncommitted fix for the add-company Stage-field-never-shows bug, and reverted a mojibake
+  encoding corruption another session had introduced into this father file.
+- 2026-07-18-project-control — Global (non-peru-tech-map-specific) session: built the
+  `project-control` CLI + `pc` shortcut, verified inventory across 4 registered roots. Did not
+  touch this repo's product code. Its current-state note above was corrupted by an encoding
+  bug when first written; rewritten with correct accents in the 2026-07-20 check-in.
 - 2026-07-13-cb310615 (2026-07-18 check-in, part 6) — `/gsd-ship` invoked but this repo has no
   `.planning/` tree; shipped manually instead — branched, committed the part-5 Phase-1
   translation diff + `PLAN.md` + handoff files, pushed, opened PR #22 (open, unmerged).

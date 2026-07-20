@@ -25,7 +25,7 @@ Una aplicación web autocontenida sin paso de compilación, sin framework, sin b
 - **[OpenFreeMap](https://openfreemap.org/)** — hosting gratuito de tiles vectoriales y estilos base. Sin API key, sin límites de uso.
 - Los tiles vectoriales siguen el **[esquema OpenMapTiles](https://openmaptiles.org/schema/)** (source-layers: `building`, `water`, `transportation`, `place`, `poi`, etc.).
 - **[Geist Mono](https://vercel.com/font)** para toda la tipografía de la interfaz.
-- **[FormSubmit](https://formsubmit.co/)** para el formulario "agregar empresa" (relay de email para sitios estáticos, sin servidor) — **aún no configurado**, ver abajo.
+- **[FormSubmit](https://formsubmit.co/)** para el formulario "agregar empresa" (relay de email para sitios estáticos, sin servidor).
 
 **Diseño:** consola monocromática casi negra con verde Solarium (`#056540`) como único acento. Vista 2D tipo plano en picado por defecto, con un toggle `[3D]`. Las etiquetas de calles solo aparecen en vías principales; los POI por defecto del mapa están ocultos para que solo se vean los marcadores de empresas.
 

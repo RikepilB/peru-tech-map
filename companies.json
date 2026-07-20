@@ -829,5 +829,27 @@
     "operating_model": "Remote",
     "tag": "Professional community connecting Peruvian talent abroad with career opportunities, networks and success stories from Peru's top companies.",
     "tag_es": "Comunidad profesional que conecta al talento peruano en el extranjero con oportunidades laborales, redes e historias de éxito de las mejores empresas del Perú."
+  },
+  {
+    "name": "Orexe",
+    "domain": "orexe.io",
+    "city": "lima",
+    "address": "Lima (remote-first, no confirmed office address)",
+    "lat": -12.0991, "lng": -77.0365,
+    "funding": { "type": "Consultancy" },
+    "operating_model": "Remote",
+    "tag": "Remote-first Lima consultancy offering AWS/cloud platform engineering, DevOps, data & AI services, and outsourced software development teams.",
+    "tag_es": "Consultora limeña remote-first de ingeniería de plataformas AWS/cloud, DevOps, datos e IA, y equipos de desarrollo de software tercerizados."
+  },
+  {
+    "name": "Tecretail",
+    "domain": "tecretail.org",
+    "city": "lima",
+    "address": "San Borja, Lima",
+    "lat": -12.0988, "lng": -76.9968,
+    "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
+    "tag": "Retail/e-commerce ERP SaaS from San Borja — unified POS, multi-location inventory, and a same-day delivery network (Tecretail Express) across Lima.",
+    "tag_es": "ERP SaaS de retail y e-commerce desde San Borja — POS unificado, inventario multi-tienda y red de entregas el mismo día (Tecretail Express) en Lima."
   }
 ]

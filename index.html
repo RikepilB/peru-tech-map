@@ -521,15 +521,14 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
             <div class="field" id="stageField" style="display:none"><label data-i18n="fStage">Stage</label>
               <select name="Stage">
                 <option value="" data-i18n="pStage">Select stage</option>
-                <option value="Pre-Seed" data-i18n="stagePreSeed">Pre-Seed</option>
                 <option value="Seed" data-i18n="stageSeed">Seed</option>
-                <option value="Series A" data-i18n="stageSeriesA">Series A</option>
-                <option value="Series B" data-i18n="stageSeriesB">Series B</option>
-                <option value="Series C+" data-i18n="stageSeriesC">Series C+</option>
-                <option value="Late Stage" data-i18n="stageLate">Late Stage</option>
+                <option value="Pre-Seed" data-i18n="stagePreSeed">Pre-Seed</option>
                 <option value="Revenue" data-i18n="stageRevenue">Revenue</option>
+                <option value="Series C+" data-i18n="stageSeriesC">Series C+</option>
+                <option value="Series B" data-i18n="stageSeriesB">Series B</option>
+                <option value="Series A" data-i18n="stageSeriesA">Series A</option>
                 <option value="Acquired" data-i18n="stageAcquired">Acquired</option>
-                <option value="Public" data-i18n="stagePublic">Public</option>
+                <option value="Late Stage" data-i18n="stageLate">Late Stage</option>
               </select>
             </div>
             <div class="field"><label data-i18n="fEmail">Your Email</label><input name="Submitter Email" type="email" placeholder="you@email.com" data-i18n-placeholder="pEmail" /></div>
@@ -602,7 +601,7 @@ const CITIES = {
     minZoom: 11,
   },
 };
-const FORM_ENDPOINT = "https://formsubmit.co/ajax/ridi.pillaca@gmail.com";
+const FORM_ENDPOINT = "https://formsubmit.co/ajax/bbd1d388bad84c6ba3b9b23d6c784867";
 const MUTED_FUNDING_TYPES = new Set(["Startup", "Consultancy", "Coworking", "Incubator", "Nonprofit", "Fund"]);
 
 const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
@@ -1134,9 +1133,11 @@ const addHint = document.getElementById("addHint");
 document.getElementById("addBtn").onclick = () => scrim.classList.add("open");
 document.getElementById("closeModal").onclick = () => closeModal();
 document.getElementById("successClose").onclick = () => closeModal();
-document.getElementById("catSelect").addEventListener("change", function () {
-  document.getElementById("stageField").style.display = this.value === "Startup" ? "" : "none";
-});
+const catSelect = document.getElementById("catSelect");
+const stageField = document.getElementById("stageField");
+function toggleStage() { stageField.style.display = catSelect.value === "Startup" ? "" : "none"; }
+catSelect.addEventListener("change", toggleStage);
+toggleStage();
 scrim.addEventListener("click", (e) => { if (e.target === scrim) closeModal(); });
 function closeModal() { scrim.classList.remove("open"); setAddMode(false); }
 function setAddMode(on) { addMode = on; addHint.classList.toggle("show", on); map.getCanvas().style.cursor = on ? "crosshair" : ""; if (on) scrim.classList.remove("open"); }
