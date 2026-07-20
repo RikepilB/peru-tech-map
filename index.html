@@ -18,8 +18,8 @@
 <meta name="twitter:description" content="An interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa." />
 <meta name="twitter:image" content="https://perugrid.com/assets/og-image.jpg" />
 <script>
-// EN/ES translation dictionary for UI chrome (labels, buttons, form, loader). Company data
-// (names, taglines, funding types) stays as-is — not translated, see docs/handoff for scope.
+// EN/ES translation dictionary for UI chrome (labels, buttons, form, loader). Company
+// descriptions toggle between `tag` (EN) and `tag_es` (ES) — see selectCompany().
 window.I18N = {
   en: {
     tagline: "Where The Builders Are",
@@ -40,6 +40,9 @@ window.I18N = {
     fLocation: "Location", dropPin: "Drop A Pin", noPinSet: "NO PIN SET",
     fCategory: "Category",
     fEmail: "Your Email", pEmail: "you@email.com",
+    fStage: "Stage", pStage: "Select stage",
+    stagePreSeed: "Pre-Seed", stageSeed: "Seed", stageSeriesA: "Series A", stageSeriesB: "Series B", stageSeriesC: "Series C+",
+    stageLate: "Late Stage", stageRevenue: "Revenue", stageAcquired: "Acquired", stagePublic: "Public",
     submit: "Submit For Review", submitting: "Submitting…", tryAgain: "Try Again",
     submitError: "Something went wrong submitting the form — check your connection and try again.",
     submitted: "Submitted", submittedBody: "Thanks — new companies get reviewed and added.",
@@ -59,7 +62,7 @@ window.I18N = {
     metaDesc: "Peru Grid — an interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa.",
     catStartup: "Startup", catConsultancy: "Consultancy", catCoworking: "Coworking",
     catIncubator: "Incubator", catNonprofit: "Nonprofit", catFund: "Fund",
-    showInvestors: "Show Investors", showCoworking: "Show Coworking Areas", showNonProfits: "Show Non-Profits & Communities",
+    showInvestors: "Show Investors", showCoworking: "Coworking Mode", showNonProfits: "Show Non-Profits & Communities",
     togglePanel: "Collapse sidebar",
     viewOnGithub: "View on GitHub",
   },
@@ -82,6 +85,9 @@ window.I18N = {
     fLocation: "Ubicación", dropPin: "Colocar Un Pin", noPinSet: "SIN PIN",
     fCategory: "Categoría",
     fEmail: "Tu Correo", pEmail: "tu@correo.com",
+    fStage: "Etapa", pStage: "Selecciona etapa",
+    stagePreSeed: "Pre-Seed", stageSeed: "Seed", stageSeriesA: "Serie A", stageSeriesB: "Serie B", stageSeriesC: "Serie C+",
+    stageLate: "Late Stage", stageRevenue: "Revenue", stageAcquired: "Adquirida", stagePublic: "Pública",
     submit: "Enviar Para Revisión", submitting: "Enviando…", tryAgain: "Intentar De Nuevo",
     submitError: "Algo salió mal al enviar el formulario — revisa tu conexión e intenta de nuevo.",
     submitted: "Enviado", submittedBody: "Gracias — las nuevas empresas se revisan y se agregan.",
@@ -101,7 +107,7 @@ window.I18N = {
     metaDesc: "Peru Grid — un mapa interactivo de startups, consultoras cloud, coworkings e incubadoras en Lima y Arequipa.",
     catStartup: "Startup", catConsultancy: "Consultoría", catCoworking: "Coworking",
     catIncubator: "Incubadora", catNonprofit: "Sin Fines De Lucro", catFund: "Fondo",
-    showInvestors: "Mostrar Inversionistas", showCoworking: "Mostrar Coworkings", showNonProfits: "Mostrar ONGs Y Comunidades",
+    showInvestors: "Mostrar Inversionistas", showCoworking: "Modo Coworking", showNonProfits: "Mostrar ONGs Y Comunidades",
     togglePanel: "Colapsar barra lateral",
     viewOnGithub: "Ver en GitHub",
   },
@@ -109,7 +115,7 @@ window.I18N = {
 window.getLang = function () {
   var saved = localStorage.getItem("pg_lang");
   if (saved === "en" || saved === "es") return saved;
-  return (navigator.language || "").toLowerCase().indexOf("es") === 0 ? "es" : "en";
+  return (navigator.language || "").toLowerCase().indexOf("en") === 0 ? "en" : "es";
 };
 window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[key]; };
 
@@ -503,13 +509,27 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
           </div>
           <div class="row2">
             <div class="field"><label data-i18n="fCategory">Category</label>
-              <select name="Category">
+              <select name="Category" id="catSelect">
                 <option value="Startup" data-i18n="catStartup">Startup</option>
                 <option value="Consultancy" data-i18n="catConsultancy">Consultancy</option>
                 <option value="Coworking" data-i18n="catCoworking">Coworking</option>
                 <option value="Incubator" data-i18n="catIncubator">Incubator</option>
                 <option value="Nonprofit" data-i18n="catNonprofit">Nonprofit</option>
                 <option value="Fund" data-i18n="catFund">Fund</option>
+              </select>
+            </div>
+            <div class="field" id="stageField" style="display:none"><label data-i18n="fStage">Stage</label>
+              <select name="Stage">
+                <option value="" data-i18n="pStage">Select stage</option>
+                <option value="Pre-Seed" data-i18n="stagePreSeed">Pre-Seed</option>
+                <option value="Seed" data-i18n="stageSeed">Seed</option>
+                <option value="Series A" data-i18n="stageSeriesA">Series A</option>
+                <option value="Series B" data-i18n="stageSeriesB">Series B</option>
+                <option value="Series C+" data-i18n="stageSeriesC">Series C+</option>
+                <option value="Late Stage" data-i18n="stageLate">Late Stage</option>
+                <option value="Revenue" data-i18n="stageRevenue">Revenue</option>
+                <option value="Acquired" data-i18n="stageAcquired">Acquired</option>
+                <option value="Public" data-i18n="stagePublic">Public</option>
               </select>
             </div>
             <div class="field"><label data-i18n="fEmail">Your Email</label><input name="Submitter Email" type="email" placeholder="you@email.com" data-i18n-placeholder="pEmail" /></div>
@@ -834,14 +854,15 @@ let selected = -1;
 let sortMode = "default"; // "default" (JSON order) | "alpha" (A–Z)
 
 // Landing view: Startups + Consultancies (+ Acquired, same bucket) render by default with
-// zero clicks. Investors/Coworking/Non-Profits are overlay toggles — each blends its own
-// funding.type(s) into the same feed rather than replacing it (PDF spec: "wildcard overlay").
+// zero clicks. Investors and Non-Profits are overlay toggles that blend their own
+// funding.type(s) into the feed. Coworking is exclusive mode — when active, ONLY coworking
+// spaces, cafés and libraries show; everything else is hidden.
 const viewState = { showInvestors: false, showCoworking: false, showNonProfits: false };
 const DEFAULT_VISIBLE_TYPES = new Set(["Startup", "Consultancy", "Acquired"]);
 function typeVisible(type) {
+  if (viewState.showCoworking) return type === "Coworking";
   if (DEFAULT_VISIBLE_TYPES.has(type)) return true;
   if ((type === "Fund" || type === "Incubator") && viewState.showInvestors) return true;
-  if (type === "Coworking" && viewState.showCoworking) return true;
   if (type === "Nonprofit" && viewState.showNonProfits) return true;
   return false;
 }
@@ -921,7 +942,8 @@ function validDomain(d) { return d && d.includes("."); }
 function fundingChip(f) {
   if (!f) return "";
   const cls = MUTED_FUNDING_TYPES.has(f.type) ? "boot" : "fund";
-  return `<span class="chip ${cls}">${f.type}</span>`;
+  const stage = f.stage ? ` <span class="chip fund">${f.stage}</span>` : "";
+  return `<span class="chip ${cls}">${f.type}</span>${stage}`;
 }
 
 function buildMarkers() {
@@ -981,7 +1003,7 @@ function selectCompany(i, fly) {
     .setLngLat([c.lng, c.lat])
     .setHTML(`
       <div class="pname">${c.name}</div>
-      ${c.tag ? `<div class="ptag">${c.tag}</div>` : ""}
+      ${c.tag ? `<div class="ptag">${(getLang() === "es" && c.tag_es) ? c.tag_es : c.tag}</div>` : ""}
       ${validDomain(c.domain) ? `<a class="site" href="https://${c.domain}" target="_blank" rel="noopener">${c.domain} ↗</a>` : ""}
       <div>${fundingChip(c.funding)}</div>
       ${c.address ? `<div class="addr">${c.address}</div>` : ""}
@@ -1018,7 +1040,7 @@ function buildSidebar() {
       <span class="prefix">></span>
       <div class="logo">${logoHtml}</div>
       <div class="meta"><div class="name">${c.name}</div></div>
-      <div class="tag">${c.funding ? c.funding.type : ""}</div>`;
+      <div class="tag">${c.funding ? (c.funding.stage || c.funding.type) : ""}</div>`;
     row.addEventListener("click", () => selectCompany(i, true));
     list.appendChild(row);
   });
@@ -1113,6 +1135,9 @@ const addHint = document.getElementById("addHint");
 document.getElementById("addBtn").onclick = () => scrim.classList.add("open");
 document.getElementById("closeModal").onclick = () => closeModal();
 document.getElementById("successClose").onclick = () => closeModal();
+document.getElementById("catSelect").addEventListener("change", function () {
+  document.getElementById("stageField").style.display = this.value === "Startup" ? "" : "none";
+});
 scrim.addEventListener("click", (e) => { if (e.target === scrim) closeModal(); });
 function closeModal() { scrim.classList.remove("open"); setAddMode(false); }
 function setAddMode(on) { addMode = on; addHint.classList.toggle("show", on); map.getCanvas().style.cursor = on ? "crosshair" : ""; if (on) scrim.classList.remove("open"); }

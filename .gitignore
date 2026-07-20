@@ -9,3 +9,6 @@ CLAUDE.local.md
 
 # visual-brainstorming companion scratch (superpowers skill)
 .superpowers/
+
+# foglamp codebase scan (contains editToken secret)
+.foglamp/
