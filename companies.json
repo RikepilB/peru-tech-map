@@ -807,5 +807,27 @@
     "operating_model": "Remote",
     "tag": "Y Combinator (S26) — foundational voice AI lab building agents that resolve live customer conversations across phone, workflow and enterprise systems.",
     "tag_es": "Y Combinator (S26) — laboratorio de voz AI fundacional que construye agentes que resuelven conversaciones de clientes en vivo a través de teléfono, flujos de trabajo y sistemas empresariales."
+  },
+  {
+    "name": "Yavendio",
+    "domain": "yavendio.com",
+    "city": "lima",
+    "address": "Lima (Peruvian founders; HQ in São Paulo, SP)",
+    "lat": -12.0975, "lng": -77.0330,
+    "funding": { "type": "Startup", "stage": "Seed" },
+    "operating_model": "Remote",
+    "tag": "AI virtual sales agent for WhatsApp and Instagram — helps ecommerce B2C brands boost sales through conversational commerce.",
+    "tag_es": "Vendedor virtual de IA para WhatsApp e Instagram — ayuda a marcas de ecommerce B2C a incrementar ventas mediante comercio conversacional."
+  },
+  {
+    "name": "Peru Abroad",
+    "domain": "abroadperu.org",
+    "city": "lima",
+    "address": "Lima (HQ: Boston, MA)",
+    "lat": -12.0990, "lng": -77.0350,
+    "funding": { "type": "Nonprofit" },
+    "operating_model": "Remote",
+    "tag": "Professional community connecting Peruvian talent abroad with career opportunities, networks and success stories from Peru's top companies.",
+    "tag_es": "Comunidad profesional que conecta al talento peruano en el extranjero con oportunidades laborales, redes e historias de éxito de las mejores empresas del Perú."
   }
 ]
