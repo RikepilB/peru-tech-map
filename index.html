@@ -1074,8 +1074,11 @@ document.querySelectorAll(".barbtn[data-view]").forEach((btn) => {
   btn.addEventListener("click", (e) => {
     e.stopPropagation();
     const key = btn.dataset.view;
-    viewState[key] = !viewState[key];
-    btn.classList.toggle("active", viewState[key]);
+    const turningOn = !viewState[key];
+    // Exclusive: clicking a pill resets all others so only one view mode is ever active.
+    Object.keys(viewState).forEach((k) => { viewState[k] = false; });
+    viewState[key] = turningOn;
+    document.querySelectorAll(".barbtn[data-view]").forEach((b) => b.classList.toggle("active", viewState[b.dataset.view]));
     applyCity(currentCity, { skipFly: true });
   });
 });
