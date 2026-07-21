@@ -852,5 +852,16 @@
     "operating_model": "On-Site",
     "tag": "Retail/e-commerce ERP SaaS from San Borja — unified POS, multi-location inventory, and a same-day delivery network (Tecretail Express) across Lima.",
     "tag_es": "ERP SaaS de retail y e-commerce desde San Borja — POS unificado, inventario multi-tienda y red de entregas el mismo día (Tecretail Express) en Lima."
+  },
+  {
+    "name": "Neuracode",
+    "domain": "neuracode.dev",
+    "city": "lima",
+    "address": "156 Calle Los Pinos, Dpto. 609, Callao, Lima",
+    "lat": -12.0566, "lng": -77.1181,
+    "funding": { "type": "Consultancy" },
+    "operating_model": "On-Site",
+    "tag": "Custom software, AI agents and cybersecurity consultancy for businesses — also runs an AI-literacy academy for non-programmers.",
+    "tag_es": "Consultora de software a medida, agentes de IA y ciberseguridad para empresas — también dicta una academia de IA para quienes no programan."
   }
 ]
