@@ -874,5 +874,38 @@
     "operating_model": "Remote",
     "tag": "Agentic software-production platform — sketch a flow on its collaborative canvas, generate production-ready code, and deploy with one click.",
     "tag_es": "Plataforma de producción de software agéntica — dibuja un flujo en su lienzo colaborativo, genera código listo para producción y despliega con un clic."
+  },
+  {
+    "name": "START Lima",
+    "domain": "startlima.org",
+    "city": "lima",
+    "address": "Lima (no specific street address publicly verifiable)",
+    "lat": -12.0995, "lng": -77.0375,
+    "funding": { "type": "Incubator" },
+    "operating_model": "On-Site",
+    "tag": "Non-profit student entrepreneurship incubator, part of the 16-chapter START Network across Europe and Latin America — helps students explore and launch startups.",
+    "tag_es": "Incubadora sin fines de lucro de emprendimiento estudiantil, parte de la red START Network de 16 sedes en Europa y Latinoamérica — ayuda a estudiantes a explorar y lanzar startups."
+  },
+  {
+    "name": "YakuSmart",
+    "domain": "yakusmart.io",
+    "city": "lima",
+    "address": "Lima (no specific street address publicly verifiable)",
+    "lat": -12.0995, "lng": -77.0375,
+    "funding": { "type": "Startup" },
+    "operating_model": "On-Site",
+    "tag": "IoT + AI platform for export farms — soil, weather, satellite and field data combined into precise, traceable irrigation decisions.",
+    "tag_es": "Plataforma IoT + IA para fundos de exportación — combina datos de suelo, clima, satélite y campo en decisiones de riego precisas y trazables."
+  },
+  {
+    "name": "StartUp Perú",
+    "domain": "startup.proinnovate.gob.pe",
+    "city": "lima",
+    "address": "Av. Paz Soldán 193, San Isidro, Lima",
+    "lat": -12.0975, "lng": -77.0295,
+    "funding": { "type": "Incubator" },
+    "operating_model": "On-Site",
+    "tag": "National innovation program (Ministry of Production / ProInnóvate) funding and supporting Peruvian startups through competitive grant calls.",
+    "tag_es": "Programa nacional de innovación (Ministerio de la Producción / ProInnóvate) que financia y apoya startups peruanas mediante concursos de fondos no reembolsables."
   }
 ]
