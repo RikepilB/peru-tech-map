@@ -62,7 +62,7 @@ window.I18N = {
     metaDesc: "Peru Grid — an interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa.",
     catStartup: "Startup", catConsultancy: "Consultancy", catCoworking: "Coworking",
     catIncubator: "Incubator", catNonprofit: "Nonprofit", catFund: "Fund",
-    showInvestors: "Show Investors", showCoworking: "Coworking Mode", showNonProfits: "Show Non-Profits & Communities",
+    showInvestors: "Investors Mode", showCoworking: "Coworking Mode", showNonProfits: "Non-Profits Mode",
     togglePanel: "Collapse sidebar",
     viewOnGithub: "View on GitHub",
   },
@@ -107,7 +107,7 @@ window.I18N = {
     metaDesc: "Peru Grid — un mapa interactivo de startups, consultoras cloud, coworkings e incubadoras en Lima y Arequipa.",
     catStartup: "Startup", catConsultancy: "Consultoría", catCoworking: "Coworking",
     catIncubator: "Incubadora", catNonprofit: "Sin Fines De Lucro", catFund: "Fondo",
-    showInvestors: "Mostrar Inversionistas", showCoworking: "Modo Coworking", showNonProfits: "Mostrar ONGs Y Comunidades",
+    showInvestors: "Modo Inversionistas", showCoworking: "Modo Coworking", showNonProfits: "Modo ONGs",
     togglePanel: "Colapsar barra lateral",
     viewOnGithub: "Ver en GitHub",
   },
@@ -521,15 +521,14 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
             <div class="field" id="stageField" style="display:none"><label data-i18n="fStage">Stage</label>
               <select name="Stage">
                 <option value="" data-i18n="pStage">Select stage</option>
-                <option value="Pre-Seed" data-i18n="stagePreSeed">Pre-Seed</option>
                 <option value="Seed" data-i18n="stageSeed">Seed</option>
-                <option value="Series A" data-i18n="stageSeriesA">Series A</option>
-                <option value="Series B" data-i18n="stageSeriesB">Series B</option>
-                <option value="Series C+" data-i18n="stageSeriesC">Series C+</option>
-                <option value="Late Stage" data-i18n="stageLate">Late Stage</option>
+                <option value="Pre-Seed" data-i18n="stagePreSeed">Pre-Seed</option>
                 <option value="Revenue" data-i18n="stageRevenue">Revenue</option>
+                <option value="Series C+" data-i18n="stageSeriesC">Series C+</option>
+                <option value="Series B" data-i18n="stageSeriesB">Series B</option>
+                <option value="Series A" data-i18n="stageSeriesA">Series A</option>
                 <option value="Acquired" data-i18n="stageAcquired">Acquired</option>
-                <option value="Public" data-i18n="stagePublic">Public</option>
+                <option value="Late Stage" data-i18n="stageLate">Late Stage</option>
               </select>
             </div>
             <div class="field"><label data-i18n="fEmail">Your Email</label><input name="Submitter Email" type="email" placeholder="you@email.com" data-i18n-placeholder="pEmail" /></div>
@@ -602,7 +601,7 @@ const CITIES = {
     minZoom: 11,
   },
 };
-const FORM_ENDPOINT = "https://formsubmit.co/ajax/ridi.pillaca@gmail.com";
+const FORM_ENDPOINT = "https://formsubmit.co/ajax/bbd1d388bad84c6ba3b9b23d6c784867";
 const MUTED_FUNDING_TYPES = new Set(["Startup", "Consultancy", "Coworking", "Incubator", "Nonprofit", "Fund"]);
 
 const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
@@ -853,17 +852,16 @@ let openPopup = null;
 let selected = -1;
 let sortMode = "default"; // "default" (JSON order) | "alpha" (A–Z)
 
-// Landing view: Startups + Consultancies (+ Acquired, same bucket) render by default with
-// zero clicks. Investors and Non-Profits are overlay toggles that blend their own
-// funding.type(s) into the feed. Coworking is exclusive mode — when active, ONLY coworking
-// spaces, cafés and libraries show; everything else is hidden.
+// Landing view: Startups + Consultancies (+ Acquired) render by default.
+// Each toggle (Investors, Coworking, Non-Profits) is exclusive — when one is
+// active, ONLY that type's entities show; everything else is hidden.
 const viewState = { showInvestors: false, showCoworking: false, showNonProfits: false };
 const DEFAULT_VISIBLE_TYPES = new Set(["Startup", "Consultancy", "Acquired"]);
 function typeVisible(type) {
   if (viewState.showCoworking) return type === "Coworking";
+  if (viewState.showInvestors) return type === "Fund" || type === "Incubator";
+  if (viewState.showNonProfits) return type === "Nonprofit";
   if (DEFAULT_VISIBLE_TYPES.has(type)) return true;
-  if ((type === "Fund" || type === "Incubator") && viewState.showInvestors) return true;
-  if (type === "Nonprofit" && viewState.showNonProfits) return true;
   return false;
 }
 
@@ -967,7 +965,11 @@ function buildMarkers() {
       const img = document.createElement("img");
       img.src = src;
       if (c.logoDark) img.classList.add("logo-dark");
-      img.onerror = () => { tile.innerHTML = `<span class="initial">${c.name[0]}</span>`; };
+      const showInitial = () => { tile.innerHTML = `<span class="initial">${c.name[0]}</span>`; };
+      img.onerror = showInitial;
+      // Google's favicon service never 404s — a domain with no indexed favicon still
+      // returns a 200 with its generic 16x16 default icon, so onerror never fires for it.
+      img.onload = () => { if (img.naturalWidth <= 16 && img.naturalHeight <= 16) showInitial(); };
       tile.appendChild(img);
     } else {
       tile.innerHTML = `<span class="initial">${c.name[0]}</span>`;
@@ -1034,7 +1036,7 @@ function buildSidebar() {
     row.dataset.idx = i;
     const src = logoSrc(c);
     const logoHtml = src
-      ? `<img class="${c.logoDark ? 'logo-dark' : ''}" src="${src}" loading="lazy" decoding="async" width="64" height="64" onerror="this.parentNode.innerHTML='<span class=\\'initial\\'>${c.name[0]}</span>'">`
+      ? `<img class="${c.logoDark ? 'logo-dark' : ''}" src="${src}" loading="lazy" decoding="async" width="64" height="64" onerror="this.parentNode.innerHTML='<span class=\\'initial\\'>${c.name[0]}</span>'" onload="if(this.naturalWidth<=16&&this.naturalHeight<=16)this.parentNode.innerHTML='<span class=\\'initial\\'>${c.name[0]}</span>'">`
       : `<span class="initial">${c.name[0]}</span>`;
     row.innerHTML = `
       <span class="prefix">></span>
@@ -1072,8 +1074,11 @@ document.querySelectorAll(".barbtn[data-view]").forEach((btn) => {
   btn.addEventListener("click", (e) => {
     e.stopPropagation();
     const key = btn.dataset.view;
-    viewState[key] = !viewState[key];
-    btn.classList.toggle("active", viewState[key]);
+    const turningOn = !viewState[key];
+    // Exclusive: clicking a pill resets all others so only one view mode is ever active.
+    Object.keys(viewState).forEach((k) => { viewState[k] = false; });
+    viewState[key] = turningOn;
+    document.querySelectorAll(".barbtn[data-view]").forEach((b) => b.classList.toggle("active", viewState[b.dataset.view]));
     applyCity(currentCity, { skipFly: true });
   });
 });
@@ -1135,9 +1140,11 @@ const addHint = document.getElementById("addHint");
 document.getElementById("addBtn").onclick = () => scrim.classList.add("open");
 document.getElementById("closeModal").onclick = () => closeModal();
 document.getElementById("successClose").onclick = () => closeModal();
-document.getElementById("catSelect").addEventListener("change", function () {
-  document.getElementById("stageField").style.display = this.value === "Startup" ? "" : "none";
-});
+const catSelect = document.getElementById("catSelect");
+const stageField = document.getElementById("stageField");
+function toggleStage() { stageField.style.display = catSelect.value === "Startup" ? "" : "none"; }
+catSelect.addEventListener("change", toggleStage);
+toggleStage();
 scrim.addEventListener("click", (e) => { if (e.target === scrim) closeModal(); });
 function closeModal() { scrim.classList.remove("open"); setAddMode(false); }
 function setAddMode(on) { addMode = on; addHint.classList.toggle("show", on); map.getCanvas().style.cursor = on ? "crosshair" : ""; if (on) scrim.classList.remove("open"); }
