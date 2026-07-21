@@ -386,6 +386,90 @@ GSD ship workflow (which needs ROADMAP.md/VERIFICATION.md) can't run. Asked user
 - Run `/export docs/handoff/2026-07-13-cb310615/transcript.md` (user must run this, not
   Claude) — re-run to capture part 5 + part 6, current `transcript.md` predates both.
 
+## Check-in — 2026-07-20 (part 7: FormSubmit fix, 2 new companies, stage-field bug, corruption revert)
+
+Picked up cold on a later date. Confirmed via `git log`/`gh pr list` that a lot shipped
+between part 6 and now, **not by this session**: PR #22 merged; a separate branch
+(`feat/bilingual-desc-funding-stage-coworking-form`, PR #31) shipped Phase 2+3 for real —
+`tag_es` bilingual field (all 78 entries at the time), `funding.stage` taxonomy, a coworking
+mode, and the add-company Stage form. Issue #15 (Spanish default) is now **closed**
+(2026-07-20). A local-only follow-up commit (`8622198`, authored directly by the user) added
+exclusive Investors/Non-Profits toggle modes plus 2 more companies (Yavendio, Peru Abroad —
+76→78) and was already pushed to `origin/feat/bilingual-desc-funding-stage-coworking-form`
+but never PR'd.
+
+This check-in's actual work:
+- **FormSubmit activation**: user received and clicked the "Activate Form" email — confirmed
+  live by 2 real incoming submissions. Fixed the real issue underneath: `FORM_ENDPOINT` in
+  `index.html` was posting to the naked email `ridi.pillaca@gmail.com`, visible to anyone
+  reading page source. Swapped for FormSubmit's provided hash endpoint. Updated `README.md`'s
+  stale "aún no configurado" (not yet configured) line to match reality.
+- **Two real submissions added to `companies.json`** (78→80): **Orexe** (orexe.io) — web
+  searched, confirmed real: a remote-first Lima AWS/cloud platform-engineering consultancy.
+  Classified `funding.type: "Consultancy"` rather than the submitter's self-picked "Startup",
+  matching this dataset's existing convention for service/consulting firms (Manantival
+  Tecnológico, Caleidos, etc. use the same category for the same kind of business — cloud
+  consulting + outsourced dev teams, not a VC-funded product startup). No confirmed office
+  (remote-first) — address noted as such, submitter-provided coords kept (verified inside
+  Lima bbox). **Tecretail** (tecretail.org) — confirmed real via web search: San Borja-based
+  retail/e-commerce ERP SaaS, founded May 2024, real CEO (Gonzalo Meza) findable on LinkedIn.
+  Classified `Startup`, `On-Site`, address "San Borja, Lima".
+  - Caught my own mistake before committing: first pass used `json.dump()` to append the two
+    entries, which silently reformatted the *entire* file's compact inline style
+    (`"lat": x, "lng": y` → multi-line, `funding: {...}` inline → expanded) — a 608-line diff
+    for a 2-entry addition. Reverted and re-did it as a plain text `Edit` appending only the
+    new block, preserving the existing file's formatting exactly (22-line diff).
+- **User reported (via screenshot) that the add-company modal's Stage dropdown never
+  appears**, even though Category defaults to "Startup". Root-caused on **live
+  production** (fetched `perugrid.com`'s actual served HTML): `catSelect`'s change-listener
+  only set `stageField`'s visibility inside the `change` event handler — there was no call
+  on initial page load, so a user who never touches the already-correct default dropopdown
+  never sees the field. Verified the *fix* for this exact bug was **already sitting
+  uncommitted** in the working tree (a refactor to a named `toggleStage()` function plus an
+  explicit initial call) — not made by this session; confirmed correct by spinning up a local
+  `http.server` + browser automation (`catSelect.value` = "Startup", `stageField` computed
+  `display: block`). Shipping it as part of this batch.
+- **Found and reverted a real encoding-corruption bug**: a separate "Project Control" session
+  (unrelated global tool, `docs/handoff/2026-07-18-project-control/`) had mojibake-corrupted
+  the entire shared father `docs/handoff/HANDOFF.md` when it edited it — every em-dash and
+  accented character turned into `ÃƒÆ’Ã‚Â¢...`-style garbage (classic UTF-8-read-as-Latin1
+  double-encoding). `git checkout -- docs/handoff/HANDOFF.md` reverted to the last clean
+  commit before touching anything else. Their own per-session file
+  (`2026-07-18-project-control/HANDOFF.md`) was NOT corrupted — only the shared father file
+  was — so re-typed their legitimate current-state content back in by hand with correct
+  Spanish accents, sourced from their clean per-session file, and added the missing session-
+  index line for their session (they'd updated `## Current state` but never appended to
+  `## Session index`).
+
+## Files changed (part 7)
+- `index.html` — `FORM_ENDPOINT` now uses the FormSubmit hash instead of the naked email
+  (pre-existing, uncommitted `toggleStage()` initial-call fix and a cosmetic stage-option
+  reorder are also included in this diff, not authored by me).
+- `README.md` — corrected the FormSubmit "not yet configured" status line.
+- `companies.json` — +Orexe, +Tecretail (78→80), clean 22-line diff.
+- `docs/handoff/HANDOFF.md` — reverted the mojibake corruption, re-added the Project Control
+  session's content with correct encoding, added this session's new current-state + index
+  entries.
+
+## Failed attempts (part 7)
+- First `companies.json` append via `json.dump()` reformatted the whole file — reverted
+  before committing, redone as a targeted text edit (see above).
+
+## Next steps (part 7)
+- **Commit + push + PR this batch** (FormSubmit fix, Orexe/Tecretail, stage-field fix,
+  handoff corruption revert) — not yet done as of writing this entry, happening next in this
+  same turn.
+- Local branch `feat/bilingual-desc-funding-stage-coworking-form` still carries the unmerged,
+  pushed-but-not-PR'd commit `8622198` (Investors/Non-Profits exclusive modes, Yavendio, Peru
+  Abroad) — needs its own PR at some point, separate from this batch.
+- Flag to the user: whatever tool/session writes to the shared `docs/handoff/HANDOFF.md`
+  father file has an encoding bug worth finding and fixing at the source, since this is the
+  second time this file has needed a manual encoding rescue.
+- Untracked `.claude/skills/*`, `.agents/`, `.codex/`, and a recurring stray `nul` file —
+  still unresolved across 3 check-ins now (parts 5, 6, 7).
+- Run `/export docs/handoff/2026-07-13-cb310615/transcript.md` (user must run this, not
+  Claude) — re-run to capture parts 5–7.
+
 ## Files in this folder
 - `HANDOFF.md` — this file
 - `snapshot-235350.md`, `snapshot-025657.md` — auto PreCompact snapshots
