@@ -120,8 +120,17 @@ Luego abre **http://localhost:8000**.
 - **El formulario "Agregar Empresa" usa FormSubmit.** `FORM_ENDPOINT` ya está configurado en
   `index.html`; el destinatario debe mantener activa la verificación de [FormSubmit](https://formsubmit.co/).
   Cada envío se revisa manualmente antes de incorporarse al dataset.
-- El favicon es un SVG inline autocontenido (data URI, no requiere archivo). **La imagen para compartir en redes sigue siendo un placeholder**: `og:image`/`twitter:image` apuntan a `https://perugrid.com/assets/og-image.jpg`, pero ese archivo aún no existe — agrega una captura o gráfico real en `assets/og-image.jpg` (1342×896 o proporción similar 3:2) para que las vistas previas de enlaces (Slack, Twitter, WhatsApp) muestren una imagen en vez de nada.
+- El favicon es un SVG inline autocontenido (data URI, no requiere archivo).
 - Hay una carpeta `assets/logos/` para overrides locales de logos de empresas (campo `logo` en `companies.json`) — úsala cuando el favicon de Google sea genérico, esté en blanco o no represente bien la marca. El resto de entradas cae de vuelta al servicio de favicons de Google o a un tile con inicial.
+
+---
+
+## Roadmap V2
+
+El proyecto tiene un [roadmap para V2](docs/roadmap-v2.md) — migración a una plataforma
+administrada con Django + PostgreSQL, back-office interno y mapa público 3D. Ver el
+[milestone V2](https://github.com/RikepilB/peru-tech-map/milestone/1) y el epic
+[#23](https://github.com/RikepilB/peru-tech-map/issues/23) para el detalle.
 
 ---
 

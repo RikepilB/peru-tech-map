@@ -39,12 +39,15 @@ window.I18N = {
     fWebsite: "Website", pWebsite: "acme.com",
     fLocation: "Location", dropPin: "Drop A Pin", noPinSet: "NO PIN SET",
     fCategory: "Category",
+    fOperatingModel: "Operating Model",
+    modelOnSite: "On-Site", modelHybrid: "Hybrid", modelRemote: "Remote",
     fEmail: "Your Email", pEmail: "you@email.com",
     fStage: "Stage", pStage: "Select stage",
     stagePreSeed: "Pre-Seed", stageSeed: "Seed", stageSeriesA: "Series A", stageSeriesB: "Series B", stageSeriesC: "Series C+",
     stageLate: "Late Stage", stageRevenue: "Revenue", stageAcquired: "Acquired", stagePublic: "Public",
     submit: "Submit For Review", submitting: "Submitting…", tryAgain: "Try Again",
     submitError: "Something went wrong submitting the form — check your connection and try again.",
+    pinRequired: "On-Site companies need a pin — drop one on the map first.",
     submitted: "Submitted", submittedBody: "Thanks — new companies get reviewed and added.",
     bootInit: "INITIALIZING MAPLIBRE GL", bootTiles: "LOADING VECTOR TILES", bootGrid: "MOUNTING COMPANY GRID",
     bootBooting: "BOOTING PERU GRID…", bootOnline: "GRID ONLINE ✓",
@@ -84,12 +87,15 @@ window.I18N = {
     fWebsite: "Sitio Web", pWebsite: "acme.com",
     fLocation: "Ubicación", dropPin: "Colocar Un Pin", noPinSet: "SIN PIN",
     fCategory: "Categoría",
+    fOperatingModel: "Modelo Operativo",
+    modelOnSite: "Presencial", modelHybrid: "Híbrido", modelRemote: "Remoto",
     fEmail: "Tu Correo", pEmail: "tu@correo.com",
     fStage: "Etapa", pStage: "Selecciona etapa",
     stagePreSeed: "Pre-Seed", stageSeed: "Seed", stageSeriesA: "Serie A", stageSeriesB: "Serie B", stageSeriesC: "Serie C+",
     stageLate: "Late Stage", stageRevenue: "Revenue", stageAcquired: "Adquirida", stagePublic: "Pública",
     submit: "Enviar Para Revisión", submitting: "Enviando…", tryAgain: "Intentar De Nuevo",
     submitError: "Algo salió mal al enviar el formulario — revisa tu conexión e intenta de nuevo.",
+    pinRequired: "Las empresas presenciales necesitan un pin — colócalo en el mapa primero.",
     submitted: "Enviado", submittedBody: "Gracias — las nuevas empresas se revisan y se agregan.",
     bootInit: "INICIANDO MAPLIBRE GL", bootTiles: "CARGANDO TILES VECTORIALES", bootGrid: "MONTANDO GRID DE EMPRESAS",
     bootBooting: "INICIANDO PERU GRID…", bootOnline: "GRID EN LÍNEA ✓",
@@ -498,7 +504,14 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
           <div class="field"><label data-i18n="city">City</label>
             <select name="City"><option value="lima">Lima</option><option value="arequipa">Arequipa</option></select>
           </div>
-          <div class="field">
+          <div class="field"><label data-i18n="fOperatingModel">Operating Model</label>
+            <select name="Operating Model" id="modelSelect">
+              <option value="On-Site" data-i18n="modelOnSite">On-Site</option>
+              <option value="Hybrid" data-i18n="modelHybrid">Hybrid</option>
+              <option value="Remote" data-i18n="modelRemote">Remote</option>
+            </select>
+          </div>
+          <div class="field" id="locationField">
             <label data-i18n="fLocation">Location</label>
             <div class="pin-row">
               <button type="button" class="btn ghost" id="dropPin" data-i18n="dropPin">Drop A Pin</button>
@@ -1149,6 +1162,12 @@ const stageField = document.getElementById("stageField");
 function toggleStage() { stageField.style.display = catSelect.value === "Startup" ? "" : "none"; }
 catSelect.addEventListener("change", toggleStage);
 toggleStage();
+
+const modelSelect = document.getElementById("modelSelect");
+const locationField = document.getElementById("locationField");
+function toggleLocation() { locationField.style.display = modelSelect.value === "Remote" ? "none" : ""; }
+modelSelect.addEventListener("change", toggleLocation);
+toggleLocation();
 scrim.addEventListener("click", (e) => { if (e.target === scrim) closeModal(); });
 function closeModal() { scrim.classList.remove("open"); setAddMode(false); }
 function setAddMode(on) { addMode = on; addHint.classList.toggle("show", on); map.getCanvas().style.cursor = on ? "crosshair" : ""; if (on) scrim.classList.remove("open"); }
@@ -1173,10 +1192,15 @@ map.on("click", (e) => {
 
 document.getElementById("coForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const btn = document.getElementById("submitBtn");
-  btn.textContent = t("submitting"); btn.disabled = true;
   const errEl = document.getElementById("formError");
   errEl.style.display = "none";
+  if (modelSelect.value === "On-Site" && !document.getElementById("latIn").value) {
+    errEl.textContent = t("pinRequired");
+    errEl.style.display = "block";
+    return;
+  }
+  const btn = document.getElementById("submitBtn");
+  btn.textContent = t("submitting"); btn.disabled = true;
   const data = Object.fromEntries(new FormData(e.target).entries());
   data._subject = "New company submission — Peru Grid";
   data._template = "table";
