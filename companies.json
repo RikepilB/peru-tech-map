@@ -907,5 +907,46 @@
     "operating_model": "On-Site",
     "tag": "National innovation program (Ministry of Production / ProInnóvate) funding and supporting Peruvian startups through competitive grant calls.",
     "tag_es": "Programa nacional de innovación (Ministerio de la Producción / ProInnóvate) que financia y apoya startups peruanas mediante concursos de fondos no reembolsables."
+  },
+  {
+    "name": "Vallejo Librería-Café",
+    "city": "lima",
+    "address": "Av. Camino Real 1119, San Isidro, Lima",
+    "lat": -12.1052878, "lng": -77.0388445,
+    "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
+    "tag": "Literary café-bookstore in San Isidro combining curated books, specialty coffee and a laptop-friendly seating area — open Mon-Sat 8am-10pm, Sun 8am-9pm.",
+    "tag_es": "Café-librería de San Isidro que combina libros curados, café de especialidad y mesas cómodas para trabajar — abierto Lun-Sáb 8am-10pm, Dom 8am-9pm."
+  },
+  {
+    "name": "La Bodega Verde",
+    "city": "lima",
+    "address": "Jr. Mariscal José Antonio de Sucre 335A, Barranco, Lima",
+    "lat": -12.1482221, "lng": -77.0225903,
+    "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
+    "tag": "Gluten-free, organic café in Barranco serving açaí bowls, smoothies and salads — cozy, laptop-friendly space with natural light.",
+    "tag_es": "Café orgánico y sin gluten en Barranco, con tazones de açaí, batidos y ensaladas — espacio acogedor con luz natural, ideal para trabajar."
+  },
+  {
+    "name": "Sofá Café Barranco",
+    "domain": "sofacafe.pe",
+    "city": "lima",
+    "address": "Av. Prolongación San Martín, Barranco, Lima",
+    "lat": -12.1413883, "lng": -77.0231407,
+    "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
+    "tag": "Barranco branch of a multi-location Lima café chain — plush seating, charging stations, fast WiFi and a full menu, popular with freelancers.",
+    "tag_es": "Sede de Barranco de una cadena de cafés con varias sedes en Lima — asientos cómodos, estaciones de carga, WiFi rápido y menú completo, popular entre freelancers."
+  },
+  {
+    "name": "Biblioteca Municipal de Barranco",
+    "city": "lima",
+    "address": "Malecón Mariscal Ramón Castilla, Barranco, Lima",
+    "lat": -12.1501191, "lng": -77.0214626,
+    "funding": { "type": "Coworking" },
+    "operating_model": "On-Site",
+    "tag": "Free public library in Barranco's municipal park with quiet study rooms and WiFi — Mon-Sat 8am-5pm.",
+    "tag_es": "Biblioteca pública gratuita en el parque municipal de Barranco, con salas de estudio tranquilas y WiFi — Lun-Sáb 8am-5pm."
   }
 ]
