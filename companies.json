@@ -947,5 +947,16 @@
     "operating_model": "On-Site",
     "tag": "Free public library in Barranco's municipal park with quiet study rooms and WiFi — Mon-Sat 8am-5pm.",
     "tag_es": "Biblioteca pública gratuita en el parque municipal de Barranco, con salas de estudio tranquilas y WiFi — Lun-Sáb 8am-5pm."
+  },
+  {
+    "name": "MyWorkIn",
+    "domain": "myworkin.pe",
+    "city": "lima",
+    "address": "Lima (no specific street address publicly verifiable)",
+    "lat": -12.1015, "lng": -77.0335,
+    "funding": { "type": "Startup", "stage": "Seed" },
+    "operating_model": "Hybrid",
+    "tag": "Employability platform for universities and technical institutes — connects students and graduates to the job market via AI and process automation. Founded 2024, 11-50 employees.",
+    "tag_es": "Plataforma de empleabilidad para universidades e institutos técnicos — conecta a estudiantes y egresados con el mercado laboral mediante IA y automatización de procesos. Fundada en 2024, 11-50 empleados."
   }
 ]
