@@ -576,6 +576,7 @@ document.getElementById("langToggle").addEventListener("click", function () {
   applyI18N();
   if (window.__pgRefreshSidebar) window.__pgRefreshSidebar();
   if (window.__pgUpdateStatusbar) window.__pgUpdateStatusbar();
+  if (window.__pgRefreshPopup) window.__pgRefreshPopup();
 });
 </script>
 
@@ -1014,6 +1015,9 @@ function selectCompany(i, fly) {
   if (fly) map.flyTo({ center: [c.lng, c.lat], zoom: 16, padding: flyPadding(), duration: 1500, essential: true });
   if (isMobile()) document.getElementById("panel").classList.remove("expanded");
 }
+// Rebuilds the open popup (if any) from the current language — selectCompany() always
+// reads getLang() fresh, so re-running it is enough to pick up the new tag_es/tag.
+window.__pgRefreshPopup = () => { if (openPopup && selected >= 0) selectCompany(selected, false); };
 
 map.on("click", () => {
   if (addMode) return;
