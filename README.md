@@ -25,7 +25,7 @@ Una aplicación web autocontenida sin paso de compilación, sin framework, sin b
 - **[OpenFreeMap](https://openfreemap.org/)** — hosting gratuito de tiles vectoriales y estilos base. Sin API key, sin límites de uso.
 - Los tiles vectoriales siguen el **[esquema OpenMapTiles](https://openmaptiles.org/schema/)** (source-layers: `building`, `water`, `transportation`, `place`, `poi`, etc.).
 - **[Geist Mono](https://vercel.com/font)** para toda la tipografía de la interfaz.
-- **[FormSubmit](https://formsubmit.co/)** para el formulario "agregar empresa" (relay de email para sitios estáticos, sin servidor) — **aún no configurado**, ver abajo.
+- **[FormSubmit](https://formsubmit.co/)** para el formulario "agregar empresa" (relay de email para sitios estáticos, sin servidor).
 
 **Diseño:** consola monocromática casi negra con verde Solarium (`#056540`) como único acento. Vista 2D tipo plano en picado por defecto, con un toggle `[3D]`. Las etiquetas de calles solo aparecen en vías principales; los POI por defecto del mapa están ocultos para que solo se vean los marcadores de empresas.
 
@@ -77,7 +77,8 @@ Un array de objetos de lugar. Este es el archivo que la mayoría de las contribu
 | `city` | ✅ | `"lima"` o `"arequipa"` — controla el selector de ciudad y la validación de bbox. |
 | `lat`, `lng` | ✅ | Grados decimales. Debe caer dentro del bbox central de esa ciudad (ver validación abajo). |
 | `funding` | ✅ | Objeto con `type`. Reutilizamos el campo de ronda de financiamiento de BUILD416 como categoría, ya que la mayoría de las entradas aquí no tienen financiamiento VC: `Startup`, `Consultancy`, `Coworking`, `Incubator`, `Nonprofit`, `Fund` se muestran como chip neutro; `Acquired` (o `Public`) se muestra como el chip verde de "resultado destacado". |
-| `domain` | ⬜ | Dominio simple (sin `https://`, sin `www`). Se usa para obtener el logo y enlazar el sitio web. Omítelo por completo si no lo sabes — el marcador cae de vuelta a un tile con inicial en lugar de adivinar. |
+| `domain` | ⬜ | Dominio simple (sin `https://`, sin `www`). Se usa para obtener el logo (servicio de favicons de Google) y enlazar el sitio web. Omítelo por completo si no lo sabes — el marcador cae de vuelta a un tile con inicial en lugar de adivinar. |
+| `logo` | ⬜ | Ruta local (p. ej. `assets/logos/nombre.png`) que reemplaza el favicon de Google cuando este es genérico, en blanco o de baja calidad. Ver `assets/logos/`. |
 | `address` | ⬜ | Legible por humanos, para trazabilidad. |
 | `tag` | ⬜ | Descripción de una oración mostrada en el popover y usada como línea secundaria en la barra lateral. |
 
@@ -120,7 +121,7 @@ Luego abre **http://localhost:8000**.
   `index.html`; el destinatario debe mantener activa la verificación de [FormSubmit](https://formsubmit.co/).
   Cada envío se revisa manualmente antes de incorporarse al dataset.
 - El favicon es un SVG inline autocontenido (data URI, no requiere archivo). **La imagen para compartir en redes sigue siendo un placeholder**: `og:image`/`twitter:image` apuntan a `https://perugrid.com/assets/og-image.jpg`, pero ese archivo aún no existe — agrega una captura o gráfico real en `assets/og-image.jpg` (1342×896 o proporción similar 3:2) para que las vistas previas de enlaces (Slack, Twitter, WhatsApp) muestren una imagen en vez de nada.
-- Aún no hay carpeta `assets/` para overrides locales de logos de empresas — los marcadores caen de vuelta al servicio de favicons de Google o a un tile con inicial, lo cual es suficiente para lanzar.
+- Hay una carpeta `assets/logos/` para overrides locales de logos de empresas (campo `logo` en `companies.json`) — úsala cuando el favicon de Google sea genérico, esté en blanco o no represente bien la marca. El resto de entradas cae de vuelta al servicio de favicons de Google o a un tile con inicial.
 
 ---
 
