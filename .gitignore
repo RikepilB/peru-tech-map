@@ -12,3 +12,8 @@ CLAUDE.local.md
 
 # foglamp codebase scan (contains editToken secret)
 .foglamp/
+
+# AI agent config + internal session/handoff docs — not for the public repo,
+# kept locally only from here on (untracked from GitHub, files stay on disk)
+.claude/
+docs/handoff/
