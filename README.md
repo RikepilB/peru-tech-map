@@ -10,7 +10,7 @@ Un mapa interactivo de startups, consultoras tecnológicas, espacios de coworkin
 
 ## Mapa Del Codebase
 
-[![Codebase scan](docs/foglamp-scan.png)](https://foglamp.dev/scan/peru-grid-cnhzyw)
+[![Codebase scan](assets/foglamp-scan.png)](https://foglamp.dev/scan/peru-grid-cnhzyw)
 
 Mapa generado por IA de la arquitectura del proyecto (servicios, stores, integraciones) — **[ver interactivo en Foglamp →](https://foglamp.dev/scan/peru-grid-cnhzyw)**
 
