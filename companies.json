@@ -863,5 +863,16 @@
     "operating_model": "On-Site",
     "tag": "Custom software, AI agents and cybersecurity consultancy for businesses — also runs an AI-literacy academy for non-programmers.",
     "tag_es": "Consultora de software a medida, agentes de IA y ciberseguridad para empresas — también dicta una academia de IA para quienes no programan."
+  },
+  {
+    "name": "Buivo",
+    "domain": "buivo.ai",
+    "city": "lima",
+    "address": "Lima (Peruvian founders; HQ in San Francisco, CA)",
+    "lat": -12.0980, "lng": -77.0340,
+    "funding": { "type": "Startup" },
+    "operating_model": "Remote",
+    "tag": "Agentic software-production platform — sketch a flow on its collaborative canvas, generate production-ready code, and deploy with one click.",
+    "tag_es": "Plataforma de producción de software agéntica — dibuja un flujo en su lienzo colaborativo, genera código listo para producción y despliega con un clic."
   }
 ]
