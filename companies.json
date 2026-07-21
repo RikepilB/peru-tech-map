@@ -852,5 +852,16 @@
     "operating_model": "On-Site",
     "tag": "Retail/e-commerce ERP SaaS from San Borja — unified POS, multi-location inventory, and a same-day delivery network (Tecretail Express) across Lima.",
     "tag_es": "ERP SaaS de retail y e-commerce desde San Borja — POS unificado, inventario multi-tienda y red de entregas el mismo día (Tecretail Express) en Lima."
+  },
+  {
+    "name": "Buivo",
+    "domain": "buivo.ai",
+    "city": "lima",
+    "address": "Lima (Peruvian founders; HQ in San Francisco, CA)",
+    "lat": -12.0980, "lng": -77.0340,
+    "funding": { "type": "Startup" },
+    "operating_model": "Remote",
+    "tag": "Agentic software-production platform — sketch a flow on its collaborative canvas, generate production-ready code, and deploy with one click.",
+    "tag_es": "Plataforma de producción de software agéntica — dibuja un flujo en su lienzo colaborativo, genera código listo para producción y despliega con un clic."
   }
 ]
