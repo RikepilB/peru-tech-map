@@ -880,9 +880,9 @@
     "domain": "startlima.org",
     "city": "lima",
     "address": "Lima (no specific street address publicly verifiable)",
-    "lat": -12.0995, "lng": -77.0375,
+    "lat": -12.0965, "lng": -77.0355,
     "funding": { "type": "Incubator" },
-    "operating_model": "On-Site",
+    "operating_model": "Hybrid",
     "tag": "Non-profit student entrepreneurship incubator, part of the 16-chapter START Network across Europe and Latin America — helps students explore and launch startups.",
     "tag_es": "Incubadora sin fines de lucro de emprendimiento estudiantil, parte de la red START Network de 16 sedes en Europa y Latinoamérica — ayuda a estudiantes a explorar y lanzar startups."
   },
@@ -891,9 +891,9 @@
     "domain": "yakusmart.io",
     "city": "lima",
     "address": "Lima (no specific street address publicly verifiable)",
-    "lat": -12.0995, "lng": -77.0375,
+    "lat": -12.1025, "lng": -77.0295,
     "funding": { "type": "Startup" },
-    "operating_model": "On-Site",
+    "operating_model": "Hybrid",
     "tag": "IoT + AI platform for export farms — soil, weather, satellite and field data combined into precise, traceable irrigation decisions.",
     "tag_es": "Plataforma IoT + IA para fundos de exportación — combina datos de suelo, clima, satélite y campo en decisiones de riego precisas y trazables."
   },
@@ -930,7 +930,6 @@
   },
   {
     "name": "Sofá Café Barranco",
-    "domain": "sofacafe.pe",
     "city": "lima",
     "address": "Av. Prolongación San Martín, Barranco, Lima",
     "lat": -12.1413883, "lng": -77.0231407,
