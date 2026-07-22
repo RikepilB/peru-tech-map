@@ -835,10 +835,15 @@ function isBuildingSizedGeometry(geometry) {
 // Even-odd point-in-polygon test (ray casting) against GeoJSON Polygon/MultiPolygon
 // coordinates — used to match a company's lng/lat against building footprints fetched in
 // bulk, instead of paying a native queryRenderedFeatures call per company (see below).
+function pointOnSegment(x, y, x1, y1, x2, y2) {
+  const cross = (x - x1) * (y2 - y1) - (y - y1) * (x2 - x1);
+  return Math.abs(cross) < 1e-12 && x >= Math.min(x1, x2) && x <= Math.max(x1, x2) && y >= Math.min(y1, y2) && y <= Math.max(y1, y2);
+}
 function pointInRing(x, y, ring) {
   let inside = false;
   for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
     const xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1];
+    if (pointOnSegment(x, y, xi, yi, xj, yj)) return true;
     if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) inside = !inside;
   }
   return inside;
