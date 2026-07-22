@@ -1102,6 +1102,7 @@ function buildSidebar() {
   });
 }
 window.__pgRefreshSidebar = buildSidebar;
+window.__pgDebugMap = map; window.__pgDebugRefreshHighlights = refreshCompanyBuildingHighlights; window.__pgDebugCompanies = () => COMPANIES;
 
 // ---------- Controls ----------
 document.querySelectorAll(".barbtn[data-city]").forEach((btn) => {
