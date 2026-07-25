@@ -794,16 +794,25 @@ function clearCoBuildingHover() {
   if (hoveredCoBuilding) { setCoBuildingHover(hoveredCoBuilding.source, hoveredCoBuilding.id, false); hoveredCoBuilding = null; }
   map.getCanvas().style.cursor = "";
 }
+// Gated to one queryRenderedFeatures per animation frame — raw mousemove events fire far
+// faster than the display refreshes, and each call crosses into the GL renderer.
+let mmQueued = false, mmPoint = null;
 map.on("mousemove", (e) => {
-  const layers = ["co-buildings-3d-highlight", "co-buildings-2d-highlight"].filter((id) => map.getLayer(id));
-  const feats = layers.length ? map.queryRenderedFeatures(e.point, { layers }) : [];
-  if (!feats.length) { clearCoBuildingHover(); return; }
-  const f = feats[0];
-  if (hoveredCoBuilding && hoveredCoBuilding.source === f.source && hoveredCoBuilding.id === f.id) return;
-  clearCoBuildingHover();
-  hoveredCoBuilding = { source: f.source, id: f.id };
-  setCoBuildingHover(f.source, f.id, true);
-  map.getCanvas().style.cursor = "pointer";
+  mmPoint = e.point;
+  if (mmQueued) return;
+  mmQueued = true;
+  requestAnimationFrame(() => {
+    mmQueued = false;
+    const layers = ["co-buildings-3d-highlight", "co-buildings-2d-highlight"].filter((id) => map.getLayer(id));
+    const feats = layers.length ? map.queryRenderedFeatures(mmPoint, { layers }) : [];
+    if (!feats.length) { clearCoBuildingHover(); return; }
+    const f = feats[0];
+    if (hoveredCoBuilding && hoveredCoBuilding.source === f.source && hoveredCoBuilding.id === f.id) return;
+    clearCoBuildingHover();
+    hoveredCoBuilding = { source: f.source, id: f.id };
+    setCoBuildingHover(f.source, f.id, true);
+    map.getCanvas().style.cursor = "pointer";
+  });
 });
 map.on("mouseleave", clearCoBuildingHover);
 
@@ -823,10 +832,37 @@ function isBuildingSizedGeometry(geometry) {
   return (maxx - minx) < MAX_BUILDING_SPAN_DEG && (maxy - miny) < MAX_BUILDING_SPAN_DEG;
 }
 
+// Even-odd point-in-polygon test (ray casting) against GeoJSON Polygon/MultiPolygon
+// coordinates — used to match a company's lng/lat against building footprints fetched in
+// bulk, instead of paying a native queryRenderedFeatures call per company (see below).
+function pointOnSegment(x, y, x1, y1, x2, y2) {
+  const cross = (x - x1) * (y2 - y1) - (y - y1) * (x2 - x1);
+  return Math.abs(cross) < 1e-12 && x >= Math.min(x1, x2) && x <= Math.max(x1, x2) && y >= Math.min(y1, y2) && y <= Math.max(y1, y2);
+}
+function pointInRing(x, y, ring) {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1];
+    if (pointOnSegment(x, y, xi, yi, xj, yj)) return true;
+    if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) inside = !inside;
+  }
+  return inside;
+}
+function pointInPolygon(x, y, geometry) {
+  if (geometry.type === "Polygon") {
+    if (!pointInRing(x, y, geometry.coordinates[0])) return false;
+    for (let k = 1; k < geometry.coordinates.length; k++) if (pointInRing(x, y, geometry.coordinates[k])) return false;
+    return true;
+  }
+  if (geometry.type === "MultiPolygon") return geometry.coordinates.some((poly) => pointInPolygon(x, y, { type: "Polygon", coordinates: poly }));
+  return false;
+}
+
 // Buildings that host an indexed company get a bold emerald highlight, always — this is what
-// makes the skyline read as "a tech map" instead of a generic city render. Queries the real
-// building geometry under each company's pin (only those currently in viewport/loaded tiles;
-// widens naturally as you pan/zoom, cheap enough to redo in full each time given ~50 companies).
+// makes the skyline read as "a tech map" instead of a generic city render. Fetches every
+// building footprint in the viewport with ONE queryRenderedFeatures call per layer (not one
+// per company — that scaled O(companies) native calls per idle event and got measurably
+// slower as the dataset grew), then matches company coordinates against them in plain JS.
 function refreshCompanyBuildingHighlights() {
   const src3d = map.getSource("co-buildings-3d"), src2d = map.getSource("co-buildings-2d");
   if (!src3d || !src2d) return;
@@ -834,27 +870,33 @@ function refreshCompanyBuildingHighlights() {
   if (map.getZoom() < 13) { src3d.setData({ type: "FeatureCollection", features: [] }); src2d.setData({ type: "FeatureCollection", features: [] }); return; }
 
   const w = map.getCanvas().clientWidth, h = map.getCanvas().clientHeight;
+  const bbox = [[0, 0], [w, h]];
+  let raw3d = [], raw2d = [];
+  try { raw3d = map.queryRenderedFeatures(bbox, { layers: ["building-3d"] }); } catch (e) {}
+  try { raw2d = map.queryRenderedFeatures(bbox, { layers: ["building"] }); } catch (e) {}
+
+  const onScreen = COMPANIES.filter((c) => {
+    const pt = map.project([c.lng, c.lat]);
+    return pt.x >= 0 && pt.y >= 0 && pt.x <= w && pt.y <= h;
+  });
+
   const seen3d = new Set(), seen2d = new Set();
   const feats3d = [], feats2d = [];
-  COMPANIES.forEach((c) => {
-    const pt = map.project([c.lng, c.lat]);
-    if (pt.x < 0 || pt.y < 0 || pt.x > w || pt.y > h) return;
-    try {
-      map.queryRenderedFeatures(pt, { layers: ["building-3d"] }).forEach((f) => {
-        if (!isBuildingSizedGeometry(f.geometry)) return;
-        const key = JSON.stringify(f.geometry.coordinates);
-        if (seen3d.has(key)) return; seen3d.add(key);
-        feats3d.push({ type: "Feature", id: feats3d.length, geometry: f.geometry, properties: { height: f.properties.render_height || 6, base: f.properties.render_min_height || 0 } });
-      });
-    } catch (e) {}
-    try {
-      map.queryRenderedFeatures(pt, { layers: ["building"] }).forEach((f) => {
-        if (!isBuildingSizedGeometry(f.geometry)) return;
-        const key = JSON.stringify(f.geometry.coordinates);
-        if (seen2d.has(key)) return; seen2d.add(key);
-        feats2d.push({ type: "Feature", id: feats2d.length, geometry: f.geometry, properties: {} });
-      });
-    } catch (e) {}
+  onScreen.forEach((c) => {
+    for (const f of raw3d) {
+      if (!isBuildingSizedGeometry(f.geometry) || !pointInPolygon(c.lng, c.lat, f.geometry)) continue;
+      const key = JSON.stringify(f.geometry.coordinates);
+      if (seen3d.has(key)) break; seen3d.add(key);
+      feats3d.push({ type: "Feature", id: feats3d.length, geometry: f.geometry, properties: { height: f.properties.render_height || 6, base: f.properties.render_min_height || 0 } });
+      break;
+    }
+    for (const f of raw2d) {
+      if (!isBuildingSizedGeometry(f.geometry) || !pointInPolygon(c.lng, c.lat, f.geometry)) continue;
+      const key = JSON.stringify(f.geometry.coordinates);
+      if (seen2d.has(key)) break; seen2d.add(key);
+      feats2d.push({ type: "Feature", id: feats2d.length, geometry: f.geometry, properties: {} });
+      break;
+    }
   });
   src3d.setData({ type: "FeatureCollection", features: feats3d });
   src2d.setData({ type: "FeatureCollection", features: feats2d });
