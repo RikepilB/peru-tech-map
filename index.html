@@ -210,6 +210,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
     --ticker: 26px;
     --sheet-peek: 96px;
     --safe-b: env(safe-area-inset-bottom, 0px);
+    --safe-t: env(safe-area-inset-top, 0px);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   /* NOTE: no global transition/transform rules — they would fight MapLibre marker positioning */
@@ -222,7 +223,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
 
   /* ---------- Brand eyebrow ---------- */
   .brand {
-    position: absolute; top: calc(14px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); z-index: 6;
+    position: absolute; top: calc(14px + var(--safe-t)); left: 50%; transform: translateX(-50%); z-index: 6;
     display: flex; align-items: center; gap: 9px; padding: 8px 15px;
     background: var(--panel); border: 1.5px solid var(--line); border-radius: var(--radius);
     backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
@@ -412,7 +413,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   }
 
   @media (max-width: 767px) {
-    .brand { top: calc(10px + var(--safe-b)); max-width: calc(100vw - 28px); }
+    .brand { top: calc(10px + var(--safe-t)); max-width: calc(100vw - 28px); }
     .controls { bottom: calc(var(--sheet-peek) + var(--statusbar) + var(--safe-b) + var(--ticker) + 12px); }
     .ctl { width: 44px; height: 44px; }
     #toggle3d { width: 44px; }
@@ -421,7 +422,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
     .statusbar { gap: 12px; padding: 0 10px; padding-bottom: var(--safe-b); }
     #panel {
       top: auto; left: 0; right: 0; bottom: calc(var(--statusbar) + var(--safe-b) + var(--ticker)); width: auto;
-      height: 60dvh; height: 60vh;
+      height: 60vh; height: 60dvh;
       transform: translateY(calc(100% - var(--sheet-peek)));
       transition: transform .32s cubic-bezier(.32,.72,0,1);
       border-right: 0; border-top: 1px solid var(--line);
