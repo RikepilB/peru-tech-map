@@ -32,7 +32,7 @@ repetible sin editar a mano registros ambiguos ni publicar automáticamente dato
 | Checkout inicial | `fix/building-highlight-perf`; sin diferencias de contenido respecto a `origin/master` | Plan en nueva rama `codex/plan-perugrid-v1-scout` |
 | Datos | 90 entidades, 16 titulares; campos actuales y bbox pasan; 90/90 tienen `tag_es` | Las cifras 75/89 de planes e issues están obsoletas |
 | Taxonomía | 38 Startup, 11 Consultancy, 3 Acquired, 11 Incubator, 17 Coworking, 5 Nonprofit, 5 Fund | Cafés y bibliotecas comparten hoy Coworking; categoría y financiación están mezcladas |
-| CI | `.github/workflows/ci.yml`: JSON y presencia de campos | No garantiza enums, tipos, duplicados, URLs seguras ni veracidad |
+| CI | Base pre-PG-01: JSON y presencia de campos; tras PG-01, `ci.yml` ejecuta `scripts/validate_data.py`, pruebas del validador y render seguro en Chromium | La base no cubría enums, tipos, duplicados ni URLs seguras; el validador actual cubre esquema, tipos, enums, bbox, duplicados y formato de enlaces; ninguna versión garantiza veracidad |
 | Scout | `master`, commit local `d8deb1e`; no issues ni PRs abiertos consultados en GitHub | Su backlog debe derivarse del código y del diseño, no de checkboxes históricos |
 | Pruebas Scout | `.venv/Scripts/python -m pytest -q`: **22 passed** | Base útil, pero no cubre los defectos reproducidos abajo |
 | Configuración local | Ambos repos tienen definiciones de 11 agentes en `.codex/agents` y `.agents/agents` | Asignar responsabilidades concretas; no lanzar todos los agentes |
@@ -63,7 +63,7 @@ y Wynwood House; no reinterpretar una inversión peruana como oficina física pe
 
 | Prioridad | Hallazgo | Evidencia / estado |
 |---|---|---|
-| P0 | Datos externos interpolados en HTML y atributos | `index.html:975`, `index.html:1062`, `index.html:1098`: ticker, popup y sidebar; hallazgo de código, sin explotación en navegador |
+| P0 | Datos externos interpolados en HTML y atributos — resuelto en PG-01 | Evidencia histórica pre-PG-01: `index.html:975/1062/1098` (ticker, popup, sidebar), hallazgo de código sin explotación en navegador; el render actual interpola vía `escapeHTML` con URLs validadas y pruebas DOM |
 | P0 | Fuente Google no puede convertirse sin más en dataset público MapLibre | Restricciones actuales de Places sobre almacenamiento y mapas; ver contrato de fuentes |
 | P1 | Scout no utiliza evidencia de amenities para puntuar | `scout/cli.py:33`: texto = nombre + dirección + web; `docs/USAGE.md` reconoce la limitación |
 | P1 | Negaciones producen puntos positivos | Reproducción: `no wifi, no outlets, not quiet` devuelve 42.0; `sin wifi, sin enchufes` devuelve 17.5 |
@@ -148,7 +148,7 @@ L dividir en varias sesiones. No representan fechas comprometidas.
 
 | ID | Entrega / archivos principales | Depende de | Aceptación | Tamaño |
 |---|---|---|---|---|
-| PG-01 | Render seguro y validador ejecutable: `index.html`, `tests/`, `.github/workflows/ci.yml` | — | HTML en nombre/tag/ticker se muestra literal; URLs maliciosas rechazadas; 90 registros válidos; esquema, bbox, enums y duplicados negativos cubiertos | M |
+| PG-01 | Render seguro y validador ejecutable: `index.html`, `tests/`, `.github/workflows/ci.yml` | — | HTML en nombre/tag/ticker se muestra literal; URLs fuera del formato permitido rechazadas; 90 registros válidos; esquema, bbox, enums y duplicados negativos cubiertos | M |
 | PG-02 | Taxonomía compatible: dataset, lector, documentación y formulario; #17 | PG-01 | Categorías no mezcladas con financiación; etapas solo si respaldadas; todos los registros conservados o enviados a revisión con razón | M |
 | PG-03 | Filtros utilizables: `viewState`, `typeVisible`, sidebar, ES/EN; #19 | PG-02 | Incubator/Accelerator/VC separados; categorías y etapas coherentes; city + filtro + vacío + popup funcionan en móvil y escritorio | M |
 | CS-01 | Contrato de candidatos y fuentes; DB con migración versionada; importación local sintética | — | ID/sede, coordenadas, procedencia y estado persistidos; migración conserva datos; paquete Google rechazado para publicación | M |
