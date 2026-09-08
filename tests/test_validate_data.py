@@ -7,13 +7,85 @@ import sys
 import tempfile
 import unittest
 
-from scripts.validate_data import load_json, safe_domain_url, safe_logo_path, validate_companies, validate_ticker
+from scripts.validate_data import (
+    CATEGORIES,
+    STARTUP_SUBCATEGORIES,
+    load_json,
+    safe_domain_url,
+    safe_logo_path,
+    validate_companies,
+    validate_ticker,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = json.loads((ROOT / "tests/fixtures/security.json").read_text(encoding="utf-8"))
 
 
 class DataValidationTests(unittest.TestCase):
+    def test_current_dataset_has_complete_explicit_taxonomy(self):
+        companies = load_json(ROOT / "companies.json")
+        self.assertEqual(len(companies), 90)
+        self.assertEqual(
+            {category: sum(row["category"] == category for row in companies) for category in CATEGORIES},
+            {
+                "Startup": 40,
+                "Incubator": 8,
+                "Accelerator": 3,
+                "VC": 4,
+                "Nonprofit": 6,
+                "Technology Consultancy": 12,
+                "Coworking Space": 17,
+            },
+        )
+        for row in companies:
+            self.assertIn(row["category"], CATEGORIES)
+            if "subcategory" in row:
+                self.assertEqual(row["category"], "Startup")
+                self.assertIn(row["subcategory"], STARTUP_SUBCATEGORIES)
+            # Campo heredado conservado durante la migración expand/contract.
+            self.assertIn("funding", row)
+        by_name = {row["name"]: row["category"] for row in companies}
+        self.assertEqual(
+            {name: by_name[name] for name in (
+                "PECAP", "Belatrix (Globant)", "Dentito", "Joinnus",
+                "UTEC Ventures", "Wayra Perú", "LIQUID Venture Studio",
+            )},
+            {
+                "PECAP": "Nonprofit",
+                "Belatrix (Globant)": "Technology Consultancy",
+                "Dentito": "Startup",
+                "Joinnus": "Startup",
+                "UTEC Ventures": "Accelerator",
+                "Wayra Perú": "Accelerator",
+                "LIQUID Venture Studio": "Accelerator",
+            },
+        )
+
+    def test_taxonomy_is_required_and_conditional(self):
+        valid = copy.deepcopy(FIXTURE["company"])
+        self.assertEqual(validate_companies([valid]), [])
+
+        mutations = (
+            ("missing category", lambda row: row.pop("category")),
+            ("unknown category", lambda row: row.update(category="Fund")),
+            ("unknown subcategory", lambda row: row.update(subcategory="Series B")),
+            ("subcategory on non-startup", lambda row: row.update(category="VC")),
+        )
+        for label, mutate in mutations:
+            with self.subTest(label=label):
+                row = copy.deepcopy(valid)
+                mutate(row)
+                self.assertTrue(validate_companies([row]))
+
+        for subcategory in STARTUP_SUBCATEGORIES:
+            with self.subTest(subcategory=subcategory):
+                row = dict(valid, subcategory=subcategory)
+                self.assertEqual(validate_companies([row]), [])
+
+        without_subcategory = copy.deepcopy(valid)
+        without_subcategory.pop("subcategory")
+        self.assertEqual(validate_companies([without_subcategory]), [])
+
     def test_current_datasets_pass_without_mutation(self):
         for name, validator in (("companies.json", validate_companies), ("ticker.json", validate_ticker)):
             data = load_json(ROOT / name)
@@ -53,6 +125,8 @@ class DataValidationTests(unittest.TestCase):
             "funding": [None, [], {}, {"type": []}, {"type": "Unknown"},
                         {"type": "Startup", "stage": "invented"},
                         {"type": "Coworking", "stage": "Seed"}],
+            "category": [None, "", "Fund", "Consultancy", []],
+            "subcategory": [None, "", "Revenue", "Series A", []],
             "domain": ["https://example.com", "example.com@evil.test", None],
             "logo": ["../image.png", "https://evil.test/a.png"],
             "operating_model": ["unknown", [], None], "logoDark": ["true", 1],
@@ -64,10 +138,23 @@ class DataValidationTests(unittest.TestCase):
                     row = copy.deepcopy(FIXTURE["company"])
                     row[field] = value
                     self.assertTrue(validate_companies([row]))
-        for field in ("name", "city", "lat", "lng", "funding"):
+        for field in ("name", "city", "lat", "lng", "category", "funding"):
             row = copy.deepcopy(FIXTURE["company"])
             del row[field]
             self.assertTrue(validate_companies([row]))
+
+    def test_form_uses_only_public_taxonomy_values(self):
+        html = (ROOT / "index.html").read_text(encoding="utf-8")
+        category_block = html.split('<select name="Category"', 1)[1].split("</select>", 1)[0]
+        stage_block = html.split('<select name="Subcategory"', 1)[1].split("</select>", 1)[0]
+        for value in CATEGORIES:
+            self.assertIn(f'value="{value}"', category_block)
+        for legacy in ("Consultancy", "Coworking", "Fund"):
+            self.assertNotIn(f'value="{legacy}"', category_block)
+        for value in STARTUP_SUBCATEGORIES:
+            self.assertIn(f'value="{value}"', stage_block)
+        for legacy in ("Revenue", "Series A", "Series B", "Series C+", "Acquired", "Late Stage"):
+            self.assertNotIn(f'value="{legacy}"', stage_block)
 
     def test_coordinate_boundaries_and_different_city(self):
         for city, lat, lng in (("lima", -12.35, -77.20), ("lima", -11.95, -76.90),

@@ -4,6 +4,8 @@
     "city": "lima",
     "lat": -12.093,
     "lng": -77.027,
+    "category": "Startup",
+    "subcategory": "Seed",
     "funding": {"type": "Startup", "stage": "Seed"},
     "tag": "<svg onload=window.__injected=1> English & text",
     "tag_es": "<img src=x onerror=window.__injected=1> Español & texto",

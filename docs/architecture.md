@@ -30,9 +30,9 @@ modal para agregar empresa mediante FormSubmit; y cargador de arranque.
 
 ## Decisiones y restricciones
 
-- **No inventar financiación.** `funding.type` se usa temporalmente como categoría
-  (`Startup`/`Consultancy`/`Coworking`/`Incubator`/`Nonprofit`) porque la mayoría de entradas no
-  tiene una ronda VC investigada. La futura taxonomía está definida en `PLAN.md`.
+- **Taxonomía explícita.** `category` describe el tipo de entidad y `subcategory` solo una etapa
+  respaldada de Startup. `funding` se conserva temporalmente para compatibilidad y no determina
+  el valor público cuando existe la taxonomía nueva.
 - **Sin logos locales.** Los marcadores usan el favicon de Google según `domain` y, cuando no
   existe, una ficha con la inicial; así se evita empaquetar logos de terceros.
 - **Formulario activo.** `FORM_ENDPOINT` apunta a FormSubmit y requiere que el destinatario haya
