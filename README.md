@@ -66,7 +66,9 @@ Un array de objetos de lugar. Este es el archivo que la mayoría de las contribu
   "city": "lima",
   "address": "San Isidro, Lima",
   "lat": -12.0930, "lng": -77.0270,
-  "funding": { "type": "Startup" },
+  "category": "Startup",
+  "subcategory": "Series A+",
+  "funding": { "type": "Startup", "stage": "Series A+" },
   "tag": "Pasarela de pagos de Credicorp/BCP para aceptar tarjetas en tienda y en línea."
 }
 ```
@@ -76,7 +78,9 @@ Un array de objetos de lugar. Este es el archivo que la mayoría de las contribu
 | `name` | ✅ | Nombre a mostrar. |
 | `city` | ✅ | `"lima"` o `"arequipa"` — controla el selector de ciudad y la validación de bbox. |
 | `lat`, `lng` | ✅ | Grados decimales. Debe caer dentro del bbox central de esa ciudad (ver validación abajo). |
-| `funding` | ✅ | Objeto con `type`. Reutilizamos el campo de ronda de financiamiento de BUILD416 como categoría, ya que la mayoría de las entradas aquí no tienen financiamiento VC: `Startup`, `Consultancy`, `Coworking`, `Incubator`, `Nonprofit`, `Fund` se muestran como chip neutro; `Acquired` (o `Public`) se muestra como el chip verde de "resultado destacado". |
+| `category` | ✅ | Taxonomía pública: `Startup`, `Incubator`, `Accelerator`, `VC`, `Nonprofit`, `Technology Consultancy` o `Coworking Space`. Describe qué es la entidad, no su estado ni una ronda. |
+| `subcategory` | ⬜ | Solo para `Startup`: `Pre-Seed`, `Seed`, `Bootstrap` o `Series A+`. Omítela si no existe una fuente que respalde la etapa. |
+| `funding` | ✅ (transitorio) | Campo heredado conservado durante la migración expand/contract. Los lectores prefieren `category`/`subcategory`; no uses este objeto para clasificar entradas nuevas ni borres el valor existente todavía. |
 | `domain` | ⬜ | Dominio ASCII sin esquema; admite una ruta simple opcional para páginas como `linkedin.com/company/nombre`. Sin credenciales, puerto, query ni fragmento. Se enlaza mediante HTTPS y el favicon usa solo el hostname. Omítelo si no lo sabes. |
 | `logo` | ⬜ | Ruta local `assets/logos/nombre.png` (también jpg/jpeg/webp/gif); nombre con letras ASCII, números, guion o guion bajo. No admite URLs externas, SVG ni rutas ascendentes. Reemplaza el favicon. |
 | `address` | ⬜ | Legible por humanos, para trazabilidad. |
@@ -90,9 +94,9 @@ Un array de objetos de lugar. Este es el archivo que la mayoría de las contribu
 Las entradas fuera del bbox de su ciudad declarada se omiten al cargar, con una advertencia en consola.
 
 **Validación reproducible:** `python scripts/validate_data.py` comprueba ambos datasets sin
-modificarlos: tipos estrictos, bbox, enums, campos opcionales, URLs y duplicados. `funding.stage`
-es opcional y solo se admite para Startup. La lista V1 de etapas está en el validador; no
-asignes una etapa sin fuente. Los campos nuevos necesitan una ampliación explícita del contrato.
+modificarlos: tipos estrictos, bbox, enums, campos opcionales, URLs y duplicados. `category` es
+obligatorio y `subcategory` solo se admite para Startup. La lista V1 de valores está en el
+validador; no asignes una etapa sin fuente. `funding` sigue validándose durante la transición.
 La CI ejecuta el mismo validador y las [pruebas de seguridad del render](tests/README.md).
 Los textos se muestran literalmente; validar la estructura no demuestra la veracidad del dato.
 

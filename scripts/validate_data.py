@@ -15,9 +15,12 @@ BBOXES = {
 FUNDING_TYPES = {"Startup", "Consultancy", "Coworking", "Incubator", "Nonprofit", "Fund", "Acquired", "Public"}
 STAGES = {"Pre-Seed", "Seed", "Series A", "Series A+", "Series B", "Series C+",
           "Late Stage", "Revenue", "Acquired", "Public"}
+CATEGORIES = {"Startup", "Incubator", "Accelerator", "VC", "Nonprofit",
+              "Technology Consultancy", "Coworking Space"}
+STARTUP_SUBCATEGORIES = {"Pre-Seed", "Seed", "Bootstrap", "Series A+"}
 OPERATING_MODELS = {"On-Site", "Hybrid", "Remote"}
 COMPANY_FIELDS = {"name", "city", "lat", "lng", "funding", "domain", "logo", "logoDark",
-                  "address", "tag", "tag_es", "operating_model"}
+                  "address", "tag", "tag_es", "operating_model", "category", "subcategory"}
 DOMAIN = re.compile(r"(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}(?:/[a-zA-Z0-9._~/-]*)?", re.ASCII | re.IGNORECASE)
 LOGO = re.compile(r"assets/logos/[a-zA-Z0-9][a-zA-Z0-9_-]*\.(?:png|jpg|jpeg|webp|gif)")
 
@@ -83,6 +86,16 @@ def validate_companies(data: object) -> list[str]:
         if bbox and coordinates_ok:
             if not (bbox[0] <= row["lng"] <= bbox[2] and bbox[1] <= row["lat"] <= bbox[3]):
                 errors.append(f"{path}: coordenadas fuera del bbox de la ciudad")
+        category = row.get("category")
+        if not isinstance(category, str) or category not in CATEGORIES:
+            errors.append(f"{path}.category: valor requerido no permitido")
+        if "subcategory" in row:
+            subcategory = row["subcategory"]
+            if (not isinstance(subcategory, str) or subcategory not in STARTUP_SUBCATEGORIES
+                    or category != "Startup"):
+                errors.append(f"{path}.subcategory: valor permitido solo para Startup")
+        # `funding` queda aceptado y requerido durante la fase expand/contract. Los lectores
+        # prefieren category/subcategory; retirarlo requiere una migración posterior explícita.
         funding = row.get("funding")
         if not isinstance(funding, dict):
             errors.append(f"{path}.funding: objeto requerido")

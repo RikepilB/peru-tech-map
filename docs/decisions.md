@@ -12,6 +12,25 @@
 - **Consecuencias:** a qué nos compromete
 ```
 
+### 2026-09-08 — Taxonomía explícita con migración expand/contract
+
+- **Contexto:** `funding.type` mezclaba categoría, etapa y estado de adquisición. PG-02 debía
+  migrar 90 entradas sin perder compatibilidad ni inventar etapas.
+- **Decisión:** cada fila recibe `category`; `subcategory` queda limitada a Startup con
+  `Pre-Seed`, `Seed`, `Bootstrap` o `Series A+`. Se conservó `funding` como campo heredado y el
+  lector prefiere la taxonomía nueva con fallback a la anterior. El resultado es: 40 Startup,
+  12 Technology Consultancy, 17 Coworking Space, 8 Incubator, 3 Accelerator, 4 VC y 6 Nonprofit.
+  Belatrix se clasificó como consultora; Dentito y Joinnus como startups adquiridas; UTEC
+  Ventures, Wayra y LIQUID como aceleradoras; PECAP como Nonprofit por ser una asociación.
+  Los demás registros Incubator permanecen así cuando el texto existente no permite separar con
+  certeza incubación de aceleración. Los tres valores heredados `Revenue` no se convirtieron a
+  `Bootstrap`: se omitió `subcategory` porque facturación no demuestra autofinanciación.
+- **Alternativas:** convertir todo `Fund` a VC, todo `Incubator` a Accelerator o `Revenue` a
+  Bootstrap. Se descartaron porque transformarían asociaciones, programas mixtos o falta de
+  evidencia en hechos nuevos.
+- **Consecuencias:** el formulario y el validador aceptan solo la taxonomía pública. PG-03 puede
+  rediseñar filtros sobre ella; retirar `funding` requiere una fase contract posterior.
+
 ### 2026-07-06 — Se omitieron seis entidades de un directorio de Lima aportado por el usuario
 
 - **Contexto:** se recibió un directorio de unas 30 startups, fondos y aceleradoras de Lima. Dos

@@ -42,8 +42,8 @@ describirlo con precisión sin exponer información adicional.
 **Resultado:** categorías explícitas y subcategorías de financiación para startups.
 
 1. Definir el esquema: `Startup` con subcategorías Pre-Seed, Seed, Bootstrap o Series A+, y
-   categorías pares Incubator, Accelerator, VC, Nonprofit, Consultancy y Coworking.
-2. Migrar y verificar las 75 entradas sin inventar financiación ni coordenadas.
+   categorías pares Incubator, Accelerator, VC, Nonprofit, Technology Consultancy y Coworking Space.
+2. Migrar y verificar las 90 entradas sin inventar financiación ni coordenadas.
 3. Reemplazar los toggles heredados por filtros coherentes con la nueva taxonomía.
 4. Actualizar documentación, formulario de alta y CI.
 

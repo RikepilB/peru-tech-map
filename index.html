@@ -43,8 +43,7 @@ window.I18N = {
     modelOnSite: "On-Site", modelHybrid: "Hybrid", modelRemote: "Remote",
     fEmail: "Your Email", pEmail: "you@email.com",
     fStage: "Stage", pStage: "Select stage",
-    stagePreSeed: "Pre-Seed", stageSeed: "Seed", stageSeriesA: "Series A", stageSeriesB: "Series B", stageSeriesC: "Series C+",
-    stageLate: "Late Stage", stageRevenue: "Revenue", stageAcquired: "Acquired", stagePublic: "Public",
+    stagePreSeed: "Pre-Seed", stageSeed: "Seed", stageBootstrap: "Bootstrap", stageSeriesAPlus: "Series A+",
     submit: "Submit For Review", submitting: "Submitting…", tryAgain: "Try Again",
     submitError: "Something went wrong submitting the form — check your connection and try again.",
     pinRequired: "On-Site companies need a pin — drop one on the map first.",
@@ -63,8 +62,8 @@ window.I18N = {
     langToggle: "ES", switchLang: "Switch to Spanish",
     title: "Peru Grid — Where The Builders Are",
     metaDesc: "Peru Grid — an interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa.",
-    catStartup: "Startup", catConsultancy: "Consultancy", catCoworking: "Coworking",
-    catIncubator: "Incubator", catNonprofit: "Nonprofit", catFund: "Fund",
+    catStartup: "Startup", catConsultancy: "Technology Consultancy", catCoworking: "Coworking Space",
+    catIncubator: "Incubator", catAccelerator: "Accelerator", catNonprofit: "Nonprofit", catVC: "VC",
     showInvestors: "Investors Mode", showCoworking: "Coworking Mode", showNonProfits: "Non-Profits Mode",
     togglePanel: "Collapse sidebar",
     viewOnGithub: "View on GitHub",
@@ -91,8 +90,7 @@ window.I18N = {
     modelOnSite: "Presencial", modelHybrid: "Híbrido", modelRemote: "Remoto",
     fEmail: "Tu Correo", pEmail: "tu@correo.com",
     fStage: "Etapa", pStage: "Selecciona etapa",
-    stagePreSeed: "Pre-Seed", stageSeed: "Seed", stageSeriesA: "Serie A", stageSeriesB: "Serie B", stageSeriesC: "Serie C+",
-    stageLate: "Late Stage", stageRevenue: "Revenue", stageAcquired: "Adquirida", stagePublic: "Pública",
+    stagePreSeed: "Pre-Seed", stageSeed: "Seed", stageBootstrap: "Bootstrap", stageSeriesAPlus: "Serie A+",
     submit: "Enviar Para Revisión", submitting: "Enviando…", tryAgain: "Intentar De Nuevo",
     submitError: "Algo salió mal al enviar el formulario — revisa tu conexión e intenta de nuevo.",
     pinRequired: "Las empresas presenciales necesitan un pin — colócalo en el mapa primero.",
@@ -111,8 +109,8 @@ window.I18N = {
     langToggle: "EN", switchLang: "Cambiar a inglés",
     title: "Peru Grid — Donde Están Los Builders",
     metaDesc: "Peru Grid — un mapa interactivo de startups, consultoras cloud, coworkings e incubadoras en Lima y Arequipa.",
-    catStartup: "Startup", catConsultancy: "Consultoría", catCoworking: "Coworking",
-    catIncubator: "Incubadora", catNonprofit: "Sin Fines De Lucro", catFund: "Fondo",
+    catStartup: "Startup", catConsultancy: "Consultora Tecnológica", catCoworking: "Espacio De Coworking",
+    catIncubator: "Incubadora", catAccelerator: "Aceleradora", catNonprofit: "Sin Fines De Lucro", catVC: "VC",
     showInvestors: "Modo Inversionistas", showCoworking: "Modo Coworking", showNonProfits: "Modo ONGs",
     togglePanel: "Colapsar barra lateral",
     viewOnGithub: "Ver en GitHub",
@@ -524,24 +522,21 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
             <div class="field"><label data-i18n="fCategory">Category</label>
               <select name="Category" id="catSelect">
                 <option value="Startup" data-i18n="catStartup">Startup</option>
-                <option value="Consultancy" data-i18n="catConsultancy">Consultancy</option>
-                <option value="Coworking" data-i18n="catCoworking">Coworking</option>
+                <option value="Technology Consultancy" data-i18n="catConsultancy">Technology Consultancy</option>
+                <option value="Coworking Space" data-i18n="catCoworking">Coworking Space</option>
                 <option value="Incubator" data-i18n="catIncubator">Incubator</option>
+                <option value="Accelerator" data-i18n="catAccelerator">Accelerator</option>
                 <option value="Nonprofit" data-i18n="catNonprofit">Nonprofit</option>
-                <option value="Fund" data-i18n="catFund">Fund</option>
+                <option value="VC" data-i18n="catVC">VC</option>
               </select>
             </div>
             <div class="field" id="stageField" style="display:none"><label data-i18n="fStage">Stage</label>
-              <select name="Stage">
+              <select name="Subcategory">
                 <option value="" data-i18n="pStage">Select stage</option>
                 <option value="Seed" data-i18n="stageSeed">Seed</option>
                 <option value="Pre-Seed" data-i18n="stagePreSeed">Pre-Seed</option>
-                <option value="Revenue" data-i18n="stageRevenue">Revenue</option>
-                <option value="Series C+" data-i18n="stageSeriesC">Series C+</option>
-                <option value="Series B" data-i18n="stageSeriesB">Series B</option>
-                <option value="Series A" data-i18n="stageSeriesA">Series A</option>
-                <option value="Acquired" data-i18n="stageAcquired">Acquired</option>
-                <option value="Late Stage" data-i18n="stageLate">Late Stage</option>
+                <option value="Bootstrap" data-i18n="stageBootstrap">Bootstrap</option>
+                <option value="Series A+" data-i18n="stageSeriesAPlus">Series A+</option>
               </select>
             </div>
             <div class="field"><label data-i18n="fEmail">Your Email</label><input name="Submitter Email" type="email" placeholder="you@email.com" data-i18n-placeholder="pEmail" /></div>
@@ -616,7 +611,7 @@ const CITIES = {
   },
 };
 const FORM_ENDPOINT = "https://formsubmit.co/ajax/bbd1d388bad84c6ba3b9b23d6c784867";
-const MUTED_FUNDING_TYPES = new Set(["Startup", "Consultancy", "Coworking", "Incubator", "Nonprofit", "Fund"]);
+const MUTED_FUNDING_TYPES = new Set(["Startup", "Technology Consultancy", "Coworking Space", "Incubator", "Accelerator", "VC", "Nonprofit", "Consultancy", "Coworking", "Fund"]);
 
 const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
 const flyPadding = () => isMobile()
@@ -912,10 +907,18 @@ let sortMode = "default"; // "default" (JSON order) | "alpha" (A–Z)
 // Each toggle (Investors, Coworking, Non-Profits) is exclusive — when one is
 // active, ONLY that type's entities show; everything else is hidden.
 const viewState = { showInvestors: false, showCoworking: false, showNonProfits: false };
-const DEFAULT_VISIBLE_TYPES = new Set(["Startup", "Consultancy", "Acquired"]);
+const DEFAULT_VISIBLE_TYPES = new Set(["Startup", "Technology Consultancy", "Consultancy", "Acquired"]);
+function companyCategory(company) {
+  return company && (company.category || (company.funding && company.funding.type)) || "";
+}
+function companySubcategory(company) {
+  if (!company) return "";
+  if (Object.prototype.hasOwnProperty.call(company, "category")) return company.subcategory || "";
+  return company.funding && company.funding.stage || "";
+}
 function typeVisible(type) {
-  if (viewState.showCoworking) return type === "Coworking";
-  if (viewState.showInvestors) return type === "Fund" || type === "Incubator";
+  if (viewState.showCoworking) return type === "Coworking Space" || type === "Coworking";
+  if (viewState.showInvestors) return type === "VC" || type === "Accelerator" || type === "Incubator" || type === "Fund";
   if (viewState.showNonProfits) return type === "Nonprofit";
   if (DEFAULT_VISIBLE_TYPES.has(type)) return true;
   return false;
@@ -944,7 +947,7 @@ function applyCity(city, opts = {}) {
 
   COMPANIES = ALL_COMPANIES.filter(c => {
     if (c.city !== city) return false;
-    if (!typeVisible(c.funding && c.funding.type)) return false;
+    if (!typeVisible(companyCategory(c))) return false;
     const ok = c.lng >= cfg.bbox[0] && c.lng <= cfg.bbox[2] && c.lat >= cfg.bbox[1] && c.lat <= cfg.bbox[3];
     if (!ok) console.warn(`[grid] skipped ${c.name} — coords ${c.lat},${c.lng} outside ${city} core bbox`);
     return ok;
@@ -1033,11 +1036,13 @@ function mountLogo(container, c, lazy = false) {
   container.replaceChildren(img);
 }
 
-function fundingChip(f) {
-  if (!f) return "";
-  const cls = MUTED_FUNDING_TYPES.has(f.type) ? "boot" : "fund";
-  const stage = f.stage ? ` <span class="chip fund">${escapeHTML(f.stage)}</span>` : "";
-  return `<span class="chip ${cls}">${escapeHTML(f.type)}</span>${stage}`;
+function taxonomyChip(company) {
+  const category = companyCategory(company);
+  if (!category) return "";
+  const cls = MUTED_FUNDING_TYPES.has(category) ? "boot" : "fund";
+  const subcategory = companySubcategory(company);
+  const detail = subcategory ? ` <span class="chip fund">${escapeHTML(subcategory)}</span>` : "";
+  return `<span class="chip ${cls}">${escapeHTML(category)}</span>${detail}`;
 }
 
 function buildMarkers() {
@@ -1090,7 +1095,7 @@ function selectCompany(i, fly) {
       <div class="pname">${escapeHTML(c.name)}</div>
       ${c.tag ? `<div class="ptag">${escapeHTML((getLang() === "es" && c.tag_es) ? c.tag_es : c.tag)}</div>` : ""}
       ${safeDomainUrl(c.domain) ? `<a class="site" href="${escapeHTML(safeDomainUrl(c.domain))}" target="_blank" rel="noopener">${escapeHTML(c.domain)} ↗</a>` : ""}
-      <div>${fundingChip(c.funding)}</div>
+      <div>${taxonomyChip(c)}</div>
       ${c.address ? `<div class="addr">${escapeHTML(c.address)}</div>` : ""}
     `).addTo(map);
 
@@ -1124,7 +1129,7 @@ function buildSidebar() {
       <span class="prefix">></span>
       <div class="logo"></div>
       <div class="meta"><div class="name">${escapeHTML(c.name)}</div></div>
-      <div class="tag">${escapeHTML(c.funding ? (c.funding.stage || c.funding.type) : "")}</div>`;
+      <div class="tag">${escapeHTML(companySubcategory(c) || companyCategory(c))}</div>`;
     mountLogo(row.querySelector(".logo"), c, true);
     row.addEventListener("click", () => selectCompany(i, true));
     list.appendChild(row);
@@ -1225,7 +1230,11 @@ document.getElementById("closeModal").onclick = () => closeModal();
 document.getElementById("successClose").onclick = () => closeModal();
 const catSelect = document.getElementById("catSelect");
 const stageField = document.getElementById("stageField");
-function toggleStage() { stageField.style.display = catSelect.value === "Startup" ? "" : "none"; }
+function toggleStage() {
+  const isStartup = catSelect.value === "Startup";
+  stageField.style.display = isStartup ? "" : "none";
+  if (!isStartup) stageField.querySelector("select").value = "";
+}
 catSelect.addEventListener("change", toggleStage);
 toggleStage();
 

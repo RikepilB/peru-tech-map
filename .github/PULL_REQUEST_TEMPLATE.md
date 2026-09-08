@@ -23,7 +23,9 @@ Todos los PRs son revisados por el mantenedor antes de fusionarse.
 
 **Sitio Web / Dominio:**
 
-**Categoría:** <!-- Startup, Consultancy, Coworking, Incubator, Nonprofit, Fund, o Acquired -->
+**Categoría:** <!-- Startup, Incubator, Accelerator, VC, Nonprofit, Technology Consultancy o Coworking Space -->
+
+**Subcategoría de Startup (opcional):** <!-- Pre-Seed, Seed, Bootstrap o Series A+; omitir sin fuente -->
 
 **Fuente:** <!-- enlace al anuncio, sitio de la empresa, comunicado de prensa, etc. -->
 
@@ -32,6 +34,7 @@ Todos los PRs son revisados por el mantenedor antes de fusionarse.
 - [ ] Las coordenadas caen dentro del bbox central de la ciudad — Lima `[-77.20,-12.35]→[-76.90,-11.95]`, Arequipa `[-71.60,-16.50]→[-71.45,-16.30]`
 - [ ] `domain` es un dominio sin esquema con ruta opcional segura; el favicon se obtiene del hostname
 - [ ] Esta entrada no está ya en `companies.json` (sin duplicados)
+- [ ] `category` usa el enum público y `subcategory`, si existe, pertenece a una Startup y tiene fuente
 - [ ] `python scripts/validate_data.py` pasa para ambos datasets
 - [ ] Lo corrí localmente y confirmé que el pin cae en el lugar correcto
 
