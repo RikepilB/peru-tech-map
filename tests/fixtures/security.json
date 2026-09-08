@@ -1,0 +1,17 @@
+{
+  "company": {
+    "name": "<img src=x onerror=window.__injected=1> O'Reilly & Co",
+    "city": "lima",
+    "lat": -12.093,
+    "lng": -77.027,
+    "funding": {"type": "Startup", "stage": "Seed"},
+    "tag": "<svg onload=window.__injected=1> English & text",
+    "tag_es": "<img src=x onerror=window.__injected=1> Español & texto",
+    "address": "</div><img src=x onerror=window.__injected=1>"
+  },
+  "ticker": [{"label": "<img src=x onerror=window.__injected=1>", "text": "<svg onload=window.__injected=1> & noticia"}],
+  "valid_domains": ["example.com", "sub.example.com.pe", "linkedin.com/company/ai-playgrounds-tech"],
+  "invalid_domains": ["javascript:alert(1)", "https://example.com", "//example.com", "example.com\" onclick=\"window.__injected=1", "example.com@evil.test", "example.com\\@evil.test", "example.com/path?x=1", "example.com/#x", "example.com/%22", "example.com\n", "example.com:443", "-bad.example", "localhost", "127.0.0.1", "example..com", "example.com/<img>", null, 42, {}],
+  "valid_logos": ["assets/logos/dialogus.png", "assets/logos/example-2.webp"],
+  "invalid_logos": ["https://evil.test/logo.png", "//evil.test/a.png", "data:image/svg+xml,<svg onload=alert(1)>", "assets/logos/../../index.html", "assets/logos/a.svg", "assets/logos/a.png?x=1", "assets/logos/a.png\" onerror=\"window.__injected=1", "assets/logos/a.png\n", null, 42]
+}

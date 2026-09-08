@@ -971,7 +971,7 @@ async function loadTicker() {
     const items = await res.json();
     if (!Array.isArray(items) || !items.length) throw new Error("empty");
     const seq = items.map(it =>
-      `<span class="ti"><span class="ti-label">${it.label || "•"}</span>${it.text}</span><span class="div">◆</span>`
+      `<span class="ti"><span class="ti-label">${escapeHTML(it.label || "•")}</span>${escapeHTML(it.text)}</span><span class="div">◆</span>`
     ).join("");
     const track = document.getElementById("tickerTrack");
     track.innerHTML = seq + seq;
@@ -987,17 +987,57 @@ async function loadTicker() {
   }
 }
 
-// Prefer a local logo (assets/logos/...) if provided, else fall back to the favicon service —
-// returns null (not a broken URL) when there's no domain, so callers render the initial-letter tile instead.
-function logoSrc(c) { return c.logo ? c.logo : (c.domain ? `https://www.google.com/s2/favicons?domain=${c.domain}&sz=64` : null); }
+// Dataset strings stay literal even when they contain markup or quotes.
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+}
 
-function validDomain(d) { return d && d.includes("."); }
+// Match the public import contract in scripts/validate_data.py; shared fixtures test both.
+// A legacy LinkedIn entry includes a path. Schemes, credentials, queries and escapes are not data domains.
+function safeDomainUrl(value) {
+  if (typeof value !== "string" || value.length > 2048 || /\s/.test(value)) return null;
+  if (!/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}(?:\/[a-zA-Z0-9._~/-]*)?$/i.test(value)) return null;
+  if (value.split("/", 1)[0].length > 253) return null;
+  return "https://" + value;
+}
+
+function safeLogoPath(value) {
+  if (typeof value !== "string" || value.length > 255 || /\s/.test(value)) return null;
+  return /^assets\/logos\/[a-zA-Z0-9][a-zA-Z0-9_-]*\.(?:png|jpg|jpeg|webp|gif)$/.test(value) ? value : null;
+}
+
+// Prefer an allowed local logo, then the site's favicon, otherwise the initial-letter tile.
+function logoSrc(c) {
+  const local = safeLogoPath(c.logo);
+  const site = safeDomainUrl(c.domain);
+  return local || (site ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(new URL(site).hostname)}&sz=64` : null);
+}
+
+function mountLogo(container, c, lazy = false) {
+  const showInitial = () => {
+    const initial = document.createElement("span");
+    initial.className = "initial";
+    initial.textContent = String(c.name ?? "").charAt(0);
+    container.replaceChildren(initial);
+  };
+  const src = logoSrc(c);
+  if (!src) { showInitial(); return; }
+  const img = document.createElement("img");
+  if (c.logoDark) img.classList.add("logo-dark");
+  if (lazy) { img.loading = "lazy"; img.decoding = "async"; img.width = 64; img.height = 64; }
+  img.alt = "";
+  img.onerror = showInitial;
+  // Google's generic fallback is a successful 16x16 response, not an HTTP error.
+  img.onload = () => { if (img.naturalWidth <= 16 && img.naturalHeight <= 16) showInitial(); };
+  img.src = src;
+  container.replaceChildren(img);
+}
 
 function fundingChip(f) {
   if (!f) return "";
   const cls = MUTED_FUNDING_TYPES.has(f.type) ? "boot" : "fund";
-  const stage = f.stage ? ` <span class="chip fund">${f.stage}</span>` : "";
-  return `<span class="chip ${cls}">${f.type}</span>${stage}`;
+  const stage = f.stage ? ` <span class="chip fund">${escapeHTML(f.stage)}</span>` : "";
+  return `<span class="chip ${cls}">${escapeHTML(f.type)}</span>${stage}`;
 }
 
 function buildMarkers() {
@@ -1016,20 +1056,7 @@ function buildMarkers() {
     inner.className = "co-marker";
     const ring = document.createElement("div"); ring.className = "ring";
     const tile = document.createElement("div"); tile.className = "tile";
-    const src = logoSrc(c);
-    if (src) {
-      const img = document.createElement("img");
-      img.src = src;
-      if (c.logoDark) img.classList.add("logo-dark");
-      const showInitial = () => { tile.innerHTML = `<span class="initial">${c.name[0]}</span>`; };
-      img.onerror = showInitial;
-      // Google's favicon service never 404s — a domain with no indexed favicon still
-      // returns a 200 with its generic 16x16 default icon, so onerror never fires for it.
-      img.onload = () => { if (img.naturalWidth <= 16 && img.naturalHeight <= 16) showInitial(); };
-      tile.appendChild(img);
-    } else {
-      tile.innerHTML = `<span class="initial">${c.name[0]}</span>`;
-    }
+    mountLogo(tile, c);
     inner.appendChild(ring); inner.appendChild(tile);
     wrapper.appendChild(inner);
     inner.addEventListener("click", (e) => { e.stopPropagation(); selectCompany(i, true); });
@@ -1060,11 +1087,11 @@ function selectCompany(i, fly) {
   openPopup = new maplibregl.Popup({ offset: 20, closeButton: false, className: "co-pop", maxWidth: "280px" })
     .setLngLat([c.lng, c.lat])
     .setHTML(`
-      <div class="pname">${c.name}</div>
-      ${c.tag ? `<div class="ptag">${(getLang() === "es" && c.tag_es) ? c.tag_es : c.tag}</div>` : ""}
-      ${validDomain(c.domain) ? `<a class="site" href="https://${c.domain}" target="_blank" rel="noopener">${c.domain} ↗</a>` : ""}
+      <div class="pname">${escapeHTML(c.name)}</div>
+      ${c.tag ? `<div class="ptag">${escapeHTML((getLang() === "es" && c.tag_es) ? c.tag_es : c.tag)}</div>` : ""}
+      ${safeDomainUrl(c.domain) ? `<a class="site" href="${escapeHTML(safeDomainUrl(c.domain))}" target="_blank" rel="noopener">${escapeHTML(c.domain)} ↗</a>` : ""}
       <div>${fundingChip(c.funding)}</div>
-      ${c.address ? `<div class="addr">${c.address}</div>` : ""}
+      ${c.address ? `<div class="addr">${escapeHTML(c.address)}</div>` : ""}
     `).addTo(map);
 
   if (fly) map.flyTo({ center: [c.lng, c.lat], zoom: 16, padding: flyPadding(), duration: 1500, essential: true });
@@ -1093,15 +1120,12 @@ function buildSidebar() {
     const row = document.createElement("div");
     row.className = "co" + (i === selected ? " active" : "");
     row.dataset.idx = i;
-    const src = logoSrc(c);
-    const logoHtml = src
-      ? `<img class="${c.logoDark ? 'logo-dark' : ''}" src="${src}" loading="lazy" decoding="async" width="64" height="64" onerror="this.parentNode.innerHTML='<span class=\\'initial\\'>${c.name[0]}</span>'" onload="if(this.naturalWidth<=16&&this.naturalHeight<=16)this.parentNode.innerHTML='<span class=\\'initial\\'>${c.name[0]}</span>'">`
-      : `<span class="initial">${c.name[0]}</span>`;
     row.innerHTML = `
       <span class="prefix">></span>
-      <div class="logo">${logoHtml}</div>
-      <div class="meta"><div class="name">${c.name}</div></div>
-      <div class="tag">${c.funding ? (c.funding.stage || c.funding.type) : ""}</div>`;
+      <div class="logo"></div>
+      <div class="meta"><div class="name">${escapeHTML(c.name)}</div></div>
+      <div class="tag">${escapeHTML(c.funding ? (c.funding.stage || c.funding.type) : "")}</div>`;
+    mountLogo(row.querySelector(".logo"), c, true);
     row.addEventListener("click", () => selectCompany(i, true));
     list.appendChild(row);
   });

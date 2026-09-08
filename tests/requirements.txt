@@ -1,0 +1,2 @@
+# Solo pruebas; el sitio sigue estático y no requiere Python ni Playwright para funcionar.
+playwright==1.58.0

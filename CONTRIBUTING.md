@@ -39,7 +39,7 @@ en contra de ella especulativamente.
    en el README para el esquema y campos requeridos.
 3. Valida tu JSON antes de abrir un PR:
    ```bash
-   python3 -m json.tool companies.json > /dev/null && echo OK
+   python scripts/validate_data.py
    ```
 4. Corre el sitio localmente y confirma que tu pin cae en el lugar correcto:
    ```bash
@@ -71,8 +71,9 @@ en contra de ella especulativamente.
 
 ## Proceso De Pull Request
 
-- CI valida que `companies.json`/`ticker.json` sean JSON bien formado y que cada entrada
-  de empresa tenga sus campos requeridos. Un check de CI en rojo bloquea el merge.
+- CI ejecuta `scripts/validate_data.py` (JSON estricto, tipos, bbox, enums, URLs y duplicados),
+  sus regresiones y pruebas DOM de render seguro. Ver [tests/README.md](tests/README.md).
+  Playwright es solo una herramienta de pruebas; el sitio sigue sin framework ni compilación.
 - [CODEOWNERS](./CODEOWNERS) solicita automáticamente la revisión del mantenedor en cada
   PR — nada se fusiona sin ella.
 - Usa el estilo [Conventional Commits](https://www.conventionalcommits.org/) para los
