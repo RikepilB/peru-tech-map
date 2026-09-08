@@ -77,8 +77,8 @@ Un array de objetos de lugar. Este es el archivo que la mayoría de las contribu
 | `city` | ✅ | `"lima"` o `"arequipa"` — controla el selector de ciudad y la validación de bbox. |
 | `lat`, `lng` | ✅ | Grados decimales. Debe caer dentro del bbox central de esa ciudad (ver validación abajo). |
 | `funding` | ✅ | Objeto con `type`. Reutilizamos el campo de ronda de financiamiento de BUILD416 como categoría, ya que la mayoría de las entradas aquí no tienen financiamiento VC: `Startup`, `Consultancy`, `Coworking`, `Incubator`, `Nonprofit`, `Fund` se muestran como chip neutro; `Acquired` (o `Public`) se muestra como el chip verde de "resultado destacado". |
-| `domain` | ⬜ | Dominio simple (sin `https://`, sin `www`). Se usa para obtener el logo (servicio de favicons de Google) y enlazar el sitio web. Omítelo por completo si no lo sabes — el marcador cae de vuelta a un tile con inicial en lugar de adivinar. |
-| `logo` | ⬜ | Ruta local (p. ej. `assets/logos/nombre.png`) que reemplaza el favicon de Google cuando este es genérico, en blanco o de baja calidad. Ver `assets/logos/`. |
+| `domain` | ⬜ | Dominio ASCII sin esquema; admite una ruta simple opcional para páginas como `linkedin.com/company/nombre`. Sin credenciales, puerto, query ni fragmento. Se enlaza mediante HTTPS y el favicon usa solo el hostname. Omítelo si no lo sabes. |
+| `logo` | ⬜ | Ruta local `assets/logos/nombre.png` (también jpg/jpeg/webp/gif); nombre con letras ASCII, números, guion o guion bajo. No admite URLs externas, SVG ni rutas ascendentes. Reemplaza el favicon. |
 | `address` | ⬜ | Legible por humanos, para trazabilidad. |
 | `tag` | ⬜ | Descripción de una oración mostrada en el popover y usada como línea secundaria en la barra lateral. |
 
@@ -88,6 +88,13 @@ Un array de objetos de lugar. Este es el archivo que la mayoría de las contribu
 - Arequipa: `[-71.60, -16.50]` → `[-71.45, -16.30]`
 
 Las entradas fuera del bbox de su ciudad declarada se omiten al cargar, con una advertencia en consola.
+
+**Validación reproducible:** `python scripts/validate_data.py` comprueba ambos datasets sin
+modificarlos: tipos estrictos, bbox, enums, campos opcionales, URLs y duplicados. `funding.stage`
+es opcional y solo se admite para Startup. La lista V1 de etapas está en el validador; no
+asignes una etapa sin fuente. Los campos nuevos necesitan una ampliación explícita del contrato.
+La CI ejecuta el mismo validador y las [pruebas de seguridad del render](tests/README.md).
+Los textos se muestran literalmente; validar la estructura no demuestra la veracidad del dato.
 
 ### `ticker.json`
 

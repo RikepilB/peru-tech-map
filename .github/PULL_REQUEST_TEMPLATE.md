@@ -30,9 +30,9 @@ Todos los PRs son revisados por el mantenedor antes de fusionarse.
 ### Checklist
 
 - [ ] Las coordenadas caen dentro del bbox central de la ciudad — Lima `[-77.20,-12.35]→[-76.90,-11.95]`, Arequipa `[-71.60,-16.50]→[-71.45,-16.30]`
-- [ ] `domain` (si está definido) es un dominio simple (sin `https://`, sin `www`) que resuelve a un favicon real
+- [ ] `domain` es un dominio sin esquema con ruta opcional segura; el favicon se obtiene del hostname
 - [ ] Esta entrada no está ya en `companies.json` (sin duplicados)
-- [ ] El JSON es válido: `python3 -m json.tool companies.json > /dev/null` pasa
+- [ ] `python scripts/validate_data.py` pasa para ambos datasets
 - [ ] Lo corrí localmente y confirmé que el pin cae en el lugar correcto
 
 ---

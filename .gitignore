@@ -1,5 +1,7 @@
 .DS_Store
 *.log
+__pycache__/
+.coverage
 
 # local overrides / secrets — never commit
 CLAUDE.local.md

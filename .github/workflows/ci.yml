@@ -8,24 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate companies.json is well-formed JSON
-        run: python3 -m json.tool companies.json > /dev/null
-      - name: Validate ticker.json is well-formed JSON
-        run: python3 -m json.tool ticker.json > /dev/null
-      - name: Every entry has required fields (name, city, lat, lng, funding.type)
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validar el contrato de los datasets
+        run: python scripts/validate_data.py
+      - name: Probar el validador reutilizable
+        run: python -m unittest discover -s tests -v
+      - name: Instalar herramientas de pruebas DOM
         run: |
-          python3 - <<'EOF'
-          import json, sys
-          data = json.load(open("companies.json"))
-          errors = []
-          for i, c in enumerate(data):
-              for field in ("name", "city", "lat", "lng"):
-                  if field not in c:
-                      errors.append(f"[{i}] {c.get('name','?')}: missing '{field}'")
-              if not c.get("funding", {}).get("type"):
-                  errors.append(f"[{i}] {c.get('name','?')}: missing funding.type")
-          if errors:
-              print("\n".join(errors))
-              sys.exit(1)
-          print(f"OK — {len(data)} entries validated")
-          EOF
+          python -m pip install -r tests/requirements.txt
+          python -m playwright install --with-deps chromium
+      - name: Probar render seguro en Chromium sin red
+        run: python tests/browser/test_render.py -v
