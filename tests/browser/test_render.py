@@ -17,6 +17,9 @@ RENDER = RENDER[RENDER.index("const markers"):]
 CONFIG = HTML.split("function bootApp() {", 1)[1].split("const map = new maplibregl.Map", 1)[0]
 DICTIONARY = HTML.split("<script>", 1)[1].split("// Boot watchdog", 1)[0]
 FORM_TAXONOMY = "const catSelect" + HTML.split("const catSelect", 1)[1].split("const modelSelect", 1)[0]
+FILTER_CONTROLS = "// ---------- Controls" + HTML.split("// ---------- Controls", 1)[1].split(
+    'document.getElementById("zin")', 1
+)[0]
 HARNESS = """
 window.map = {on() {}, setMaxBounds() {}, setMinZoom() {}, flyTo() {}};
 window.maplibregl = {
@@ -39,6 +42,15 @@ window.__injected = 0;
 PAGE = """<div id="panel"></div><div id="map"></div><div id="coList"></div>
 <div id="coCount"></div><div id="gridStatus"></div>
 <div id="ticker"><div id="tickerTrack"></div></div>
+<button class="barbtn" data-view-category="Incubator" data-i18n="showIncubators"></button>
+<button class="barbtn" data-view-category="Accelerator" data-i18n="showAccelerators"></button>
+<button class="barbtn" data-view-category="VC" data-i18n="showVC"></button>
+<button class="barbtn" data-view-category="Coworking Space" data-i18n="showCoworking"></button>
+<button class="barbtn" data-view-category="Nonprofit" data-i18n="showNonProfits"></button>
+<button class="barbtn" data-view-stage="Pre-Seed" data-i18n="stagePreSeed"></button>
+<button class="barbtn" data-view-stage="Seed" data-i18n="stageSeed"></button>
+<button class="barbtn" data-view-stage="Bootstrap" data-i18n="stageBootstrap"></button>
+<button class="barbtn" data-view-stage="Series A+" data-i18n="stageSeriesAPlus"></button>
 <select id="catSelect"><option value="Startup">Startup</option><option value="VC">VC</option></select>
 <div id="stageField"><select name="Subcategory"><option value=""></option><option value="Seed">Seed</option></select></div>"""
 
@@ -60,7 +72,7 @@ class RenderTests(unittest.TestCase):
                            if route.request.url == "http://perugrid.test/" else route.abort())
         self.page = self.context.new_page()
         self.page.goto("http://perugrid.test/")
-        self.page.add_script_tag(content=DICTIONARY + CONFIG + HARNESS + RENDER + FORM_TAXONOMY)
+        self.page.add_script_tag(content=DICTIONARY + CONFIG + HARNESS + RENDER + FILTER_CONTROLS + FORM_TAXONOMY)
 
     def tearDown(self):
         self.context.close()
@@ -115,7 +127,8 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(self.page.locator(".ptag").text_content(), expected[0]["tag_es"])
         self.page.evaluate("localStorage.setItem('pg_lang', 'en'); window.__pgRefreshPopup()")
         self.assertEqual(self.page.locator(".ptag").text_content(), expected[0]["tag"])
-        self.page.evaluate("viewState.showCoworking = true; applyCity('arequipa')")
+        self.page.locator('[data-view-category="Coworking Space"]').click()
+        self.page.evaluate("applyCity('arequipa')")
         expected = [c for c in companies if c["city"] == "arequipa" and c["category"] == "Coworking Space"]
         self.assertEqual(self.page.locator(".co").count(), len(expected))
         self.assertEqual(self.page.locator(".co-marker").count(), len(expected))
@@ -147,6 +160,65 @@ class RenderTests(unittest.TestCase):
         self.page.locator("#catSelect").select_option("VC")
         self.assertEqual(subcategory.input_value(), "")
         self.assertEqual(self.page.locator("#stageField").evaluate("el => el.style.display"), "none")
+
+    def test_category_filters_are_separate_and_preserve_city(self):
+        companies = json.loads((ROOT / "companies.json").read_text(encoding="utf-8"))
+        self.page.evaluate("data => { ALL_COMPANIES = data; applyCity('lima'); }", companies)
+
+        for category in ("Incubator", "Accelerator", "VC", "Coworking Space", "Nonprofit"):
+            with self.subTest(category=category):
+                button = self.page.locator(f'[data-view-category="{category}"]')
+                button.click()
+                expected = [c for c in companies if c["city"] == "lima" and c["category"] == category]
+                self.assertEqual(self.page.locator(".co").count(), len(expected))
+                self.assertEqual(button.get_attribute("aria-pressed"), "true")
+                self.assertEqual(self.page.locator('[data-view-category][aria-pressed="true"]').count(), 1)
+                self.assertEqual(self.page.locator('[data-view-stage][aria-pressed="true"]').count(), 0)
+
+        self.page.evaluate("applyCity('arequipa')")
+        self.assertEqual(self.page.locator(".co").count(), 0)
+        self.assertEqual(self.page.locator(".panel-empty").count(), 1)
+
+    def test_startup_stage_filter_and_clear_return_to_default_feed(self):
+        companies = json.loads((ROOT / "companies.json").read_text(encoding="utf-8"))
+        self.page.evaluate("data => { ALL_COMPANIES = data; applyCity('lima'); }", companies)
+        default_count = len([
+            c for c in companies
+            if c["city"] == "lima" and c["category"] in ("Startup", "Technology Consultancy")
+        ])
+
+        seed = self.page.locator('[data-view-stage="Seed"]')
+        seed.click()
+        expected_seed = [
+            c for c in companies
+            if c["city"] == "lima" and c["category"] == "Startup" and c.get("subcategory") == "Seed"
+        ]
+        self.assertEqual(self.page.locator(".co").count(), len(expected_seed))
+        self.assertEqual(self.page.locator(".co .tag").first.text_content(), "Seed")
+        self.assertEqual(seed.get_attribute("aria-pressed"), "true")
+
+        seed.click()
+        self.assertEqual(self.page.locator(".co").count(), default_count)
+        self.assertEqual(seed.get_attribute("aria-pressed"), "false")
+
+        bootstrap = self.page.locator('[data-view-stage="Bootstrap"]')
+        bootstrap.click()
+        self.assertEqual(self.page.locator(".co").count(), 0)
+        self.assertEqual(self.page.locator(".co-marker").count(), 0)
+        self.assertEqual(self.page.locator(".panel-empty").text_content(), "No hay lugares que coincidan con estos filtros.")
+
+    def test_filter_labels_have_english_and_spanish_copy(self):
+        expected = {
+            "en": ("Category", "Startup stage", "Incubators", "Accelerators", "Coworking"),
+            "es": ("Categoría", "Etapa startup", "Incubadoras", "Aceleradoras", "Coworking"),
+        }
+        for lang, labels in expected.items():
+            with self.subTest(lang=lang):
+                values = self.page.evaluate(
+                    "lang => { localStorage.setItem('pg_lang', lang); return [t('filterCategory'), t('filterStage'), t('showIncubators'), t('showAccelerators'), t('showCoworking')]; }",
+                    lang,
+                )
+                self.assertEqual(tuple(values), labels)
 
     def test_safe_legacy_path_and_logo_error_fallback(self):
         company = dict(FIXTURE["company"], name="O'Reilly & Co", domain=FIXTURE["valid_domains"][-1])

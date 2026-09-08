@@ -100,6 +100,14 @@ validador; no asignes una etapa sin fuente. `funding` sigue validándose durante
 La CI ejecuta el mismo validador y las [pruebas de seguridad del render](tests/README.md).
 Los textos se muestran literalmente; validar la estructura no demuestra la veracidad del dato.
 
+### Filtros Del Mapa
+
+La vista inicial muestra `Startup` y `Technology Consultancy`. Los botones de categoría cambian
+esa vista por una sola categoría: `Incubator`, `Accelerator`, `VC`, `Coworking Space` o
+`Nonprofit`. Los botones de etapa muestran únicamente startups con `Pre-Seed`, `Seed`,
+`Bootstrap` o `Series A+`. Volver a pulsar el filtro activo restaura la vista inicial. Ciudad,
+categoría y etapa se aplican juntas; una combinación sin resultados muestra un estado vacío.
+
 ### `ticker.json`
 
 Un array de objetos de titular que se desplazan en la parte superior:

@@ -64,7 +64,10 @@ window.I18N = {
     metaDesc: "Peru Grid — an interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa.",
     catStartup: "Startup", catConsultancy: "Technology Consultancy", catCoworking: "Coworking Space",
     catIncubator: "Incubator", catAccelerator: "Accelerator", catNonprofit: "Nonprofit", catVC: "VC",
-    showInvestors: "Investors Mode", showCoworking: "Coworking Mode", showNonProfits: "Non-Profits Mode",
+    filterCategory: "Category", filterStage: "Startup stage",
+    showIncubators: "Incubators", showAccelerators: "Accelerators", showVC: "VC",
+    showCoworking: "Coworking", showNonProfits: "Nonprofits",
+    noFilterResults: "No places match these filters.",
     togglePanel: "Collapse sidebar",
     viewOnGithub: "View on GitHub",
   },
@@ -111,7 +114,10 @@ window.I18N = {
     metaDesc: "Peru Grid — un mapa interactivo de startups, consultoras cloud, coworkings e incubadoras en Lima y Arequipa.",
     catStartup: "Startup", catConsultancy: "Consultora Tecnológica", catCoworking: "Espacio De Coworking",
     catIncubator: "Incubadora", catAccelerator: "Aceleradora", catNonprofit: "Sin Fines De Lucro", catVC: "VC",
-    showInvestors: "Modo Inversionistas", showCoworking: "Modo Coworking", showNonProfits: "Modo ONGs",
+    filterCategory: "Categoría", filterStage: "Etapa startup",
+    showIncubators: "Incubadoras", showAccelerators: "Aceleradoras", showVC: "VC",
+    showCoworking: "Coworking", showNonProfits: "ONGs",
+    noFilterResults: "No hay lugares que coincidan con estos filtros.",
     togglePanel: "Colapsar barra lateral",
     viewOnGithub: "Ver en GitHub",
   },
@@ -466,9 +472,19 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
         <button class="barbtn" data-sort="alpha" data-i18n="alpha">A–Z</button>
       </div>
       <div class="barrow wrap">
-        <button class="barbtn pill" data-view="showInvestors" data-i18n="showInvestors">Show Investors</button>
-        <button class="barbtn pill" data-view="showCoworking" data-i18n="showCoworking">Show Coworking Areas</button>
-        <button class="barbtn pill" data-view="showNonProfits" data-i18n="showNonProfits">Show Non-Profits & Communities</button>
+        <span class="barlabel" data-i18n="filterCategory">Category</span>
+        <button class="barbtn pill" data-view-category="Incubator" data-i18n="showIncubators" aria-pressed="false">Incubators</button>
+        <button class="barbtn pill" data-view-category="Accelerator" data-i18n="showAccelerators" aria-pressed="false">Accelerators</button>
+        <button class="barbtn pill" data-view-category="VC" data-i18n="showVC" aria-pressed="false">VC</button>
+        <button class="barbtn pill" data-view-category="Coworking Space" data-i18n="showCoworking" aria-pressed="false">Coworking</button>
+        <button class="barbtn pill" data-view-category="Nonprofit" data-i18n="showNonProfits" aria-pressed="false">Nonprofits</button>
+      </div>
+      <div class="barrow wrap">
+        <span class="barlabel" data-i18n="filterStage">Startup stage</span>
+        <button class="barbtn pill" data-view-stage="Pre-Seed" data-i18n="stagePreSeed" aria-pressed="false">Pre-Seed</button>
+        <button class="barbtn pill" data-view-stage="Seed" data-i18n="stageSeed" aria-pressed="false">Seed</button>
+        <button class="barbtn pill" data-view-stage="Bootstrap" data-i18n="stageBootstrap" aria-pressed="false">Bootstrap</button>
+        <button class="barbtn pill" data-view-stage="Series A+" data-i18n="stageSeriesAPlus" aria-pressed="false">Series A+</button>
       </div>
     </div>
     <div class="panel-list" id="coList"></div>
@@ -903,10 +919,8 @@ let openPopup = null;
 let selected = -1;
 let sortMode = "default"; // "default" (JSON order) | "alpha" (A–Z)
 
-// Landing view: Startups + Consultancies (+ Acquired) render by default.
-// Each toggle (Investors, Coworking, Non-Profits) is exclusive — when one is
-// active, ONLY that type's entities show; everything else is hidden.
-const viewState = { showInvestors: false, showCoworking: false, showNonProfits: false };
+// Landing view: startups + consultancies. One category or startup stage can replace it.
+const viewState = { category: null, subcategory: null };
 const DEFAULT_VISIBLE_TYPES = new Set(["Startup", "Technology Consultancy", "Consultancy", "Acquired"]);
 function companyCategory(company) {
   return company && (company.category || (company.funding && company.funding.type)) || "";
@@ -916,12 +930,14 @@ function companySubcategory(company) {
   if (Object.prototype.hasOwnProperty.call(company, "category")) return company.subcategory || "";
   return company.funding && company.funding.stage || "";
 }
-function typeVisible(type) {
-  if (viewState.showCoworking) return type === "Coworking Space" || type === "Coworking";
-  if (viewState.showInvestors) return type === "VC" || type === "Accelerator" || type === "Incubator" || type === "Fund";
-  if (viewState.showNonProfits) return type === "Nonprofit";
-  if (DEFAULT_VISIBLE_TYPES.has(type)) return true;
-  return false;
+function typeVisible(type, subcategory = "") {
+  if (viewState.subcategory) return type === "Startup" && subcategory === viewState.subcategory;
+  if (viewState.category) {
+    if (viewState.category === "Coworking Space") return type === "Coworking Space" || type === "Coworking";
+    if (viewState.category === "VC") return type === "VC" || type === "Fund";
+    return type === viewState.category;
+  }
+  return DEFAULT_VISIBLE_TYPES.has(type);
 }
 
 async function loadCompanies() {
@@ -947,7 +963,7 @@ function applyCity(city, opts = {}) {
 
   COMPANIES = ALL_COMPANIES.filter(c => {
     if (c.city !== city) return false;
-    if (!typeVisible(companyCategory(c))) return false;
+    if (!typeVisible(companyCategory(c), companySubcategory(c))) return false;
     const ok = c.lng >= cfg.bbox[0] && c.lng <= cfg.bbox[2] && c.lat >= cfg.bbox[1] && c.lat <= cfg.bbox[3];
     if (!ok) console.warn(`[grid] skipped ${c.name} — coords ${c.lat},${c.lng} outside ${city} core bbox`);
     return ok;
@@ -1118,6 +1134,13 @@ function buildSidebar() {
   const list = document.getElementById("coList");
   list.innerHTML = "";
   document.getElementById("coCount").textContent = t("placesIndexed")(COMPANIES.length);
+  if (!COMPANIES.length) {
+    const empty = document.createElement("div");
+    empty.className = "panel-err panel-empty";
+    empty.textContent = t("noFilterResults");
+    list.appendChild(empty);
+    return;
+  }
   const order = COMPANIES.map((c, i) => i);
   if (sortMode === "alpha") order.sort((a, b) => COMPANIES[a].name.localeCompare(COMPANIES[b].name));
   order.forEach((i) => {
@@ -1156,17 +1179,35 @@ document.querySelectorAll(".barbtn[data-sort]").forEach((btn) => {
   });
 });
 
-// Overlay toggles — each pill flips independently and blends into the same feed (no exclusive
-// selection, unlike city/sort). Re-runs applyCity with skipFly so the camera doesn't jump.
-document.querySelectorAll(".barbtn[data-view]").forEach((btn) => {
+function syncViewButtons() {
+  document.querySelectorAll("[data-view-category]").forEach((btn) => {
+    const active = btn.dataset.viewCategory === viewState.category;
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-pressed", String(active));
+  });
+  document.querySelectorAll("[data-view-stage]").forEach((btn) => {
+    const active = btn.dataset.viewStage === viewState.subcategory;
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-pressed", String(active));
+  });
+}
+
+document.querySelectorAll("[data-view-category]").forEach((btn) => {
   btn.addEventListener("click", (e) => {
     e.stopPropagation();
-    const key = btn.dataset.view;
-    const turningOn = !viewState[key];
-    // Exclusive: clicking a pill resets all others so only one view mode is ever active.
-    Object.keys(viewState).forEach((k) => { viewState[k] = false; });
-    viewState[key] = turningOn;
-    document.querySelectorAll(".barbtn[data-view]").forEach((b) => b.classList.toggle("active", viewState[b.dataset.view]));
+    viewState.category = viewState.category === btn.dataset.viewCategory ? null : btn.dataset.viewCategory;
+    viewState.subcategory = null;
+    syncViewButtons();
+    applyCity(currentCity, { skipFly: true });
+  });
+});
+
+document.querySelectorAll("[data-view-stage]").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    viewState.subcategory = viewState.subcategory === btn.dataset.viewStage ? null : btn.dataset.viewStage;
+    viewState.category = null;
+    syncViewButtons();
     applyCity(currentCity, { skipFly: true });
   });
 });
