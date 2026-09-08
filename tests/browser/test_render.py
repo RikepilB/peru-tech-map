@@ -20,6 +20,9 @@ FORM_TAXONOMY = "const catSelect" + HTML.split("const catSelect", 1)[1].split("c
 FILTER_CONTROLS = "// ---------- Controls" + HTML.split("// ---------- Controls", 1)[1].split(
     'document.getElementById("zin")', 1
 )[0]
+MOBILE_CONTROLS = "// ---------- Mobile sheet" + HTML.split("// ---------- Mobile sheet", 1)[1].split(
+    "// ---------- Add-company modal", 1
+)[0]
 HARNESS = """
 window.map = {on() {}, setMaxBounds() {}, setMinZoom() {}, flyTo() {}};
 window.maplibregl = {
@@ -39,8 +42,8 @@ window.maplibregl = {
 };
 window.__injected = 0;
 """
-PAGE = """<div id="panel"></div><div id="map"></div><div id="coList"></div>
-<div id="coCount"></div><div id="gridStatus"></div>
+PAGE = """<aside id="panel"><div id="handle"></div><div id="panelHead"></div><div id="coList"></div></aside>
+<button id="panelToggle"></button><div id="map"></div><div id="coCount"></div><div id="gridStatus"></div>
 <div id="ticker"><div id="tickerTrack"></div></div>
 <button class="barbtn" data-view-category="Incubator" data-i18n="showIncubators"></button>
 <button class="barbtn" data-view-category="Accelerator" data-i18n="showAccelerators"></button>
@@ -72,7 +75,9 @@ class RenderTests(unittest.TestCase):
                            if route.request.url == "http://perugrid.test/" else route.abort())
         self.page = self.context.new_page()
         self.page.goto("http://perugrid.test/")
-        self.page.add_script_tag(content=DICTIONARY + CONFIG + HARNESS + RENDER + FILTER_CONTROLS + FORM_TAXONOMY)
+        self.page.add_script_tag(
+            content=DICTIONARY + CONFIG + HARNESS + RENDER + FILTER_CONTROLS + MOBILE_CONTROLS + FORM_TAXONOMY
+        )
 
     def tearDown(self):
         self.context.close()
@@ -219,6 +224,31 @@ class RenderTests(unittest.TestCase):
                     lang,
                 )
                 self.assertEqual(tuple(values), labels)
+
+    def test_desktop_filter_row_selection_and_popup_leave_panel_as_sidebar(self):
+        companies = json.loads((ROOT / "companies.json").read_text(encoding="utf-8"))
+        self.page.set_viewport_size({"width": 1280, "height": 800})
+        self.page.evaluate("data => { ALL_COMPANIES = data; applyCity('lima'); }", companies)
+        self.page.locator('[data-view-category="VC"]').click()
+        self.assertGreater(self.page.locator(".co").count(), 0)
+        self.page.locator(".co").first.click()
+        self.assertEqual(self.page.locator(".test-popup").count(), 1)
+        self.page.locator("#panelHead").evaluate("el => el.click()")
+        self.assertNotIn("expanded", self.page.locator("#panel").get_attribute("class") or "")
+
+    def test_mobile_filter_row_selection_and_popup_collapse_expanded_sheet(self):
+        companies = json.loads((ROOT / "companies.json").read_text(encoding="utf-8"))
+        self.page.set_viewport_size({"width": 390, "height": 844})
+        self.page.evaluate("data => { ALL_COMPANIES = data; applyCity('lima'); }", companies)
+        self.page.locator("#panelHead").evaluate("el => el.click()")
+        self.assertIn("expanded", self.page.locator("#panel").get_attribute("class") or "")
+
+        self.page.locator('[data-view-category="Coworking Space"]').click()
+        self.assertIn("expanded", self.page.locator("#panel").get_attribute("class") or "")
+        self.assertGreater(self.page.locator(".co").count(), 0)
+        self.page.locator(".co").first.click()
+        self.assertEqual(self.page.locator(".test-popup").count(), 1)
+        self.assertNotIn("expanded", self.page.locator("#panel").get_attribute("class") or "")
 
     def test_safe_legacy_path_and_logo_error_fallback(self):
         company = dict(FIXTURE["company"], name="O'Reilly & Co", domain=FIXTURE["valid_domains"][-1])

@@ -105,8 +105,10 @@ Los textos se muestran literalmente; validar la estructura no demuestra la verac
 La vista inicial muestra `Startup` y `Technology Consultancy`. Los botones de categoría cambian
 esa vista por una sola categoría: `Incubator`, `Accelerator`, `VC`, `Coworking Space` o
 `Nonprofit`. Los botones de etapa muestran únicamente startups con `Pre-Seed`, `Seed`,
-`Bootstrap` o `Series A+`. Volver a pulsar el filtro activo restaura la vista inicial. Ciudad,
-categoría y etapa se aplican juntas; una combinación sin resultados muestra un estado vacío.
+`Bootstrap` o `Series A+`. Categoría y etapa son modos mutuamente exclusivos: elegir una categoría
+limpia la etapa activa y elegir una etapa limpia la categoría activa. Volver a pulsar el filtro
+activo restaura la vista inicial. El filtro de ciudad permanece activo en todos los modos; cuando
+no hay resultados, la barra lateral muestra un estado vacío.
 
 ### `ticker.json`
 
