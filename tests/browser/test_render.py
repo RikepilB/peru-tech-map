@@ -16,6 +16,7 @@ RENDER = HTML.split("// ---------- Companies", 1)[1].split("// ---------- Contro
 RENDER = RENDER[RENDER.index("const markers"):]
 CONFIG = HTML.split("function bootApp() {", 1)[1].split("const map = new maplibregl.Map", 1)[0]
 DICTIONARY = HTML.split("<script>", 1)[1].split("// Boot watchdog", 1)[0]
+FORM_TAXONOMY = "const catSelect" + HTML.split("const catSelect", 1)[1].split("const modelSelect", 1)[0]
 HARNESS = """
 window.map = {on() {}, setMaxBounds() {}, setMinZoom() {}, flyTo() {}};
 window.maplibregl = {
@@ -37,7 +38,9 @@ window.__injected = 0;
 """
 PAGE = """<div id="panel"></div><div id="map"></div><div id="coList"></div>
 <div id="coCount"></div><div id="gridStatus"></div>
-<div id="ticker"><div id="tickerTrack"></div></div>"""
+<div id="ticker"><div id="tickerTrack"></div></div>
+<select id="catSelect"><option value="Startup">Startup</option><option value="VC">VC</option></select>
+<div id="stageField"><select name="Subcategory"><option value=""></option><option value="Seed">Seed</option></select></div>"""
 
 
 class RenderTests(unittest.TestCase):
@@ -57,7 +60,7 @@ class RenderTests(unittest.TestCase):
                            if route.request.url == "http://perugrid.test/" else route.abort())
         self.page = self.context.new_page()
         self.page.goto("http://perugrid.test/")
-        self.page.add_script_tag(content=DICTIONARY + CONFIG + HARNESS + RENDER)
+        self.page.add_script_tag(content=DICTIONARY + CONFIG + HARNESS + RENDER + FORM_TAXONOMY)
 
     def tearDown(self):
         self.context.close()
@@ -137,6 +140,13 @@ class RenderTests(unittest.TestCase):
         self.render(legacy)
         self.assertEqual(self.page.locator(".co .tag").text_content(), "Seed")
         self.assertEqual(self.page.locator(".test-popup .chip").all_text_contents(), ["Startup", "Seed"])
+
+    def test_hidden_subcategory_is_cleared_for_non_startup(self):
+        subcategory = self.page.locator('[name="Subcategory"]')
+        subcategory.select_option("Seed")
+        self.page.locator("#catSelect").select_option("VC")
+        self.assertEqual(subcategory.input_value(), "")
+        self.assertEqual(self.page.locator("#stageField").evaluate("el => el.style.display"), "none")
 
     def test_safe_legacy_path_and_logo_error_fallback(self):
         company = dict(FIXTURE["company"], name="O'Reilly & Co", domain=FIXTURE["valid_domains"][-1])

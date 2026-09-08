@@ -1230,7 +1230,11 @@ document.getElementById("closeModal").onclick = () => closeModal();
 document.getElementById("successClose").onclick = () => closeModal();
 const catSelect = document.getElementById("catSelect");
 const stageField = document.getElementById("stageField");
-function toggleStage() { stageField.style.display = catSelect.value === "Startup" ? "" : "none"; }
+function toggleStage() {
+  const isStartup = catSelect.value === "Startup";
+  stageField.style.display = isStartup ? "" : "none";
+  if (!isStartup) stageField.querySelector("select").value = "";
+}
 catSelect.addEventListener("change", toggleStage);
 toggleStage();
 
