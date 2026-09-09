@@ -64,7 +64,8 @@ window.I18N = {
     metaDesc: "Peru Grid — an interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa.",
     catStartup: "Startup", catConsultancy: "Technology Consultancy", catCoworking: "Coworking Space",
     catIncubator: "Incubator", catAccelerator: "Accelerator", catNonprofit: "Nonprofit", catVC: "VC",
-    filterCategory: "Category", filterStage: "Startup stage",
+    filterCategory: "What do you want to see?", viewCompanies: "Companies",
+    filterStage: "Startup stage", allStartupStages: "All stages", clearFilters: "Clear filters",
     showIncubators: "Incubators", showAccelerators: "Accelerators", showVC: "VC",
     showCoworking: "Coworking", showNonProfits: "Nonprofits",
     noFilterResults: "No places match these filters.",
@@ -114,7 +115,8 @@ window.I18N = {
     metaDesc: "Peru Grid — un mapa interactivo de startups, consultoras cloud, coworkings e incubadoras en Lima y Arequipa.",
     catStartup: "Startup", catConsultancy: "Consultora Tecnológica", catCoworking: "Espacio De Coworking",
     catIncubator: "Incubadora", catAccelerator: "Aceleradora", catNonprofit: "Sin Fines De Lucro", catVC: "VC",
-    filterCategory: "Categoría", filterStage: "Etapa startup",
+    filterCategory: "¿Qué quieres ver?", viewCompanies: "Empresas",
+    filterStage: "Etapa de startup", allStartupStages: "Todas las etapas", clearFilters: "Limpiar filtros",
     showIncubators: "Incubadoras", showAccelerators: "Aceleradoras", showVC: "VC",
     showCoworking: "Coworking", showNonProfits: "ONGs",
     noFilterResults: "No hay lugares que coincidan con estos filtros.",
@@ -275,6 +277,33 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
     padding: 4px 9px; background: transparent; color: var(--muted); border: 1.5px solid var(--line); border-radius: 8px; cursor: pointer; }
   .barbtn:hover, .barbtn:active { border-color: var(--green-bright); color: var(--green-bright); }
   .barbtn.active { background: var(--green); color: #fff; border-color: var(--green); }
+  [hidden] { display: none !important; }
+  .filter-stack {
+    display: grid; gap: 10px; margin-top: 14px; padding-top: 13px;
+    border-top: 1px solid rgba(43,51,66,0.72);
+  }
+  .filter-field { display: grid; gap: 6px; }
+  .filter-label {
+    font-size: 10px; letter-spacing: .14em; line-height: 1.35;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .filter-select {
+    width: 100%; min-height: 40px; padding: 8px 10px;
+    border: 1.5px solid var(--line); border-radius: 8px;
+    background: #151b24; color: var(--text); font: 600 12px/1.3 var(--sans);
+    letter-spacing: .02em; cursor: pointer;
+  }
+  .filter-select:hover { border-color: #4d5a6e; }
+  .filter-select:focus-visible {
+    border-color: var(--green-bright); outline: 2px solid rgba(5,220,96,.28); outline-offset: 2px;
+  }
+  .filter-reset {
+    width: fit-content; min-height: 32px; margin: -2px 0 0; padding: 5px 0;
+    border: 0; background: transparent; color: var(--green-bright);
+    font: 600 11px/1.3 var(--sans); letter-spacing: .04em; cursor: pointer;
+  }
+  .filter-reset:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .filter-reset:focus-visible { outline: 2px solid var(--green-bright); outline-offset: 3px; border-radius: 2px; }
 
   .panel-list { flex: 1; overflow-y: auto; }
   .panel-list::-webkit-scrollbar { width: 8px; }
@@ -424,6 +453,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
     .ctl { width: 44px; height: 44px; }
     #toggle3d { width: 44px; }
     .barbtn { padding: 9px 12px; font-size: 11px; }
+    .filter-select, .filter-reset { min-height: 44px; }
     #langToggle { padding: 9px 10px; }
     .statusbar { gap: 12px; padding: 0 10px; padding-bottom: var(--safe-b); }
     #panel {
@@ -487,20 +517,31 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
         <button class="barbtn active" data-sort="default" data-i18n="default">Default</button>
         <button class="barbtn" data-sort="alpha" data-i18n="alpha">A–Z</button>
       </div>
-      <div class="barrow wrap">
-        <span class="barlabel" data-i18n="filterCategory">Category</span>
-        <button class="barbtn pill" data-view-category="Incubator" data-i18n="showIncubators" aria-pressed="false">Incubators</button>
-        <button class="barbtn pill" data-view-category="Accelerator" data-i18n="showAccelerators" aria-pressed="false">Accelerators</button>
-        <button class="barbtn pill" data-view-category="VC" data-i18n="showVC" aria-pressed="false">VC</button>
-        <button class="barbtn pill" data-view-category="Coworking Space" data-i18n="showCoworking" aria-pressed="false">Coworking</button>
-        <button class="barbtn pill" data-view-category="Nonprofit" data-i18n="showNonProfits" aria-pressed="false">Nonprofits</button>
-      </div>
-      <div class="barrow wrap">
-        <span class="barlabel" data-i18n="filterStage">Startup stage</span>
-        <button class="barbtn pill" data-view-stage="Pre-Seed" data-i18n="stagePreSeed" aria-pressed="false">Pre-Seed</button>
-        <button class="barbtn pill" data-view-stage="Seed" data-i18n="stageSeed" aria-pressed="false">Seed</button>
-        <button class="barbtn pill" data-view-stage="Bootstrap" data-i18n="stageBootstrap" aria-pressed="false">Bootstrap</button>
-        <button class="barbtn pill" data-view-stage="Series A+" data-i18n="stageSeriesAPlus" aria-pressed="false">Series A+</button>
+      <div class="filter-stack">
+        <div class="filter-field">
+          <label class="filter-label" for="viewCategory" data-i18n="filterCategory">What do you want to see?</label>
+          <select class="filter-select" id="viewCategory">
+            <option value="" data-i18n="viewCompanies">Companies</option>
+            <option value="Startup" data-i18n="catStartup">Startup</option>
+            <option value="Technology Consultancy" data-i18n="catConsultancy">Technology Consultancy</option>
+            <option value="Incubator" data-i18n="catIncubator">Incubator</option>
+            <option value="Accelerator" data-i18n="catAccelerator">Accelerator</option>
+            <option value="VC" data-i18n="catVC">VC</option>
+            <option value="Coworking Space" data-i18n="catCoworking">Coworking Space</option>
+            <option value="Nonprofit" data-i18n="catNonprofit">Nonprofit</option>
+          </select>
+        </div>
+        <div class="filter-field" id="viewStageField" hidden>
+          <label class="filter-label" for="viewStage" data-i18n="filterStage">Startup stage</label>
+          <select class="filter-select" id="viewStage">
+            <option value="" data-i18n="allStartupStages">All stages</option>
+            <option value="Pre-Seed" data-i18n="stagePreSeed">Pre-Seed</option>
+            <option value="Seed" data-i18n="stageSeed">Seed</option>
+            <option value="Bootstrap" data-i18n="stageBootstrap">Bootstrap</option>
+            <option value="Series A+" data-i18n="stageSeriesAPlus">Series A+</option>
+          </select>
+        </div>
+        <button type="button" class="filter-reset" id="clearViewFilters" data-i18n="clearFilters" hidden>Clear filters</button>
       </div>
     </div>
     <div class="panel-list" id="coList"></div>
@@ -954,7 +995,7 @@ let openPopup = null;
 let selected = -1;
 let sortMode = "default"; // "default" (JSON order) | "alpha" (A–Z)
 
-// Landing view: startups + consultancies. One category or startup stage can replace it.
+// Landing view: startups + consultancies. A category replaces it; a stage refines Startup.
 const viewState = { category: null, subcategory: null };
 const DEFAULT_VISIBLE_TYPES = new Set(["Startup", "Technology Consultancy", "Consultancy", "Acquired"]);
 function companyCategory(company) {
@@ -1214,38 +1255,44 @@ document.querySelectorAll(".barbtn[data-sort]").forEach((btn) => {
   });
 });
 
-function syncViewButtons() {
-  document.querySelectorAll("[data-view-category]").forEach((btn) => {
-    const active = btn.dataset.viewCategory === viewState.category;
-    btn.classList.toggle("active", active);
-    btn.setAttribute("aria-pressed", String(active));
-  });
-  document.querySelectorAll("[data-view-stage]").forEach((btn) => {
-    const active = btn.dataset.viewStage === viewState.subcategory;
-    btn.classList.toggle("active", active);
-    btn.setAttribute("aria-pressed", String(active));
-  });
+const viewCategorySelect = document.getElementById("viewCategory");
+const viewStageSelect = document.getElementById("viewStage");
+const viewStageField = document.getElementById("viewStageField");
+const clearViewFilters = document.getElementById("clearViewFilters");
+
+function syncViewControls() {
+  const startupSelected = viewState.category === "Startup";
+  if (!startupSelected) viewState.subcategory = null;
+  viewCategorySelect.value = viewState.category || "";
+  viewStageSelect.value = viewState.subcategory || "";
+  viewStageField.hidden = !startupSelected;
+  clearViewFilters.hidden = !viewState.category && !viewState.subcategory;
 }
 
-document.querySelectorAll("[data-view-category]").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    viewState.category = viewState.category === btn.dataset.viewCategory ? null : btn.dataset.viewCategory;
-    viewState.subcategory = null;
-    syncViewButtons();
-    applyCity(currentCity, { skipFly: true });
-  });
+viewCategorySelect.addEventListener("change", (e) => {
+  e.stopPropagation();
+  viewState.category = viewCategorySelect.value || null;
+  viewState.subcategory = null;
+  syncViewControls();
+  applyCity(currentCity, { skipFly: true });
 });
 
-document.querySelectorAll("[data-view-stage]").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    viewState.subcategory = viewState.subcategory === btn.dataset.viewStage ? null : btn.dataset.viewStage;
-    viewState.category = null;
-    syncViewButtons();
-    applyCity(currentCity, { skipFly: true });
-  });
+viewStageSelect.addEventListener("change", (e) => {
+  e.stopPropagation();
+  viewState.category = "Startup";
+  viewState.subcategory = viewStageSelect.value || null;
+  syncViewControls();
+  applyCity(currentCity, { skipFly: true });
 });
+
+clearViewFilters.addEventListener("click", (e) => {
+  e.stopPropagation();
+  viewState.category = null;
+  viewState.subcategory = null;
+  syncViewControls();
+  applyCity(currentCity, { skipFly: true });
+});
+syncViewControls();
 
 document.getElementById("zin").onclick = () => map.zoomIn({ duration: 400 });
 document.getElementById("zout").onclick = () => map.zoomOut({ duration: 400 });
@@ -1289,7 +1336,10 @@ function startStatusBar() {
 
 // ---------- Mobile sheet ----------
 const panel = document.getElementById("panel");
-document.getElementById("panelHead").addEventListener("click", () => { if (isMobile()) panel.classList.toggle("expanded"); });
+document.getElementById("panelHead").addEventListener("click", (e) => {
+  if (e.target.closest("button, select, label")) return;
+  if (isMobile()) panel.classList.toggle("expanded");
+});
 document.getElementById("handle").addEventListener("click", () => panel.classList.toggle("expanded"));
 
 // :hover can't pause the ticker on touch devices — tap toggles a class that does the same.
