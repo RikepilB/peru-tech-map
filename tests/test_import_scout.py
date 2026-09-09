@@ -1,7 +1,9 @@
 """Contrato de integración INT-01 entre Coworking Scout y PeruGrid."""
 import copy
 import json
+import os
 from pathlib import Path
+import stat
 from unittest import mock
 import subprocess
 import sys
@@ -10,13 +12,14 @@ import unittest
 
 from scripts.import_scout import (
     MAX_PACKAGE_BYTES,
+    MAX_RECORDS,
     MAX_VALIDATION_ERRORS,
     ScoutImportError,
     import_package,
     plan_import,
     validate_scout_package,
 )
-from scripts.validate_data import load_json, validate_companies
+from scripts.validate_data import MAX_SCOUT_SOURCES, load_json, validate_companies
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -153,7 +156,7 @@ class ScoutPackageValidationTests(unittest.TestCase):
         package = fixture_package()
         prototype = package["records"][0]
         package["records"] = []
-        for index in range(1000):
+        for index in range(MAX_RECORDS):
             row = copy.deepcopy(prototype)
             row["site_id"] = f"site-{index:04d}"
             package["records"].append(row)
@@ -166,7 +169,7 @@ class ScoutPackageValidationTests(unittest.TestCase):
         package = fixture_package()
         source = package["records"][0]["sources"][0]
         package["records"][0]["sources"] = []
-        for index in range(100):
+        for index in range(MAX_SCOUT_SOURCES):
             item = copy.deepcopy(source)
             item["source_url"] = f"https://github.com/RikepilB/coworking-scout/source-{index:03d}"
             package["records"][0]["sources"].append(item)
@@ -386,6 +389,20 @@ class ScoutImportTests(unittest.TestCase):
                     import_package(FIXTURE_PATH, companies_path, write=True)
             self.assertEqual(companies_path.read_bytes(), before)
             self.assertEqual(list(Path(tmp).glob("*.tmp")), [])
+
+    def test_atomic_write_preserves_existing_destination_mode(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            companies_path = Path(tmp) / "companies.json"
+            companies_path.write_bytes((ROOT / "companies.json").read_bytes())
+            os.chmod(companies_path, 0o640)
+            original_mode = stat.S_IMODE(companies_path.stat().st_mode)
+
+            with mock.patch("scripts.import_scout.os.chmod", wraps=os.chmod) as chmod:
+                import_package(FIXTURE_PATH, companies_path, write=True)
+
+            chmod.assert_called_once()
+            self.assertEqual(chmod.call_args.args[1], original_mode)
+            self.assertEqual(stat.S_IMODE(companies_path.stat().st_mode), original_mode)
 
     def test_write_refuses_a_symlink_destination_before_loading_or_replacing(self):
         with mock.patch("scripts.import_scout.Path.is_symlink", return_value=True):

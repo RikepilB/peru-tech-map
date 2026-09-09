@@ -23,6 +23,7 @@ CATEGORIES = {"Startup", "Incubator", "Accelerator", "VC", "Nonprofit",
 STARTUP_SUBCATEGORIES = {"Pre-Seed", "Seed", "Bootstrap", "Series A+"}
 OPERATING_MODELS = {"On-Site", "Hybrid", "Remote"}
 SCOUT_WORKSPACE_TYPES = {"coworking", "cafe", "library"}
+MAX_SCOUT_SOURCES = 100
 SCOUT_SOURCE_FIELDS = {"provider", "source_url", "observed_at", "provenance_class",
                        "use_classification", "export_eligible"}
 SCOUT_COMPANY_FIELDS = {"site_id", "organization_id", "workspace_type", "sources"}
@@ -212,10 +213,10 @@ def validate_scout_sources(sources: object, path: str) -> list[str]:
     if not isinstance(sources, list) or not sources:
         return [f"{path}: array no vacío requerido"]
     errors: list[str] = []
-    if len(sources) > 100:
-        errors.append(f"{path}: máximo 100 fuentes")
+    if len(sources) > MAX_SCOUT_SOURCES:
+        errors.append(f"{path}: máximo {MAX_SCOUT_SOURCES} fuentes")
     seen: list[dict] = []
-    for index, source in enumerate(sources[:100]):
+    for index, source in enumerate(sources[:MAX_SCOUT_SOURCES]):
         source_path = f"{path}[{index}]"
         errors.extend(validate_scout_source(source, source_path))
         if isinstance(source, dict):

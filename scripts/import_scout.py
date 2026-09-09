@@ -7,6 +7,7 @@ from dataclasses import dataclass
 import json
 import os
 from pathlib import Path
+import stat
 import sys
 import tempfile
 
@@ -213,6 +214,7 @@ def _atomic_json_write(path: Path, data: list[dict]) -> None:
     try:
         if path.is_symlink():
             raise ScoutImportError("destino companies: no se permite un enlace simbólico")
+        destination_mode = stat.S_IMODE(path.stat().st_mode) if path.exists() else None
         with tempfile.NamedTemporaryFile(
             "w", encoding="utf-8", newline="\n", dir=path.parent,
             prefix=f".{path.name}.", suffix=".tmp", delete=False,
@@ -222,6 +224,8 @@ def _atomic_json_write(path: Path, data: list[dict]) -> None:
             handle.write("\n")
         if path.is_symlink():
             raise ScoutImportError("destino companies: no se permite un enlace simbólico")
+        if destination_mode is not None:
+            os.chmod(temp_name, destination_mode)
         os.replace(temp_name, path)
     except Exception:
         if temp_name:
