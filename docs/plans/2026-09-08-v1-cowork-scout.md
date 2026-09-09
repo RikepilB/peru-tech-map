@@ -1,11 +1,11 @@
 # PeruGrid V1 + Cowork Scout: plan de recuperación e integración
 
-Fecha: 2026-09-08. Estado: propuesta ejecutable; implementación pendiente.
+Fecha: 2026-09-08. Estado: ejecución en curso; PG-04 preparado para revisión.
 
 Actualización de ejecución: **PG-01–03, CS-01–03 e INT-01 están fusionados**. La corrección
 PG-03.1 reemplazó el selector excluyente por controles combinables mediante el PR #47.
-**DATA-01 es la entrega actual**: reconcilia sedes verificadas y deja los candidatos inciertos
-como backlog editorial. PG-04 y QA-01 continúan pendientes.
+**DATA-01 está fusionado**: reconcilia sedes verificadas y deja los candidatos inciertos como
+backlog editorial. PG-04 añade la vista pública Trabajar remoto; QA-01 continúa pendiente.
 
 Ampliación solicitada: [rendimiento, lazy loading, caché y evaluación Astro/Next/Go](2026-09-08-performance.md).
 PERF-00 mide la base antes de optimizar; PG-01 sigue como primera entrega de código.
@@ -234,8 +234,10 @@ responsive/táctil mediante el PR #43 y los filtros combinables mediante el PR #
 Scout, CS-01, CS-02 y CS-03 están fusionados mediante los PR #2, #3 y #4. INT-01 está fusionado
 en ambos repositorios (Scout #5–6 y PeruGrid #46). DATA-01 aplica la matriz
 `docs/data-reconciliation-2026-09-09.md`, sustituye pins genéricos por ocho sedes trazables y
-mantiene los casos sin coordenada exacta como pendientes. El siguiente frente es PG-04: integrar
-la vista pública «Trabajar remoto». Conservar en ambos repositorios los archivos locales ajenos.
+mantiene los casos sin coordenada exacta como pendientes. PG-04 implementa la vista pública
+«Trabajar remoto» con tipos combinables y solo publica lugares respaldados por una fuente pública
+redistribuible. El siguiente frente es QA-01 y la línea base de rendimiento. Conservar en ambos
+repositorios los archivos locales ajenos.
 
 ## PG-03.1 — Corrección UX del selector de filtros
 

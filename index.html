@@ -64,8 +64,13 @@ window.I18N = {
     metaDesc: "Peru Grid — an interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa.",
     catStartup: "Startup", catConsultancy: "Technology Consultancy", catCoworking: "Coworking Space",
     catIncubator: "Incubator", catAccelerator: "Accelerator", catNonprofit: "Nonprofit", catVC: "VC",
+    mapMode: "Map mode", ecosystemMode: "Ecosystem", remoteWorkMode: "Work remotely",
     filterCategory: "Organization types", viewCompanies: "Companies",
     filterStage: "Startup stage · optional", allStartupStages: "All stages", clearFilters: "Restore companies",
+    filterWorkspace: "Place types", workspaceCoworking: "Coworking", workspaceCafe: "Café", workspaceLibrary: "Library", restoreWorkspaces: "Show all place types",
+    remoteNotice: "Location backed by a public source. Wi-Fi and amenities are not yet verified.",
+    sourceObserved: "Source checked:", chooseWorkspaceType: "Select at least one place type.",
+    noRemotePlacesCity: function (city) { return "No places with a public source are available in " + city + " yet."; },
     showStartups: "Startups", showConsultancies: "Consultancies",
     showIncubators: "Incubators", showAccelerators: "Accelerators", showVC: "VC",
     showCoworking: "Coworking", showNonProfits: "Nonprofits",
@@ -116,8 +121,13 @@ window.I18N = {
     metaDesc: "Peru Grid — un mapa interactivo de startups, consultoras cloud, coworkings e incubadoras en Lima y Arequipa.",
     catStartup: "Startup", catConsultancy: "Consultora Tecnológica", catCoworking: "Espacio De Coworking",
     catIncubator: "Incubadora", catAccelerator: "Aceleradora", catNonprofit: "Sin Fines De Lucro", catVC: "VC",
+    mapMode: "Modo del mapa", ecosystemMode: "Ecosistema", remoteWorkMode: "Trabajar remoto",
     filterCategory: "Tipos de organización", viewCompanies: "Empresas",
     filterStage: "Etapa de startup · opcional", allStartupStages: "Todas las etapas", clearFilters: "Restaurar empresas",
+    filterWorkspace: "Tipos de lugar", workspaceCoworking: "Coworking", workspaceCafe: "Café", workspaceLibrary: "Biblioteca", restoreWorkspaces: "Mostrar todos los tipos",
+    remoteNotice: "Ubicación respaldada por una fuente pública. Wi-Fi y servicios aún no verificados.",
+    sourceObserved: "Fuente consultada:", chooseWorkspaceType: "Selecciona al menos un tipo de lugar.",
+    noRemotePlacesCity: function (city) { return "Aún no hay lugares con una fuente pública en " + city + "."; },
     showStartups: "Startups", showConsultancies: "Consultoras",
     showIncubators: "Incubadoras", showAccelerators: "Aceleradoras", showVC: "VC",
     showCoworking: "Coworking", showNonProfits: "ONGs",
@@ -290,6 +300,23 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
     font-size: 10px; letter-spacing: .14em; line-height: 1.35;
     text-transform: uppercase; color: var(--muted);
   }
+  .mode-switch {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px; padding: 3px;
+    border: 1.5px solid var(--line); border-radius: 9px; background: rgba(21,27,36,.72);
+  }
+  .mode-choice {
+    position: relative; min-width: 0; cursor: pointer;
+  }
+  .mode-choice-label {
+    min-height: 36px; display: flex; align-items: center; justify-content: center; padding: 7px 8px;
+    border: 1px solid transparent; border-radius: 6px; color: var(--muted);
+    font: 650 10px/1.2 var(--sans); letter-spacing: .04em; text-align: center;
+  }
+  .mode-choice:hover .mode-choice-label { color: var(--text); }
+  .mode-choice .filter-input:checked + .mode-choice-label {
+    border-color: var(--green-bright); background: rgba(5,220,96,.12); color: var(--text);
+  }
+  .mode-choice .filter-input:focus-visible + .mode-choice-label { outline: 2px solid var(--green-bright); outline-offset: 2px; }
   .filter-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
   .filter-choice { position: relative; min-width: 0; cursor: pointer; }
   .filter-input {
@@ -319,10 +346,18 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
     outline: 2px solid rgba(5,220,96,.42); outline-offset: 2px;
   }
   .filter-stage-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .filter-workspace-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .filter-stage-grid .filter-choice-label {
     justify-content: center; padding: 7px 2px; font-size: 9px; text-align: center;
   }
   .filter-stage-grid .filter-choice-label::before { display: none; }
+  .filter-workspace-grid .filter-choice-label {
+    justify-content: center; padding: 7px 4px; text-align: center;
+  }
+  .filter-workspace-grid .filter-choice-label::before { display: none; }
+  .filter-note {
+    margin: 0; color: var(--muted); font: 500 10px/1.45 var(--sans); letter-spacing: .02em;
+  }
   .filter-reset {
     width: fit-content; min-height: 32px; margin: -2px 0 0; padding: 5px 0;
     border: 0; background: transparent; color: var(--green-bright);
@@ -426,6 +461,13 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   .co-pop a.site { color: var(--green-bright); font-size: 12px; text-decoration: none; }
   .co-pop a.site:hover { text-decoration: underline; }
   .co-pop .addr { color: var(--muted); font-size: 10px; margin-top: 6px; letter-spacing: .03em; }
+  .co-pop .source-meta {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    margin-top: 9px; padding-top: 8px; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 10px; letter-spacing: .03em;
+  }
+  .co-pop .source-link { color: var(--green-bright); text-decoration: none; white-space: nowrap; }
+  .co-pop .source-link:hover { text-decoration: underline; }
   .chip { display: inline-block; margin-top: 10px; padding: 3px 8px; border-radius: 6px; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
   .chip.boot { background: rgba(29,168,66,0.18); color: var(--green-bright); border: 1px solid var(--green-dim); }
   .chip.fund { background: var(--green); color: #fff; border: 1px solid var(--green); }
@@ -482,6 +524,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
     .filter-stack { gap: 8px; margin-top: 12px; padding-top: 11px; }
     .filter-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .filter-choice-label, .filter-reset { min-height: 44px; }
+    .mode-choice-label { min-height: 44px; font-size: 11px; }
     .filter-choice-label { justify-content: center; padding: 6px 5px; text-align: center; }
     .filter-choice-label::before { display: none; }
     .filter-stage-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -551,6 +594,13 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
       </div>
       <div class="filter-stack">
         <fieldset class="filter-field filter-group">
+          <legend class="filter-label" data-i18n="mapMode">Map mode</legend>
+          <div class="mode-switch" id="viewModes">
+            <label class="mode-choice"><input class="filter-input" type="radio" name="view-mode" value="ecosystem" data-view-mode="ecosystem" aria-controls="viewCategoryField viewStageField" checked><span class="mode-choice-label" data-i18n="ecosystemMode">Ecosystem</span></label>
+            <label class="mode-choice"><input class="filter-input" type="radio" name="view-mode" value="remote" data-view-mode="remote" aria-controls="viewWorkspaceField"><span class="mode-choice-label" data-i18n="remoteWorkMode">Work remotely</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="filter-field filter-group" id="viewCategoryField">
           <legend class="filter-label" data-i18n="filterCategory">Organization types</legend>
           <div class="filter-grid" id="viewCategories">
             <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-category="Startup" value="Startup" checked><span class="filter-choice-label" data-i18n="showStartups">Startups</span></label>
@@ -570,6 +620,15 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
             <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-stage="Bootstrap" value="Bootstrap"><span class="filter-choice-label" data-i18n="stageBootstrap">Bootstrap</span></label>
             <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-stage="Series A+" value="Series A+"><span class="filter-choice-label" data-i18n="stageSeriesAPlus">Series A+</span></label>
           </div>
+        </fieldset>
+        <fieldset class="filter-field filter-group" id="viewWorkspaceField" aria-describedby="remoteNotice" hidden>
+          <legend class="filter-label" data-i18n="filterWorkspace">Place types</legend>
+          <div class="filter-grid filter-workspace-grid" id="viewWorkspaces">
+            <label class="filter-choice"><input class="filter-input" type="checkbox" data-workspace-type="coworking" value="coworking" checked><span class="filter-choice-label" data-i18n="workspaceCoworking">Coworking</span></label>
+            <label class="filter-choice"><input class="filter-input" type="checkbox" data-workspace-type="cafe" value="cafe" checked><span class="filter-choice-label" data-i18n="workspaceCafe">Cafés</span></label>
+            <label class="filter-choice"><input class="filter-input" type="checkbox" data-workspace-type="library" value="library" checked><span class="filter-choice-label" data-i18n="workspaceLibrary">Libraries</span></label>
+          </div>
+          <p class="filter-note" id="remoteNotice" data-i18n="remoteNotice">Location backed by a public source. Wi-Fi and amenities are not yet verified.</p>
         </fieldset>
         <button type="button" class="filter-reset" id="clearViewFilters" data-i18n="clearFilters" hidden>Restore companies</button>
       </div>
@@ -686,6 +745,7 @@ document.getElementById("langToggle").addEventListener("click", function () {
   localStorage.setItem("pg_lang", getLang() === "en" ? "es" : "en");
   applyI18N();
   if (window.__pgRefreshSidebar) window.__pgRefreshSidebar();
+  if (window.__pgSyncViewControls) window.__pgSyncViewControls();
   if (window.__pgUpdateStatusbar) window.__pgUpdateStatusbar();
   if (window.__pgRefreshPopup) window.__pgRefreshPopup();
 });
@@ -1025,11 +1085,14 @@ let openPopup = null;
 let selected = -1;
 let sortMode = "default"; // "default" (JSON order) | "alpha" (A–Z)
 
-// Landing view: startups + consultancies. Categories combine; stages refine only Startup.
+// Landing view: startups + consultancies. Remote work is a separate physical-place view.
 const DEFAULT_VIEW_CATEGORIES = ["Startup", "Technology Consultancy"];
+const DEFAULT_WORKSPACE_TYPES = ["coworking", "cafe", "library"];
 const viewState = {
+  mode: "ecosystem",
   categories: new Set(DEFAULT_VIEW_CATEGORIES),
   subcategories: new Set(),
+  workspaceTypes: new Set(DEFAULT_WORKSPACE_TYPES),
 };
 function companyCategory(company) {
   return company && (company.category || (company.funding && company.funding.type)) || "";
@@ -1055,6 +1118,14 @@ function typeVisible(type, subcategory = "") {
   return true;
 }
 
+function companyVisible(company) {
+  if (viewState.mode === "remote") {
+    return DEFAULT_WORKSPACE_TYPES.includes(company.workspace_type) &&
+      viewState.workspaceTypes.has(company.workspace_type) && publicSources(company).length > 0;
+  }
+  return typeVisible(companyCategory(company), companySubcategory(company));
+}
+
 async function loadCompanies() {
   try {
     const res = await fetch("./companies.json", { cache: "no-cache" });
@@ -1078,7 +1149,7 @@ function applyCity(city, opts = {}) {
 
   COMPANIES = ALL_COMPANIES.filter(c => {
     if (c.city !== city) return false;
-    if (!typeVisible(companyCategory(c), companySubcategory(c))) return false;
+    if (!companyVisible(c)) return false;
     const ok = c.lng >= cfg.bbox[0] && c.lng <= cfg.bbox[2] && c.lat >= cfg.bbox[1] && c.lat <= cfg.bbox[3];
     if (!ok) console.warn(`[grid] skipped ${c.name} — coords ${c.lat},${c.lng} outside ${city} core bbox`);
     return ok;
@@ -1095,6 +1166,10 @@ function applyCity(city, opts = {}) {
 
   buildMarkers();
   buildSidebar();
+  if (typeof map.getSource === "function") {
+    clearTimeout(hlRefreshTimer);
+    hlRefreshTimer = setTimeout(refreshCompanyBuildingHighlights, 0);
+  }
 }
 
 // ---------- Ticker (separate feed: ticker.json — not filtered by city, it's a shared headline reel) ----------
@@ -1138,6 +1213,79 @@ function safeDomainUrl(value) {
 function safeLogoPath(value) {
   if (typeof value !== "string" || value.length > 255 || /\s/.test(value)) return null;
   return /^assets\/logos\/[a-zA-Z0-9][a-zA-Z0-9_-]*\.(?:png|jpg|jpeg|webp|gif)$/.test(value) ? value : null;
+}
+
+function safeSourceUrl(value) {
+  if (typeof value !== "string" || !value || value.length > 2048 || /[\s\\]/.test(value)) return null;
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    if (url.protocol !== "https:" || url.username || url.password || url.port || url.search || url.hash) return null;
+    if (!/^[a-z0-9.-]+$/.test(host) || !host.includes(".") || host.startsWith(".") || host.endsWith(".") || host.includes("..")) return null;
+    if (/^(?:\d+\.){1,3}\d+$/.test(host) || host.includes(":")) return null;
+    const blockedSuffixes = [".localhost", ".local", ".internal", ".intranet", ".lan", ".home", ".localdomain", ".test", ".invalid", ".example", ".onion", ".alt", ".arpa", ".corp", ".private"];
+    if (host === "localhost" || blockedSuffixes.some((suffix) => host.endsWith(suffix))) return null;
+    if (host === "home.arpa" || host.endsWith(".home.arpa")) return null;
+    if (["example.com", "example.net", "example.org"].some((domain) => host === domain || host.endsWith("." + domain))) return null;
+    if (host.split(".").includes("google") || ["googleapis.com", "googleusercontent.com", "gstatic.com", "goo.gl", "maps.app.goo.gl"].some((domain) => host === domain || host.endsWith("." + domain))) return null;
+    return value;
+  } catch (error) {
+    return null;
+  }
+}
+
+function observedDate(value) {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}T/.test(value) || !/(?:Z|[+-]\d{2}:\d{2})$/.test(value) || !Number.isFinite(Date.parse(value))) return null;
+  return value.slice(0, 10);
+}
+
+function formatObservedDate(value) {
+  return new Intl.DateTimeFormat(getLang() === "es" ? "es-PE" : "en-US", {
+    year: "numeric", month: "short", day: "numeric", timeZone: "UTC",
+  }).format(new Date(value));
+}
+
+function safeSourceProvider(value) {
+  if (typeof value !== "string" || value.length > 200 || !/^[a-z0-9][a-z0-9._-]*$/.test(value)) return null;
+  return value.replace(/[^a-z0-9]/g, "").includes("google") ? null : value;
+}
+
+function sourceProviderMatchesUrl(provider, value) {
+  if (provider !== "openstreetmap") return true;
+  const host = new URL(value).hostname.toLowerCase();
+  return host === "openstreetmap.org" || host.endsWith(".openstreetmap.org");
+}
+
+function publicSources(company) {
+  if (!Array.isArray(company.sources)) return [];
+  return company.sources.map((source) => {
+    if (!source || typeof source !== "object") return null;
+    if (source.provenance_class !== "public" || source.use_classification !== "redistributable" || source.export_eligible !== true) return null;
+    const provider = safeSourceProvider(source.provider);
+    const url = safeSourceUrl(source.source_url);
+    const date = observedDate(source.observed_at);
+    return provider && url && date && sourceProviderMatchesUrl(provider, url) ? {
+      provider, url, date: formatObservedDate(source.observed_at),
+      observedAt: source.observed_at, observedTime: Date.parse(source.observed_at),
+    } : null;
+  }).filter(Boolean);
+}
+
+function workspaceTypeLabel(value) {
+  const labels = { coworking: "workspaceCoworking", cafe: "workspaceCafe", library: "workspaceLibrary" };
+  return labels[value] ? t(labels[value]) : "";
+}
+
+function workspaceChip(company) {
+  const label = workspaceTypeLabel(company.workspace_type);
+  return label ? `<span class="chip fund workspace-chip">${escapeHTML(label)}</span>` : "";
+}
+
+function sourceDetails(company) {
+  const source = publicSources(company).sort((a, b) => b.observedTime - a.observedTime)[0];
+  if (!source) return "";
+  const provider = source.provider === "openstreetmap" ? "OpenStreetMap" : source.provider;
+  return `<div class="source-meta"><span>${escapeHTML(t("sourceObserved"))} <a class="source-link" href="${escapeHTML(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(provider)} ↗</a></span><time class="source-observed" datetime="${escapeHTML(source.observedAt)}">${escapeHTML(source.date)}</time></div>`;
 }
 
 // Prefer an allowed local logo, then the site's favicon, otherwise the initial-letter tile.
@@ -1226,8 +1374,9 @@ function selectCompany(i, fly) {
       <div class="pname">${escapeHTML(c.name)}</div>
       ${c.tag ? `<div class="ptag">${escapeHTML((getLang() === "es" && c.tag_es) ? c.tag_es : c.tag)}</div>` : ""}
       ${safeDomainUrl(c.domain) ? `<a class="site" href="${escapeHTML(safeDomainUrl(c.domain))}" target="_blank" rel="noopener">${escapeHTML(c.domain)} ↗</a>` : ""}
-      <div>${taxonomyChip(c)}</div>
+      <div>${viewState.mode === "remote" ? workspaceChip(c) : taxonomyChip(c)}</div>
       ${c.address ? `<div class="addr">${escapeHTML(c.address)}</div>` : ""}
+      ${sourceDetails(c)}
     `).addTo(map);
 
   if (fly) map.flyTo({ center: [c.lng, c.lat], zoom: 16, padding: flyPadding(), duration: 1500, essential: true });
@@ -1252,7 +1401,10 @@ function buildSidebar() {
   if (!COMPANIES.length) {
     const empty = document.createElement("div");
     empty.className = "panel-err panel-empty";
-    empty.textContent = t("noFilterResults");
+    const cityName = currentCity.charAt(0).toUpperCase() + currentCity.slice(1);
+    empty.textContent = viewState.mode === "remote"
+      ? (viewState.workspaceTypes.size ? t("noRemotePlacesCity")(cityName) : t("chooseWorkspaceType"))
+      : t("noFilterResults");
     list.appendChild(empty);
     return;
   }
@@ -1267,7 +1419,7 @@ function buildSidebar() {
       <span class="prefix">></span>
       <div class="logo"></div>
       <div class="meta"><div class="name">${escapeHTML(c.name)}</div></div>
-      <div class="tag">${escapeHTML(companySubcategory(c) || companyCategory(c))}</div>`;
+      <div class="tag">${escapeHTML(viewState.mode === "remote" ? workspaceTypeLabel(c.workspace_type) : companySubcategory(c) || companyCategory(c))}</div>`;
     mountLogo(row.querySelector(".logo"), c, true);
     row.addEventListener("click", () => selectCompany(i, true));
     list.appendChild(row);
@@ -1296,10 +1448,18 @@ document.querySelectorAll(".barbtn[data-sort]").forEach((btn) => {
 
 const viewCategoryInputs = [...document.querySelectorAll("[data-view-category]")];
 const viewStageInputs = [...document.querySelectorAll("[data-view-stage]")];
+const viewModeInputs = [...document.querySelectorAll("[data-view-mode]")];
+const viewWorkspaceInputs = [...document.querySelectorAll("[data-workspace-type]")];
+const viewCategoryField = document.getElementById("viewCategoryField");
 const viewStageField = document.getElementById("viewStageField");
+const viewWorkspaceField = document.getElementById("viewWorkspaceField");
 const clearViewFilters = document.getElementById("clearViewFilters");
 
 function isDefaultView() {
+  if (viewState.mode === "remote") {
+    return viewState.workspaceTypes.size === DEFAULT_WORKSPACE_TYPES.length &&
+      DEFAULT_WORKSPACE_TYPES.every((type) => viewState.workspaceTypes.has(type));
+  }
   return viewState.subcategories.size === 0 &&
     viewState.categories.size === DEFAULT_VIEW_CATEGORIES.length &&
     DEFAULT_VIEW_CATEGORIES.every((category) => viewState.categories.has(category));
@@ -1308,11 +1468,27 @@ function isDefaultView() {
 function syncViewControls() {
   const startupSelected = viewState.categories.has("Startup");
   if (!startupSelected) viewState.subcategories.clear();
+  viewModeInputs.forEach((input) => { input.checked = input.value === viewState.mode; });
   viewCategoryInputs.forEach((input) => { input.checked = viewState.categories.has(input.value); });
   viewStageInputs.forEach((input) => { input.checked = viewState.subcategories.has(input.value); });
-  viewStageField.hidden = !startupSelected;
+  viewWorkspaceInputs.forEach((input) => { input.checked = viewState.workspaceTypes.has(input.value); });
+  viewCategoryField.hidden = viewState.mode !== "ecosystem";
+  viewStageField.hidden = viewState.mode !== "ecosystem" || !startupSelected;
+  viewWorkspaceField.hidden = viewState.mode !== "remote";
   clearViewFilters.hidden = isDefaultView();
+  clearViewFilters.textContent = t(viewState.mode === "remote" ? "restoreWorkspaces" : "clearFilters");
 }
+window.__pgSyncViewControls = syncViewControls;
+
+viewModeInputs.forEach((input) => {
+  input.addEventListener("change", (e) => {
+    e.stopPropagation();
+    if (!input.checked || viewState.mode === input.value) return;
+    viewState.mode = input.value;
+    syncViewControls();
+    applyCity(currentCity, { skipFly: true });
+  });
+});
 
 viewCategoryInputs.forEach((input) => {
   input.addEventListener("change", (e) => {
@@ -1334,10 +1510,24 @@ viewStageInputs.forEach((input) => {
   });
 });
 
+viewWorkspaceInputs.forEach((input) => {
+  input.addEventListener("change", (e) => {
+    e.stopPropagation();
+    if (input.checked) viewState.workspaceTypes.add(input.value);
+    else viewState.workspaceTypes.delete(input.value);
+    syncViewControls();
+    applyCity(currentCity, { skipFly: true });
+  });
+});
+
 clearViewFilters.addEventListener("click", (e) => {
   e.stopPropagation();
-  viewState.categories = new Set(DEFAULT_VIEW_CATEGORIES);
-  viewState.subcategories.clear();
+  if (viewState.mode === "remote") {
+    viewState.workspaceTypes = new Set(DEFAULT_WORKSPACE_TYPES);
+  } else {
+    viewState.categories = new Set(DEFAULT_VIEW_CATEGORIES);
+    viewState.subcategories.clear();
+  }
   syncViewControls();
   applyCity(currentCity, { skipFly: true });
 });
