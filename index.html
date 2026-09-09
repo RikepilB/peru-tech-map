@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Peru Grid — Where The Builders Are</title>
 <meta name="description" content="Peru Grid — an interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa." />
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231B222C'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%231DA842' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='5.5' fill='%2305DC60'/%3E%3C/svg%3E" />
@@ -214,19 +214,22 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
     --blur: 12px;
     --statusbar: 24px;
     --ticker: 26px;
+    --sheet-peek: 96px;
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --safe-t: env(safe-area-inset-top, 0px);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   /* NOTE: no global transition/transform rules — they would fight MapLibre marker positioning */
   html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); }
   body { font-family: var(--sans); color: var(--text); font-size: 13px; }
-  #map { position: absolute; top: 0; left: 0; right: 0; bottom: calc(var(--statusbar) + var(--ticker)); }
+  #map { position: absolute; top: 0; left: 0; right: 0; bottom: calc(var(--statusbar) + var(--safe-b) + var(--ticker)); }
   .maplibregl-ctrl-attrib { font-size: 9px !important; background: rgba(27,34,44,0.7) !important; }
   .maplibregl-ctrl-attrib a { color: #7C8794 !important; }
-  .maplibregl-ctrl-bottom-right { bottom: calc(var(--statusbar) + var(--ticker)); }
+  .maplibregl-ctrl-bottom-right { bottom: calc(var(--statusbar) + var(--safe-b) + var(--ticker)); }
 
   /* ---------- Brand eyebrow ---------- */
   .brand {
-    position: absolute; top: 14px; left: 50%; transform: translateX(-50%); z-index: 6;
+    position: absolute; top: calc(14px + var(--safe-t)); left: 50%; transform: translateX(-50%); z-index: 6;
     display: flex; align-items: center; gap: 9px; padding: 8px 15px;
     background: var(--panel); border: 1.5px solid var(--line); border-radius: var(--radius);
     backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
@@ -238,24 +241,24 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
     font-family: inherit; font-size: 10px; letter-spacing: .1em; padding: 3px 8px; border-radius: 6px;
     cursor: pointer; text-transform: uppercase;
   }
-  .brand #langToggle:hover { border-color: var(--green-bright); color: var(--green-bright); }
+  .brand #langToggle:hover, .brand #langToggle:active { border-color: var(--green-bright); color: var(--green-bright); }
   .brand #githubLink { display: flex; align-items: center; color: var(--muted); }
   .brand #githubLink:hover { color: var(--green-bright); }
 
   /* ---------- Controls ---------- */
-  .controls { position: absolute; right: 14px; bottom: calc(var(--statusbar) + var(--ticker) + 16px); z-index: 6; display: flex; flex-direction: column; gap: 8px; }
+  .controls { position: absolute; right: 14px; bottom: calc(var(--statusbar) + var(--safe-b) + var(--ticker) + 16px); z-index: 6; display: flex; flex-direction: column; gap: 8px; }
   .ctl { width: 40px; height: 40px; display: grid; place-items: center; cursor: pointer;
     background: var(--panel); border: 1.5px solid var(--line); border-radius: 8px; color: var(--text);
     backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
     font-family: var(--sans); font-size: 15px; font-weight: 600; user-select: none;
     padding: 0; margin: 0; }
-  .ctl:hover { border-color: var(--green-bright); color: var(--green-bright); }
+  .ctl:hover, .ctl:active { border-color: var(--green-bright); color: var(--green-bright); }
   #toggle3d { width: 40px; font-size: 12px; letter-spacing: .05em; }
   #toggle3d.on { background: var(--green); color: #fff; border-color: var(--green); }
 
   /* ---------- Sidebar ---------- */
   #panel {
-    position: absolute; top: 0; left: 0; bottom: calc(var(--statusbar) + var(--ticker)); width: 320px; z-index: 7;
+    position: absolute; top: 0; left: 0; bottom: calc(var(--statusbar) + var(--safe-b) + var(--ticker)); width: 320px; z-index: 7;
     display: flex; flex-direction: column; background: var(--panel); border-right: 1.5px solid var(--line);
     backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
   }
@@ -270,7 +273,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   .barrow .barlabel { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
   .barbtn { font-family: var(--sans); font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
     padding: 4px 9px; background: transparent; color: var(--muted); border: 1.5px solid var(--line); border-radius: 8px; cursor: pointer; }
-  .barbtn:hover { border-color: var(--green-bright); color: var(--green-bright); }
+  .barbtn:hover, .barbtn:active { border-color: var(--green-bright); color: var(--green-bright); }
   .barbtn.active { background: var(--green); color: #fff; border-color: var(--green); }
 
   .panel-list { flex: 1; overflow-y: auto; }
@@ -311,7 +314,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
     backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
     transition: left .32s cubic-bezier(.32,.72,0,1), border-color .15s, color .15s;
   }
-  #panelToggle:hover { border-color: var(--green-bright); color: var(--green-bright); }
+  #panelToggle:hover, #panelToggle:active { border-color: var(--green-bright); color: var(--green-bright); }
 
   @media (min-width: 768px) {
     #panel { transition: transform .32s cubic-bezier(.32,.72,0,1); }
@@ -321,8 +324,8 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
 
   /* ---------- Status bar ---------- */
   .statusbar {
-    position: absolute; left: 0; right: 0; bottom: 0; height: var(--statusbar); z-index: 8;
-    display: flex; align-items: center; gap: 22px; padding: 0 14px;
+    position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--statusbar) + var(--safe-b)); z-index: 8;
+    display: flex; align-items: center; gap: 22px; padding: 0 14px; padding-bottom: var(--safe-b);
     background: rgba(27,34,44,0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
     border-top: 1.5px solid var(--line); font-family: var(--mono); font-size: 11px; letter-spacing: .08em; color: var(--muted);
     font-variant-numeric: tabular-nums;
@@ -333,11 +336,11 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   .statusbar .live .b { width: 7px; height: 7px; background: var(--green-bright); animation: blink 1.4s step-end infinite; }
 
   /* ---------- Ticker ---------- */
-  .ticker { position: absolute; left: 0; right: 0; bottom: var(--statusbar); height: var(--ticker); z-index: 8;
+  .ticker { position: absolute; left: 0; right: 0; bottom: calc(var(--statusbar) + var(--safe-b)); height: var(--ticker); z-index: 8;
     background: rgba(27,34,44,0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
     border-top: 1.5px solid var(--line); overflow: hidden; display: flex; align-items: center; }
   .ticker-track { display: inline-flex; white-space: nowrap; will-change: transform; animation: ticker 90s linear infinite; }
-  .ticker:hover .ticker-track { animation-play-state: paused; }
+  .ticker:hover .ticker-track, .ticker.paused .ticker-track { animation-play-state: paused; }
   @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   .ti { display: inline-flex; align-items: center; gap: 8px; padding: 0 16px; font-size: 11px; letter-spacing: .05em; color: var(--text); }
   .ti .ti-label { color: var(--green-bright); font-weight: 600; }
@@ -349,7 +352,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   .co-marker { position: relative; width: 28px; height: 28px; cursor: pointer; }
   .co-marker .tile { position: absolute; inset: 0; background: #fff; border: 1px solid var(--green-dim); border-radius: 6px;
     display: grid; place-items: center; overflow: hidden; transition: transform .14s ease; }
-  .co-marker:hover .tile { transform: scale(1.12); }
+  .co-marker:hover .tile, .co-marker:active .tile { transform: scale(1.12); }
   .co-marker .tile img { width: 20px; height: 20px; object-fit: contain; }
   .co-marker .tile .initial { font-weight: 700; color: var(--bg); font-size: 13px; }
   .co-marker .ring { position: absolute; inset: -5px; border: 1px solid var(--green-bright); border-radius: 9px; opacity: 0; pointer-events: none; }
@@ -381,11 +384,12 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   .modal-head { padding: 16px 18px; border-bottom: 1.5px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
   .modal-head h2 { margin: 0; font-size: 14px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
   .modal-head .x { cursor: pointer; color: var(--muted); font-size: 20px; line-height: 1;
-    background: none; border: none; padding: 0; font-family: inherit; }
+    background: none; border: none; padding: 0; font-family: inherit;
+    width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; margin: -12px -12px -12px 0; }
   .modal-body { padding: 18px; }
   .field { margin-bottom: 13px; }
   .field label { display: block; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-  .field input, .field select { width: 100%; padding: 10px 11px; font-family: var(--sans); font-size: 13px; color: var(--text);
+  .field input, .field select { width: 100%; padding: 10px 11px; font-family: var(--sans); font-size: 16px; color: var(--text);
     background: #151b24; border: 1.5px solid var(--line); border-radius: 8px; outline: none; }
   .field input:focus, .field select:focus { border-color: var(--green-bright); }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
@@ -415,16 +419,28 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   }
 
   @media (max-width: 767px) {
-    .brand { top: 10px; }
-    .controls { bottom: calc(var(--sheet-peek, 96px) + var(--statusbar) + var(--ticker) + 12px); }
+    .brand { top: calc(10px + var(--safe-t)); max-width: calc(100vw - 28px); }
+    .controls { bottom: calc(var(--sheet-peek) + var(--statusbar) + var(--safe-b) + var(--ticker) + 12px); }
+    .ctl { width: 44px; height: 44px; }
+    #toggle3d { width: 44px; }
+    .barbtn { padding: 9px 12px; font-size: 11px; }
+    #langToggle { padding: 9px 10px; }
+    .statusbar { gap: 12px; padding: 0 10px; padding-bottom: var(--safe-b); }
     #panel {
-      top: auto; left: 0; right: 0; bottom: calc(var(--statusbar) + var(--ticker)); width: auto; height: 60vh;
-      transform: translateY(calc(100% - 96px)); transition: transform .32s cubic-bezier(.32,.72,0,1);
+      top: auto; left: 0; right: 0; bottom: calc(var(--statusbar) + var(--safe-b) + var(--ticker)); width: auto;
+      height: 60vh; height: 60dvh;
+      transform: translateY(calc(100% - var(--sheet-peek)));
+      transition: transform .32s cubic-bezier(.32,.72,0,1);
       border-right: 0; border-top: 1px solid var(--line);
     }
     #panel.expanded { transform: translateY(0); }
-    .drag-handle { display: block; width: 38px; height: 3px; background: var(--line); margin: 8px auto 2px; }
-    .panel-head { cursor: pointer; padding-top: 4px; }
+    .drag-handle {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 22px; margin: 0; padding: 0; background: transparent;
+      touch-action: none;
+    }
+    .drag-handle::after { content: ""; width: 38px; height: 4px; background: var(--line); border-radius: 2px; }
+    .panel-head { cursor: pointer; padding-top: 0; }
     #panelToggle { display: none; }
   }
 </style>
@@ -826,6 +842,25 @@ map.on("mousemove", (e) => {
   });
 });
 map.on("mouseleave", clearCoBuildingHover);
+
+// Touch parity: hover never fires on touch devices, so tap does the same lookup/highlight,
+// then clears itself shortly after — otherwise the highlight would stick forever post-tap.
+let touchClearTimer = null;
+map.getCanvas().addEventListener("touchstart", (e) => {
+  if (!e.touches || !e.touches.length) return;
+  const rect = map.getCanvas().getBoundingClientRect();
+  const touch = e.touches[0];
+  const point = [touch.clientX - rect.left, touch.clientY - rect.top];
+  const layers = ["co-buildings-3d-highlight", "co-buildings-2d-highlight"].filter((id) => map.getLayer(id));
+  const feats = layers.length ? map.queryRenderedFeatures(point, { layers }) : [];
+  clearTimeout(touchClearTimer);
+  if (!feats.length) { clearCoBuildingHover(); return; }
+  const f = feats[0];
+  clearCoBuildingHover();
+  hoveredCoBuilding = { source: f.source, id: f.id };
+  setCoBuildingHover(f.source, f.id, true);
+  touchClearTimer = setTimeout(clearCoBuildingHover, 1800);
+}, { passive: true });
 
 // Vector tiles sometimes generalize nearby footprints into one oversized MultiPolygon
 // (block-scale, not building-scale) — reject those before they get counted as "the" building.
@@ -1256,6 +1291,11 @@ function startStatusBar() {
 const panel = document.getElementById("panel");
 document.getElementById("panelHead").addEventListener("click", () => { if (isMobile()) panel.classList.toggle("expanded"); });
 document.getElementById("handle").addEventListener("click", () => panel.classList.toggle("expanded"));
+
+// :hover can't pause the ticker on touch devices — tap toggles a class that does the same.
+document.getElementById("ticker").addEventListener("click", (e) => {
+  e.currentTarget.classList.toggle("paused");
+});
 
 document.getElementById("panelToggle").addEventListener("click", (e) => {
   const collapsed = panel.classList.toggle("collapsed");
