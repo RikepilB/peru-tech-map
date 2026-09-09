@@ -47,4 +47,28 @@ python scripts/validate_data.py --companies ruta/candidatos.json --ticker ticker
 Salida 0 si pasa; 1 ante un error, con rutas de campos en stderr. El importador debe validar
 su candidato antes de reemplazar un destino y conservarlo intacto si hay errores.
 El esquema V1 aún requiere coordenadas para toda entrada publicada, incluso si el formulario
-acepta una propuesta remota sin pin. PG-02 ampliará el contrato al incorporar la taxonomía.
+acepta una propuesta remota sin pin.
+
+## Importación desde Coworking Scout
+
+`scripts/import_scout.py` consume únicamente `perugrid.scout.v1`. Por defecto realiza un
+dry-run; `--write` es la única forma de reemplazar atómicamente el destino:
+
+```powershell
+python scripts/import_scout.py --package ruta/scout.json
+python scripts/import_scout.py --package ruta/scout.json --companies ruta/companies.json --write
+```
+
+El archivo del paquete admite como máximo 10 MiB antes de parsear, 1.000 sedes y 100 fuentes
+distintas por sede. Los diagnósticos se limitan a 100 errores más un marcador. Exige textos
+canónicos, sedes verificadas y elegibles, coordenadas dentro de Lima o Arequipa y todas sus
+fuentes públicas, redistribuibles y elegibles. Rechaza proveedores y hosts Google, hosts locales,
+internos o reservados, IPs no globales, URLs con credenciales, puerto, query o fragmento,
+versiones/campos desconocidos y conflictos de sede. El destino de `--write` no puede ser un
+enlace simbólico.
+Una segunda importación idéntica informa `added=0, unchanged=1` y no reescribe el archivo.
+
+`fixtures/scout_perugrid_v1.json` se generó con el exportador real de Scout a partir de su
+fixture `synthetic_perugrid_candidate.json`; contiene solo nombres e IDs sintéticos. Su URL
+identifica este fixture público de integración y no constituye evidencia sobre una sede real.
+La prueba integral usa una copia temporal de las 90 entradas y nunca agrega la sede a este repo.

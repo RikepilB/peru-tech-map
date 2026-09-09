@@ -1,0 +1,27 @@
+{
+  "records": [
+    {
+      "address": "Avenida Larco 123, Miraflores",
+      "city": "Lima",
+      "export_eligible": true,
+      "lat": -12.1191,
+      "lng": -77.0297,
+      "name": "Nomad House Miraflores",
+      "organization_id": "org-nomad-house",
+      "review_state": "verified",
+      "site_id": "site-nomad-miraflores",
+      "sources": [
+        {
+          "export_eligible": true,
+          "observed_at": "2026-09-08T00:00:00Z",
+          "provenance_class": "public",
+          "provider": "synthetic_fixture",
+          "source_url": "https://github.com/RikepilB/peru-tech-map/blob/master/tests/fixtures/scout_perugrid_v1.json",
+          "use_classification": "redistributable"
+        }
+      ],
+      "workspace_type": "coworking"
+    }
+  ],
+  "schema_version": "perugrid.scout.v1"
+}
