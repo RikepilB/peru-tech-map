@@ -169,6 +169,35 @@ class DataValidationTests(unittest.TestCase):
         self.assertEqual(validate_companies([row, dict(row, lat=-12.10)]), [])
         self.assertEqual(validate_companies([row, dict(row, name="Otra empresa")]), [])
 
+    def test_optional_scout_metadata_is_strict_and_site_ids_are_unique(self):
+        package = load_json(ROOT / "tests/fixtures/scout_perugrid_v1.json")
+        source = package["records"][0]["sources"][0]
+        row = dict(
+            FIXTURE["company"],
+            site_id="site-fixture",
+            organization_id="org-fixture",
+            workspace_type="cafe",
+            sources=[source],
+        )
+        self.assertEqual(validate_companies([row]), [])
+
+        mutations = (
+            lambda item: item.update(site_id=[]),
+            lambda item: item.update(organization_id=True),
+            lambda item: item.update(workspace_type="restaurant"),
+            lambda item: item.update(sources=[]),
+            lambda item: item["sources"][0].update(provider="Google Maps Platform"),
+            lambda item: item["sources"][0].update(source_url="https://example.org/site?key=x"),
+            lambda item: item["sources"][0].update(unexpected=True),
+        )
+        for mutate in mutations:
+            with self.subTest(mutate=mutate):
+                changed = copy.deepcopy(row)
+                mutate(changed)
+                self.assertTrue(validate_companies([changed]))
+        second = dict(row, name="Otra", lat=-12.10)
+        self.assertTrue(validate_companies([row, second]))
+
     def test_invalid_ticker_and_duplicates(self):
         for row in ({}, {"label": 1, "text": "a"}, {"label": "x", "text": ""},
                     {"label": "x", "text": "a", "unknown": 1}):

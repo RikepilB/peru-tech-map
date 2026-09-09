@@ -85,6 +85,9 @@ Un array de objetos de lugar. Este es el archivo que la mayoría de las contribu
 | `logo` | ⬜ | Ruta local `assets/logos/nombre.png` (también jpg/jpeg/webp/gif); nombre con letras ASCII, números, guion o guion bajo. No admite URLs externas, SVG ni rutas ascendentes. Reemplaza el favicon. |
 | `address` | ⬜ | Legible por humanos, para trazabilidad. |
 | `tag` | ⬜ | Descripción de una oración mostrada en el popover y usada como línea secundaria en la barra lateral. |
+| `site_id`, `organization_id` | ⬜ | IDs estables de sede y organización emitidos por el paquete público de Coworking Scout. No son IDs de APIs de proveedores. |
+| `workspace_type` | ⬜ | Para sedes importadas: `coworking`, `cafe` o `library`. Las tres conservan `category: "Coworking Space"` durante V1. |
+| `sources` | ⬜ | Referencias públicas de Scout con URL HTTPS, fecha de observación, procedencia `public`, uso `redistributable` y elegibilidad explícita. |
 
 **Validación De Coordenadas:** cada entrada debe caer dentro del bounding box de su ciudad —
 
@@ -99,6 +102,21 @@ obligatorio y `subcategory` solo se admite para Startup. La lista V1 de valores 
 validador; no asignes una etapa sin fuente. `funding` sigue validándose durante la transición.
 La CI ejecuta el mismo validador y las [pruebas de seguridad del render](tests/README.md).
 Los textos se muestran literalmente; validar la estructura no demuestra la veracidad del dato.
+
+### Importar un paquete revisado de Coworking Scout
+
+El importador acepta solo el esquema `perugrid.scout.v1` y simula por defecto:
+
+```powershell
+python scripts/import_scout.py --package ruta/scout.json
+python scripts/import_scout.py --package ruta/scout.json --write
+```
+
+Antes de escribir valida el paquete, detecta conflictos por `site_id` o por nombre/ciudad/
+coordenadas, construye el dataset candidato completo y ejecuta el validador de PeruGrid.
+`--write` usa un reemplazo atómico; sin esa opción `companies.json` no cambia. Reimportar el
+mismo paquete es un no-op. Fuentes restringidas, privadas, sin clasificar o de proveedores
+Google se rechazan. El fixture de integración es sintético y no forma parte del dataset público.
 
 ### Filtros Del Mapa
 
