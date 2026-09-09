@@ -102,13 +102,16 @@ Los textos se muestran literalmente; validar la estructura no demuestra la verac
 
 ### Filtros Del Mapa
 
-La vista inicial muestra `Startup` y `Technology Consultancy`. Los botones de categoría cambian
-esa vista por una sola categoría: `Incubator`, `Accelerator`, `VC`, `Coworking Space` o
-`Nonprofit`. Los botones de etapa muestran únicamente startups con `Pre-Seed`, `Seed`,
-`Bootstrap` o `Series A+`. Categoría y etapa son modos mutuamente exclusivos: elegir una categoría
-limpia la etapa activa y elegir una etapa limpia la categoría activa. Volver a pulsar el filtro
-activo restaura la vista inicial. El filtro de ciudad permanece activo en todos los modos; cuando
-no hay resultados, la barra lateral muestra un estado vacío.
+El selector de ancho completo **Qué quieres ver** empieza en `Empresas`, la vista inicial que
+combina `Startup` y `Technology Consultancy`. También permite elegir cada categoría pública por
+separado: `Startup`, `Technology Consultancy`, `Incubator`, `Accelerator`, `VC`,
+`Coworking Space` o `Nonprofit`.
+
+Al elegir `Startup` aparece el selector dependiente **Etapa de startup**, con `Todas las etapas`,
+`Pre-Seed`, `Seed`, `Bootstrap` y `Series A+`. Cambiar a otra categoría limpia cualquier etapa que
+hubiera quedado seleccionada. El control **Limpiar filtros** solo aparece fuera de la vista inicial
+y restaura `Empresas` sin cambiar la ciudad ni el orden. Cuando no hay coincidencias, la barra
+lateral muestra un estado vacío.
 
 ### `ticker.json`
 

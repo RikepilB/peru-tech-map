@@ -227,11 +227,15 @@ entregas de cada repo según dependencias. Un único responsable edita `index.ht
 `companies.json`; revisar juntos antes de integrar. Los agentes no deben revertir cambios
 ajenos. Esta sesión inspeccionó las definiciones, no ejecutó subagentes.
 
-## Siguiente acción
+## Estado de ejecución y siguiente acción
 
-PG-01 completado localmente. Continuar PG-02 (taxonomía compatible) cuando se solicite;
-CS-01 ya tiene rama y plan independiente en Scout para empezar por pruebas de migración.
-Conservar los archivos locales. Los cambios siguen sin commit, push ni despliegue.
+PG-01, PG-02 y PG-03 están fusionados en `master` mediante los PR #41, #42 y #44; la corrección
+responsive/táctil también está fusionada mediante el PR #43. PG-03.1 está implementado, verificado,
+committed y pushed en `codex/pg03-sidebar-ux`; su PR y merge quedan pendientes de la revisión de
+esta entrega. En Coworking Scout, CS-01, CS-02 y CS-03 están fusionados en `master` mediante los
+PR #2, #3 y #4, después del plan inicial del PR #1. El siguiente frente integrado es INT-01:
+ejecutar una fixture sintética completa de Scout, exportarla, validar el contrato y hacer el
+dry-run de importación en PeruGrid. Conservar en ambos repositorios los archivos locales ajenos.
 
 ## PG-03.1 — Corrección UX del selector de filtros
 
