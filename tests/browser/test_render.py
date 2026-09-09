@@ -23,6 +23,7 @@ FILTER_CONTROLS = "// ---------- Controls" + HTML.split("// ---------- Controls"
 MOBILE_CONTROLS = "// ---------- Mobile sheet" + HTML.split("// ---------- Mobile sheet", 1)[1].split(
     "// ---------- Add-company modal", 1
 )[0]
+STYLES = HTML.split("<style>", 1)[1].split("</style>", 1)[0]
 HARNESS = """
 window.map = {on() {}, setMaxBounds() {}, setMinZoom() {}, flyTo() {}};
 window.maplibregl = {
@@ -42,18 +43,25 @@ window.maplibregl = {
 };
 window.__injected = 0;
 """
-PAGE = """<aside id="panel"><div id="handle"></div><div id="panelHead"></div><div id="coList"></div></aside>
-<button id="panelToggle"></button><div id="map"></div><div id="coCount"></div><div id="gridStatus"></div>
+PAGE = f"""<style>{STYLES}</style>
+<div id="map"></div><aside id="panel"><div id="handle"></div><div id="panelHead"><div id="coCount"></div>
+<button class="barbtn active" data-city="lima">Lima</button><button class="barbtn" data-city="arequipa">Arequipa</button>
+<button class="barbtn active" data-sort="default">Default</button><button class="barbtn" data-sort="alpha">A-Z</button>
+<div class="filter-stack"><div class="filter-field"><label class="filter-label" for="viewCategory">What do you want to see?</label>
+<select class="filter-select" id="viewCategory">
+  <option value="">Companies</option><option value="Startup">Startup</option>
+  <option value="Technology Consultancy">Technology Consultancy</option>
+  <option value="Incubator">Incubator</option><option value="Accelerator">Accelerator</option>
+  <option value="VC">VC</option><option value="Coworking Space">Coworking Space</option>
+  <option value="Nonprofit">Nonprofit</option>
+</select></div>
+<div class="filter-field" id="viewStageField" hidden><label class="filter-label" for="viewStage">Startup stage</label>
+  <select class="filter-select" id="viewStage"><option value="">All stages</option><option value="Pre-Seed">Pre-Seed</option>
+  <option value="Seed">Seed</option><option value="Bootstrap">Bootstrap</option><option value="Series A+">Series A+</option></select>
+</div>
+<button class="filter-reset" id="clearViewFilters" hidden>Clear filters</button></div></div><div id="coList"></div></aside>
+<button id="panelToggle"></button><div id="gridStatus"></div>
 <div id="ticker"><div id="tickerTrack"></div></div>
-<button class="barbtn" data-view-category="Incubator" data-i18n="showIncubators"></button>
-<button class="barbtn" data-view-category="Accelerator" data-i18n="showAccelerators"></button>
-<button class="barbtn" data-view-category="VC" data-i18n="showVC"></button>
-<button class="barbtn" data-view-category="Coworking Space" data-i18n="showCoworking"></button>
-<button class="barbtn" data-view-category="Nonprofit" data-i18n="showNonProfits"></button>
-<button class="barbtn" data-view-stage="Pre-Seed" data-i18n="stagePreSeed"></button>
-<button class="barbtn" data-view-stage="Seed" data-i18n="stageSeed"></button>
-<button class="barbtn" data-view-stage="Bootstrap" data-i18n="stageBootstrap"></button>
-<button class="barbtn" data-view-stage="Series A+" data-i18n="stageSeriesAPlus"></button>
 <select id="catSelect"><option value="Startup">Startup</option><option value="VC">VC</option></select>
 <div id="stageField"><select name="Subcategory"><option value=""></option><option value="Seed">Seed</option></select></div>"""
 
@@ -132,7 +140,7 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(self.page.locator(".ptag").text_content(), expected[0]["tag_es"])
         self.page.evaluate("localStorage.setItem('pg_lang', 'en'); window.__pgRefreshPopup()")
         self.assertEqual(self.page.locator(".ptag").text_content(), expected[0]["tag"])
-        self.page.locator('[data-view-category="Coworking Space"]').click()
+        self.page.locator("#viewCategory").select_option("Coworking Space")
         self.page.evaluate("applyCity('arequipa')")
         expected = [c for c in companies if c["city"] == "arequipa" and c["category"] == "Coworking Space"]
         self.assertEqual(self.page.locator(".co").count(), len(expected))
@@ -166,19 +174,23 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(subcategory.input_value(), "")
         self.assertEqual(self.page.locator("#stageField").evaluate("el => el.style.display"), "none")
 
-    def test_category_filters_are_separate_and_preserve_city(self):
+    def test_category_select_exposes_all_public_views_and_preserves_city(self):
         companies = json.loads((ROOT / "companies.json").read_text(encoding="utf-8"))
         self.page.evaluate("data => { ALL_COMPANIES = data; applyCity('lima'); }", companies)
 
-        for category in ("Incubator", "Accelerator", "VC", "Coworking Space", "Nonprofit"):
+        category_select = self.page.locator("#viewCategory")
+        self.assertEqual(category_select.locator("option").count(), 8)
+        self.assertEqual(category_select.locator("option").evaluate_all("options => options.map(option => option.value)"), [
+            "", "Startup", "Technology Consultancy", "Incubator", "Accelerator", "VC",
+            "Coworking Space", "Nonprofit",
+        ])
+        for category in ("Startup", "Technology Consultancy", "Incubator", "Accelerator", "VC", "Coworking Space", "Nonprofit"):
             with self.subTest(category=category):
-                button = self.page.locator(f'[data-view-category="{category}"]')
-                button.click()
+                category_select.select_option(category)
                 expected = [c for c in companies if c["city"] == "lima" and c["category"] == category]
                 self.assertEqual(self.page.locator(".co").count(), len(expected))
-                self.assertEqual(button.get_attribute("aria-pressed"), "true")
-                self.assertEqual(self.page.locator('[data-view-category][aria-pressed="true"]').count(), 1)
-                self.assertEqual(self.page.locator('[data-view-stage][aria-pressed="true"]').count(), 0)
+                self.assertEqual(category_select.input_value(), category)
+                self.assertEqual(self.page.locator('[data-city="lima"]').get_attribute("class"), "barbtn active")
 
         self.page.evaluate("applyCity('arequipa')")
         self.assertEqual(self.page.locator(".co").count(), 0)
@@ -192,35 +204,43 @@ class RenderTests(unittest.TestCase):
             if c["city"] == "lima" and c["category"] in ("Startup", "Technology Consultancy")
         ])
 
-        seed = self.page.locator('[data-view-stage="Seed"]')
-        seed.click()
+        category = self.page.locator("#viewCategory")
+        stage = self.page.locator("#viewStage")
+        category.select_option("Startup")
+        self.assertFalse(self.page.locator("#viewStageField").is_hidden())
+        stage.select_option("Seed")
         expected_seed = [
             c for c in companies
             if c["city"] == "lima" and c["category"] == "Startup" and c.get("subcategory") == "Seed"
         ]
         self.assertEqual(self.page.locator(".co").count(), len(expected_seed))
         self.assertEqual(self.page.locator(".co .tag").first.text_content(), "Seed")
-        self.assertEqual(seed.get_attribute("aria-pressed"), "true")
+        self.assertEqual(stage.input_value(), "Seed")
 
-        seed.click()
-        self.assertEqual(self.page.locator(".co").count(), default_count)
-        self.assertEqual(seed.get_attribute("aria-pressed"), "false")
+        stage.select_option("")
+        expected_startups = len([c for c in companies if c["city"] == "lima" and c["category"] == "Startup"])
+        self.assertEqual(self.page.locator(".co").count(), expected_startups)
 
-        bootstrap = self.page.locator('[data-view-stage="Bootstrap"]')
-        bootstrap.click()
+        stage.select_option("Bootstrap")
         self.assertEqual(self.page.locator(".co").count(), 0)
         self.assertEqual(self.page.locator(".co-marker").count(), 0)
         self.assertEqual(self.page.locator(".panel-empty").text_content(), "No hay lugares que coincidan con estos filtros.")
 
+        self.page.locator("#clearViewFilters").click()
+        self.assertEqual(category.input_value(), "")
+        self.assertTrue(self.page.locator("#viewStageField").is_hidden())
+        self.assertTrue(self.page.locator("#clearViewFilters").is_hidden())
+        self.assertEqual(self.page.locator(".co").count(), default_count)
+
     def test_filter_labels_have_english_and_spanish_copy(self):
         expected = {
-            "en": ("Category", "Startup stage", "Incubators", "Accelerators", "Coworking"),
-            "es": ("Categoría", "Etapa startup", "Incubadoras", "Aceleradoras", "Coworking"),
+            "en": ("What do you want to see?", "Companies", "Startup stage", "All stages", "Clear filters"),
+            "es": ("¿Qué quieres ver?", "Empresas", "Etapa de startup", "Todas las etapas", "Limpiar filtros"),
         }
         for lang, labels in expected.items():
             with self.subTest(lang=lang):
                 values = self.page.evaluate(
-                    "lang => { localStorage.setItem('pg_lang', lang); return [t('filterCategory'), t('filterStage'), t('showIncubators'), t('showAccelerators'), t('showCoworking')]; }",
+                    "lang => { localStorage.setItem('pg_lang', lang); return [t('filterCategory'), t('viewCompanies'), t('filterStage'), t('allStartupStages'), t('clearFilters')]; }",
                     lang,
                 )
                 self.assertEqual(tuple(values), labels)
@@ -229,7 +249,7 @@ class RenderTests(unittest.TestCase):
         companies = json.loads((ROOT / "companies.json").read_text(encoding="utf-8"))
         self.page.set_viewport_size({"width": 1280, "height": 800})
         self.page.evaluate("data => { ALL_COMPANIES = data; applyCity('lima'); }", companies)
-        self.page.locator('[data-view-category="VC"]').click()
+        self.page.locator("#viewCategory").select_option("VC")
         self.assertGreater(self.page.locator(".co").count(), 0)
         self.page.locator(".co").first.click()
         self.assertEqual(self.page.locator(".test-popup").count(), 1)
@@ -243,12 +263,44 @@ class RenderTests(unittest.TestCase):
         self.page.locator("#panelHead").evaluate("el => el.click()")
         self.assertIn("expanded", self.page.locator("#panel").get_attribute("class") or "")
 
-        self.page.locator('[data-view-category="Coworking Space"]').click()
+        self.page.locator("#viewCategory").select_option("Coworking Space")
         self.assertIn("expanded", self.page.locator("#panel").get_attribute("class") or "")
         self.assertGreater(self.page.locator(".co").count(), 0)
         self.page.locator(".co").first.click()
         self.assertEqual(self.page.locator(".test-popup").count(), 1)
         self.assertNotIn("expanded", self.page.locator("#panel").get_attribute("class") or "")
+
+    def test_filter_hierarchy_keyboard_reset_and_mobile_targets(self):
+        companies = json.loads((ROOT / "companies.json").read_text(encoding="utf-8"))
+        self.page.set_viewport_size({"width": 390, "height": 844})
+        self.page.evaluate("data => { ALL_COMPANIES = data; applyCity('lima'); }", companies)
+        self.page.locator("#panelHead").evaluate("el => el.click()")
+        self.page.locator('[data-city="arequipa"]').click()
+        self.page.locator('[data-sort="alpha"]').click()
+
+        category = self.page.locator("#viewCategory")
+        stage = self.page.locator("#viewStage")
+        clear = self.page.locator("#clearViewFilters")
+        self.assertTrue(self.page.locator("#viewStageField").is_hidden())
+        self.assertTrue(clear.is_hidden())
+        self.assertGreaterEqual(category.bounding_box()["height"], 44)
+
+        category.focus()
+        category.press("ArrowDown")
+        self.assertEqual(category.input_value(), "Startup")
+        self.assertFalse(self.page.locator("#viewStageField").is_hidden())
+        self.assertFalse(clear.is_hidden())
+        self.assertGreaterEqual(stage.bounding_box()["height"], 44)
+
+        stage.select_option("Seed")
+        category.select_option("VC")
+        self.assertEqual(stage.input_value(), "")
+        self.assertTrue(self.page.locator("#viewStageField").is_hidden())
+
+        clear.click()
+        self.assertEqual(category.input_value(), "")
+        self.assertEqual(self.page.locator('[data-city="arequipa"]').get_attribute("class"), "barbtn active")
+        self.assertEqual(self.page.locator('[data-sort="alpha"]').get_attribute("class"), "barbtn active")
 
     def test_safe_legacy_path_and_logo_error_fallback(self):
         company = dict(FIXTURE["company"], name="O'Reilly & Co", domain=FIXTURE["valid_domains"][-1])

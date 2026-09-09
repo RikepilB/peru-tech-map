@@ -227,8 +227,45 @@ entregas de cada repo según dependencias. Un único responsable edita `index.ht
 `companies.json`; revisar juntos antes de integrar. Los agentes no deben revertir cambios
 ajenos. Esta sesión inspeccionó las definiciones, no ejecutó subagentes.
 
-## Siguiente acción
+## Estado de ejecución y siguiente acción
 
-PG-01 completado localmente. Continuar PG-02 (taxonomía compatible) cuando se solicite;
-CS-01 ya tiene rama y plan independiente en Scout para empezar por pruebas de migración.
-Conservar los archivos locales. Los cambios siguen sin commit, push ni despliegue.
+PG-01, PG-02 y PG-03 están fusionados en `master` mediante los PR #41, #42 y #44; la corrección
+responsive/táctil también está fusionada mediante el PR #43. PG-03.1 está implementado, verificado,
+committed y pushed en `codex/pg03-sidebar-ux`; su PR y merge quedan pendientes de la revisión de
+esta entrega. En Coworking Scout, CS-01, CS-02 y CS-03 están fusionados en `master` mediante los
+PR #2, #3 y #4, después del plan inicial del PR #1. El siguiente frente integrado es INT-01:
+ejecutar una fixture sintética completa de Scout, exportarla, validar el contrato y hacer el
+dry-run de importación en PeruGrid. Conservar en ambos repositorios los archivos locales ajenos.
+
+## PG-03.1 — Corrección UX del selector de filtros
+
+Decisión tomada a partir de la captura del sidebar en escritorio del 2026-09-08. La persona
+que explora el ecosistema necesita elegir ciudad y una vista útil en pocos segundos, y después
+abrir una empresa o lugar. La captura muestra nueve pills del mismo peso visual, agrupadas por
+labels débiles y con un reset implícito; el estado y la relación categoría-etapa no se entienden.
+
+Dirección: conservar el lenguaje visual Costa Verde y el panel compacto, pero convertir los
+filtros en un formulario jerárquico. Ciudad y orden permanecen como controles segmentados. Un
+selector de ancho completo, «Qué quieres ver», incluye una opción inicial explícita «Empresas»
+(startups + consultoras) y cada categoría pública, incluidas Startup y Consultora. «Etapa de
+startup» aparece solo al elegir Startup, con «Todas las etapas» y las cuatro etapas válidas. Un
+botón textual «Limpiar filtros» aparece únicamente fuera de la vista inicial.
+
+No se agregan iconos decorativos, accordions ni un nuevo sistema visual. Los controles nativos
+mantienen teclado, foco y lectura de estado; en móvil ocupan el ancho disponible y respetan 44 px
+de altura. La ciudad seleccionada persiste al cambiar vista o etapa. Elegir otra categoría limpia
+la etapa oculta; limpiar restaura Empresas sin cambiar ciudad ni orden.
+
+Verificación: escritorio 1280×800 y móvil 390×844; selección con teclado; ES/EN; todas las
+categorías; Startup con y sin etapa; reset; estado vacío; selección de fila y popup. La revisión
+visual debe comprobar jerarquía, wrapping, contraste y área táctil sobre una página servida por
+HTTP.
+
+Veredicto anti-slop: **PASS**. La inspección servida por HTTP en 1280×800 y 390×844 confirma que
+el bloque jerárquico de `index.html:520` reemplaza nueve acciones del mismo peso por una primera
+decisión explícita, revela la etapa solo cuando aporta contexto y mantiene el reset junto a los
+controles. En móvil, los selects de `index.html:456` ocupan el ancho disponible y miden 44 px; no
+hay wrapping, solapamiento ni un sistema visual nuevo. Se conservan ciudad y orden como controles
+segmentados, el verde Costa Verde para estados activos y los controles nativos. Las pruebas de
+Chromium vuelven a comprobar teclado, ES/EN, todas las categorías, estado vacío, popup, reset y
+las vistas móvil y escritorio.
