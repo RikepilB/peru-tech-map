@@ -2,10 +2,10 @@
 
 Fecha: 2026-09-08. Estado: propuesta ejecutable; implementación pendiente.
 
-Actualización de ejecución: **PG-01 implementado y verificado localmente** (10 pruebas del
-validador, 6 pruebas DOM y smoke con MapLibre real). Dataset actual sin cambios. CI configurada,
-pendiente de ejecución hospedada. **CS-01 preparado**, sin cambios de código Scout, en
-`codex/cs-01-source-contract` desde d8deb1e. Las demás entregas continúan pendientes.
+Actualización de ejecución: **PG-01 y PG-02 fusionados**; PG-03 implementa filtros separados
+de categoría y etapa, estado vacío y copia ES/EN, con verificación local pendiente de registrar
+en su PR. **CS-01 preparado** como siguiente frente independiente; su implementación continúa
+pendiente. Las demás entregas continúan pendientes.
 
 Ampliación solicitada: [rendimiento, lazy loading, caché y evaluación Astro/Next/Go](2026-09-08-performance.md).
 PERF-00 mide la base antes de optimizar; PG-01 sigue como primera entrega de código.

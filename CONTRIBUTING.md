@@ -52,7 +52,10 @@ en contra de ella especulativamente.
 **Qué se acepta:**
 - ✅ Empresas/lugares reales con presencia genuina y verificable en Lima o Arequipa.
 - ✅ Correcciones de coordenadas/detalles a entradas existentes.
-- ✅ Una `category` del enum documentado y, para Startup, una `subcategory` solo cuando tenga fuente.
+- ✅ Una `category`: `Startup`, `Incubator`, `Accelerator`, `VC`, `Nonprofit`,
+  `Technology Consultancy` o `Coworking Space`.
+- ✅ Para `Startup`, una `subcategory` (`Pre-Seed`, `Seed`, `Bootstrap` o `Series A+`)
+  solo cuando tenga fuente; omítela si la etapa no está respaldada.
 - ❌ Entradas fuera de los bounding boxes de las dos ciudades (ver README).
 - ❌ Afirmaciones no verificables, copy de marketing, o entradas duplicadas.
 - ❌ Usar `funding`, una adquisición o la falta de datos como sustituto de la categoría.
