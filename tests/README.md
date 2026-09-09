@@ -59,7 +59,8 @@ python scripts/import_scout.py --package ruta/scout.json
 python scripts/import_scout.py --package ruta/scout.json --companies ruta/companies.json --write
 ```
 
-El contrato admite como máximo 1.000 sedes y 100 fuentes distintas por sede. Exige textos
+El archivo del paquete admite como máximo 10 MiB antes de parsear, 1.000 sedes y 100 fuentes
+distintas por sede. Los diagnósticos se limitan a 100 errores más un marcador. Exige textos
 canónicos, sedes verificadas y elegibles, coordenadas dentro de Lima o Arequipa y todas sus
 fuentes públicas, redistribuibles y elegibles. Rechaza proveedores y hosts Google, hosts locales,
 internos o reservados, IPs no globales, URLs con credenciales, puerto, query o fragmento,

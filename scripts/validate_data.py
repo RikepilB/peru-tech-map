@@ -71,7 +71,8 @@ def canonical_scout_text(value: object, maximum: int) -> bool:
 
 
 def canonical_scout_id(value: str) -> str:
-    return unicodedata.normalize("NFKC", value).casefold()
+    normalized = unicodedata.normalize("NFKC", value).casefold()
+    return unicodedata.normalize("NFKC", normalized)
 
 
 def company_identity(row: dict) -> tuple:
@@ -102,6 +103,9 @@ def _blocked_source_host(hostname: str) -> bool:
         address = ipaddress.ip_address(host)
     except ValueError:
         labels = host.split(".")
+        numeric_label = r"(?:0x[0-9a-f]+|[0-9]+)"
+        if len(labels) <= 4 and all(re.fullmatch(numeric_label, label) for label in labels):
+            return True
         if len(labels) < 2 or all(label.isdigit() for label in labels):
             return True
         if any(not re.fullmatch(r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?", label)
@@ -128,7 +132,7 @@ def _blocked_source_host(hostname: str) -> bool:
         ):
             return True
         return False
-    return not address.is_global
+    return not address.is_global or address.is_multicast
 
 
 def _has_explicit_port(netloc: str) -> bool:
@@ -179,7 +183,17 @@ def validate_scout_source(source: object, path: str) -> list[str]:
     errors: list[str] = []
     _extra_fields(source, SCOUT_SOURCE_FIELDS, path, errors)
     provider = source.get("provider")
-    if not canonical_scout_text(provider, 200) or _is_google_provider(provider):
+    normalized_provider = (
+        unicodedata.normalize("NFKC", provider).casefold()
+        if isinstance(provider, str) else provider
+    )
+    provider_ok = (
+        canonical_scout_text(provider, 200)
+        and provider == normalized_provider
+        and provider.isascii()
+        and re.fullmatch(r"[a-z0-9][a-z0-9._-]*", provider) is not None
+    )
+    if not provider_ok or _is_google_provider(provider):
         errors.append(f"{path}.provider: proveedor público no permitido")
     if not _safe_public_source_url(source.get("source_url")):
         errors.append(f"{path}.source_url: URL HTTPS pública no permitida")
@@ -352,9 +366,13 @@ def _parse_float(value: str) -> float:
     return number
 
 
-def load_json(path: str | Path) -> object:
-    return json.loads(Path(path).read_text(encoding="utf-8"), object_pairs_hook=_unique_object,
+def parse_json(text: str) -> object:
+    return json.loads(text, object_pairs_hook=_unique_object,
                       parse_constant=_reject_constant, parse_float=_parse_float)
+
+
+def load_json(path: str | Path) -> object:
+    return parse_json(Path(path).read_text(encoding="utf-8"))
 
 
 def main(argv: list[str] | None = None) -> int:

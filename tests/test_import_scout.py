@@ -9,6 +9,8 @@ import tempfile
 import unittest
 
 from scripts.import_scout import (
+    MAX_PACKAGE_BYTES,
+    MAX_VALIDATION_ERRORS,
     ScoutImportError,
     import_package,
     plan_import,
@@ -126,6 +128,14 @@ class ScoutPackageValidationTests(unittest.TestCase):
 
         package = fixture_package()
         second = copy.deepcopy(package["records"][0])
+        second["site_id"] = "ＳＩＴＥ-ＮＯＭＡＤ-ＭＩＲＡＦＬＯＲＥＳ"
+        second["name"] = "Third synthetic site"
+        second["lat"] = -12.13
+        package["records"].append(second)
+        self.assertTrue(validate_scout_package(package))
+
+        package = fixture_package()
+        second = copy.deepcopy(package["records"][0])
         package["records"][0]["site_id"] = "site-nomad-miraflores-e\u0301"
         second["site_id"] = "site-nomad-miraflores-é"
         second["name"] = "Second synthetic site"
@@ -198,7 +208,10 @@ class ScoutPackageValidationTests(unittest.TestCase):
                     self.assertTrue(validate_scout_package(package))
 
     def test_rejects_unicode_google_provider_and_google_source_hosts(self):
-        for provider in ("Ｇｏｏｇｌｅ Maps", "official_google_directory", "Not Google Maps"):
+        for provider in (
+            "Ｇｏｏｇｌｅ Maps", "official_google_directory", "Not Google Maps",
+            "gоogle_maps", "gοοgle_maps", "góogle_maps",
+        ):
             with self.subTest(provider=provider):
                 package = fixture_package()
                 package["records"][0]["sources"][0]["provider"] = provider
@@ -230,6 +243,32 @@ class ScoutPackageValidationTests(unittest.TestCase):
         package = fixture_package()
         package["records"][0]["sources"][0]["source_url"] = "https://1.1.1.1/source"
         self.assertEqual(validate_scout_package(package), [])
+
+    def test_rejects_browser_ambiguous_and_multicast_ip_hosts(self):
+        urls = (
+            "https://0x7f.0.0.1/site", "https://0177.0.0.1/site",
+            "https://127.1/site", "https://2130706433/site",
+            "https://224.0.0.1/site", "https://239.255.255.250/site",
+            "https://[ff02::1]/site", "https://[ff0e::1]/site",
+        )
+        for url in urls:
+            with self.subTest(url=url):
+                package = fixture_package()
+                package["records"][0]["sources"][0]["source_url"] = url
+                self.assertTrue(validate_scout_package(package))
+
+    def test_package_diagnostics_are_deterministically_bounded(self):
+        package = fixture_package()
+        prototype = package["records"][0]
+        package["records"] = []
+        for index in range(MAX_VALIDATION_ERRORS + 20):
+            row = copy.deepcopy(prototype)
+            row["site_id"] = f"site-invalid-{index:03d}"
+            row["name"] = ""
+            package["records"].append(row)
+        errors = validate_scout_package(package)
+        self.assertEqual(len(errors), MAX_VALIDATION_ERRORS + 1)
+        self.assertEqual(errors[-1], "package: errores adicionales omitidos")
 
     def test_city_coordinate_pair_must_match_existing_bounds(self):
         package = fixture_package()
@@ -354,6 +393,17 @@ class ScoutImportTests(unittest.TestCase):
                 with self.assertRaisesRegex(ScoutImportError, "enlace simbólico"):
                     import_package(FIXTURE_PATH, ROOT / "companies.json", write=True)
                 load.assert_not_called()
+
+    def test_oversized_package_is_rejected_before_json_parsing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            package_path = Path(tmp) / "oversized.json"
+            with package_path.open("wb") as handle:
+                handle.seek(MAX_PACKAGE_BYTES)
+                handle.write(b"x")
+            with mock.patch("scripts.import_scout.parse_json") as parse:
+                with self.assertRaisesRegex(ScoutImportError, "10 MiB"):
+                    import_package(package_path, ROOT / "companies.json")
+                parse.assert_not_called()
 
     def test_symlink_swap_before_replace_preserves_destination(self):
         with tempfile.TemporaryDirectory() as tmp:

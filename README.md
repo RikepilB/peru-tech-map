@@ -117,8 +117,9 @@ coordenadas, construye el dataset candidato completo y ejecuta el validador de P
 `--write` usa un reemplazo atómico; sin esa opción `companies.json` no cambia. Reimportar el
 mismo paquete es un no-op. Fuentes restringidas, privadas, sin clasificar o de proveedores
 Google se rechazan, igual que hosts Google, locales, internos o reservados e IPs no globales.
-El paquete admite hasta 1.000 sedes y 100 fuentes por sede, y `--write` rechaza destinos que sean
-enlaces simbólicos. La URL del fixture sintético identifica la prueba pública; no es evidencia
+El paquete admite hasta 10 MiB, 1.000 sedes y 100 fuentes por sede; los diagnósticos se acotan a
+100 errores más un marcador. `--write` rechaza destinos que sean enlaces simbólicos. La URL del
+fixture sintético identifica la prueba pública; no es evidencia
 sobre una sede real y su registro no forma parte del dataset público.
 
 ### Filtros Del Mapa

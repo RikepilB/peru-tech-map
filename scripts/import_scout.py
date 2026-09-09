@@ -19,6 +19,7 @@ from scripts.validate_data import (
     canonical_scout_text,
     company_identity,
     load_json,
+    parse_json,
     validate_companies,
     validate_scout_sources,
 )
@@ -34,6 +35,8 @@ RECORD_FIELDS = {
 CITY_MAP = {"Lima": "lima", "Arequipa": "arequipa"}
 WORKSPACE_TYPES = {"coworking", "cafe", "library"}
 MAX_RECORDS = 1000
+MAX_PACKAGE_BYTES = 10 * 1024 * 1024
+MAX_VALIDATION_ERRORS = 100
 
 
 class ScoutImportError(ValueError):
@@ -123,7 +126,21 @@ def validate_scout_package(package: object) -> list[str]:
                 errors.append(f"{path}: coordenadas fuera del bbox de la ciudad")
 
         errors.extend(validate_scout_sources(record.get("sources"), f"{path}.sources"))
+    if len(errors) > MAX_VALIDATION_ERRORS:
+        return errors[:MAX_VALIDATION_ERRORS] + ["package: errores adicionales omitidos"]
     return errors
+
+
+def _load_scout_package(path: str | Path) -> object:
+    with Path(path).open("rb") as handle:
+        raw = handle.read(MAX_PACKAGE_BYTES + 1)
+    if len(raw) > MAX_PACKAGE_BYTES:
+        raise ScoutImportError("paquete Scout supera el límite de 10 MiB")
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise ValueError("JSON no usa UTF-8") from exc
+    return parse_json(text)
 
 
 def _mapped_company(record: dict) -> dict:
@@ -221,7 +238,7 @@ def import_package(
     destination = Path(companies_path)
     if write and destination.is_symlink():
         raise ScoutImportError("destino companies: no se permite un enlace simbólico")
-    package = load_json(package_path)
+    package = _load_scout_package(package_path)
     companies = load_json(destination)
     result = plan_import(package, companies)
     if write and result.added:
