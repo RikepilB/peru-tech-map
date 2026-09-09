@@ -156,8 +156,11 @@ Para 1.000/10.000 registros, p95 y memoria determinan cuándo adoptar PERF-04; n
 ese rendimiento antes de medir.
 
 PERF-00 guarda cinco pares fríos/calientes y muestras de interacción en
-`docs/performance/perf00-browser-baseline-2026-09-09.json`. La primera lista tuvo mediana
-267,4 ms en frío y 233,3 ms en caliente bajo un retraso determinista de mapa de 200 ms. Los
-filtros quedaron por debajo de 10 ms de handler. Cinco estados `idle` equivalentes repitieron
-diez escrituras GeoJSON; este es el objetivo comprobable de PERF-01. Estas cifras no incluyen
-WebGL, tiles ni red pública y solo se comparan en el mismo host/protocolo.
+`docs/performance/perf00-browser-baseline-2026-09-09.json`. La primera lista útil, medida después
+de dos frames, tuvo mediana 364,2 ms en frío y 327,6 ms en caliente bajo un retraso determinista
+de mapa de 200 ms. Los filtros quedaron cerca o por debajo de 10 ms de handler. CDP registra la
+navegación, JSON, status y bytes; la recarga local devolvió respuestas 200 completas sin hits de
+caché. Cinco estados `idle` equivalentes repitieron diez escrituras GeoJSON; este es el objetivo
+comprobable de PERF-01. Estas cifras no incluyen WebGL, tiles ni red pública y solo se comparan
+en el mismo host/protocolo. Un trace diagnóstico separado acompaña la captura y CI conserva un
+trace smoke durante 14 días.
