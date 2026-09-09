@@ -22,12 +22,12 @@ jobs:
       - name: Probar render seguro en Chromium sin red
         run: python tests/browser/test_render.py -v
       - name: Verificar el harness de rendimiento sin red pública
-        run: python scripts/benchmark_performance.py --runs 1 --output perf-smoke.json --trace perf-smoke-trace.zip
+        run: python scripts/benchmark_performance.py --runs 1 --output "$RUNNER_TEMP/perf-smoke.json" --trace "$RUNNER_TEMP/perf-smoke-trace.zip"
       - name: Guardar diagnóstico de rendimiento
         uses: actions/upload-artifact@v4
         with:
           name: perf-smoke-${{ github.run_id }}
           path: |
-            perf-smoke.json
-            perf-smoke-trace.zip
+            ${{ runner.temp }}/perf-smoke.json
+            ${{ runner.temp }}/perf-smoke-trace.zip
           retention-days: 14

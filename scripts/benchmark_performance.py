@@ -177,6 +177,9 @@ def configure_context(context: BrowserContext, map_delay_ms: int, external_reque
 
     def route_external(route) -> None:
         url = route.request.url
+        if url.startswith("http://127.0.0.1:"):
+            route.fallback()
+            return
         external_requests.append(url)
         if "maplibre-gl.js" in url:
             route.fulfill(status=200, content_type="application/javascript", body=MAPLIBRE_STUB)
@@ -185,7 +188,7 @@ def configure_context(context: BrowserContext, map_delay_ms: int, external_reque
         else:
             route.abort()
 
-    context.route("https://**/*", route_external)
+    context.route("**/*", route_external)
 
 
 def wait_for_list(page: Page) -> None:
@@ -352,23 +355,52 @@ def file_bytes() -> dict[str, int]:
     return {name: (ROOT / name).stat().st_size for name in ("index.html", "companies.json", "ticker.json")}
 
 
-def expected_counts(companies: list[dict[str, object]]) -> dict[str, int]:
-    lima = [company for company in companies if company.get("city") == "lima"]
-    ecosystem = {"Startup", "Technology Consultancy"}
-    return {
-        "initial_ecosystem": sum(company.get("category") in ecosystem for company in lima),
-        "ecosystem_with_coworking": sum(
-            company.get("category") in ecosystem | {"Coworking Space"} for company in lima
-        ),
-        "remote_all_types": sum(
-            company.get("workspace_type") in {"coworking", "cafe", "library"} and bool(company.get("sources"))
-            for company in lima
-        ),
-        "remote_without_cafe": sum(
-            company.get("workspace_type") in {"coworking", "library"} and bool(company.get("sources"))
-            for company in lima
-        ),
-    }
+def read_consistent_count(page: Page) -> int:
+    """Read a settled result count after checking the rendered rows and markers."""
+    counts = page.evaluate(
+        """async () => {
+          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+          return {
+            label: parseInt(document.getElementById('coCount').textContent, 10),
+            rows: document.querySelectorAll('.co').length,
+            markers: document.querySelectorAll('.co-marker').length,
+          };
+        }"""
+    )
+    if counts["label"] != counts["rows"] or counts["rows"] != counts["markers"]:
+        raise RuntimeError(f"application count is inconsistent: {counts}")
+    return int(counts["label"])
+
+
+def expected_counts_from_app(browser, url: str, map_delay_ms: int) -> dict[str, int]:
+    """Exercise the real controls once outside timed samples to derive expectations."""
+    context = browser.new_context(locale="es-PE", viewport={"width": 1280, "height": 800})
+    configure_context(context, map_delay_ms, [])
+    page = context.new_page()
+    try:
+        page.goto(url, wait_until="load")
+        wait_for_list(page)
+        counts = {"initial_ecosystem": read_consistent_count(page)}
+        page.evaluate("document.querySelector('[data-view-category=\"Coworking Space\"]').click()")
+        counts["ecosystem_with_coworking"] = read_consistent_count(page)
+        page.evaluate("document.querySelector('[data-view-mode=\"remote\"]').click()")
+        counts["remote_all_types"] = read_consistent_count(page)
+        page.evaluate("document.querySelector('[data-workspace-type=\"cafe\"]').click()")
+        counts["remote_without_cafe"] = read_consistent_count(page)
+        return counts
+    finally:
+        context.close()
+
+
+def git_stdout(*args: str) -> str | None:
+    """Return a Git value when repository metadata is available."""
+    try:
+        result = subprocess.run(
+            ["git", *args], cwd=ROOT, check=True, capture_output=True, text=True
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    return result.stdout.strip() or None
 
 
 def summarize_interactions(samples: list[dict[str, float]]) -> dict[str, object]:
@@ -387,7 +419,8 @@ def run_benchmark(
 ) -> dict[str, object]:
     companies_path = ROOT / "companies.json"
     companies = json.loads(companies_path.read_text(encoding="utf-8"))
-    counts = expected_counts(companies)
+    git_head = git_stdout("rev-parse", "HEAD")
+    comparison_base = git_stdout("merge-base", "origin/master", "HEAD")
     interaction_runs: dict[str, list[dict[str, float]]] = {
         "ecosystem_add_coworking": [],
         "switch_to_remote": [],
@@ -401,6 +434,7 @@ def run_benchmark(
     with local_server() as url, sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True)
         chromium_version = browser.version
+        counts = expected_counts_from_app(browser, url, map_delay_ms)
         for run in range(1, runs + 1):
             context = browser.new_context(locale="es-PE", viewport={"width": 1280, "height": 800})
             run_external_requests: list[str] = []
@@ -408,17 +442,21 @@ def run_benchmark(
             page = context.new_page()
             network = NetworkRecorder(context.new_cdp_session(page))
             errors: list[str] = []
-            page.on("pageerror", lambda error: errors.append(str(error)))
+            page.on("pageerror", lambda error, sink=errors: sink.append(str(error)))
             network.reset()
             page.goto(url, wait_until="load")
             wait_for_list(page)
             cold.append(read_load_sample(page, "cold", run, list(errors), network, url))
+            if cold[-1]["visible_rows"] != counts["initial_ecosystem"]:
+                raise RuntimeError(f"initial result count does not match application contract: {cold[-1]}")
 
             error_start = len(errors)
             network.reset()
             page.reload(wait_until="load")
             wait_for_list(page)
             warm.append(read_load_sample(page, "warm", run, errors[error_start:], network, url))
+            if warm[-1]["visible_rows"] != counts["initial_ecosystem"]:
+                raise RuntimeError(f"warm result count does not match application contract: {warm[-1]}")
 
             interaction_runs["ecosystem_add_coworking"].append(measure_click(
                 page, '[data-view-category="Coworking Space"]', counts["ecosystem_with_coworking"]
@@ -463,13 +501,6 @@ def run_benchmark(
         raise RuntimeError(f"public tile requests escaped the deterministic map stub: {tile_requests}")
 
     dataset_hash = hashlib.sha256(companies_path.read_bytes()).hexdigest()
-    git_head = subprocess.run(
-        ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True
-    ).stdout.strip()
-    base_result = subprocess.run(
-        ["git", "merge-base", "origin/master", "HEAD"], cwd=ROOT, check=False, capture_output=True, text=True
-    )
-    comparison_base = base_result.stdout.strip() or None
     trace_artifact = None
     if trace_path:
         trace_artifact = {
@@ -485,6 +516,7 @@ def run_benchmark(
             "repository_head": git_head,
             "comparison_base": comparison_base,
             "index_sha256": hashlib.sha256((ROOT / "index.html").read_bytes()).hexdigest(),
+            "benchmark_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         },
         "environment": {
             "platform": platform.platform(),
