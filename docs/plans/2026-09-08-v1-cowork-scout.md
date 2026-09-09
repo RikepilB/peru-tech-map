@@ -2,10 +2,10 @@
 
 Fecha: 2026-09-08. Estado: propuesta ejecutable; implementación pendiente.
 
-Actualización de ejecución: **PG-01 y PG-02 fusionados**; PG-03 implementa filtros separados
-de categoría y etapa, estado vacío y copia ES/EN, con verificación local pendiente de registrar
-en su PR. **CS-01 preparado** como siguiente frente independiente; su implementación continúa
-pendiente. Las demás entregas continúan pendientes.
+Actualización de ejecución: **PG-01–03, CS-01–03 e INT-01 están fusionados**. La corrección
+PG-03.1 reemplazó el selector excluyente por controles combinables mediante el PR #47.
+**DATA-01 es la entrega actual**: reconcilia sedes verificadas y deja los candidatos inciertos
+como backlog editorial. PG-04 y QA-01 continúan pendientes.
 
 Ampliación solicitada: [rendimiento, lazy loading, caché y evaluación Astro/Next/Go](2026-09-08-performance.md).
 PERF-00 mide la base antes de optimizar; PG-01 sigue como primera entrega de código.
@@ -230,12 +230,12 @@ ajenos. Esta sesión inspeccionó las definiciones, no ejecutó subagentes.
 ## Estado de ejecución y siguiente acción
 
 PG-01, PG-02 y PG-03 están fusionados en `master` mediante los PR #41, #42 y #44; la corrección
-responsive/táctil también está fusionada mediante el PR #43. PG-03.1 está implementado, verificado,
-committed y pushed en `codex/pg03-sidebar-ux`; su PR y merge quedan pendientes de la revisión de
-esta entrega. En Coworking Scout, CS-01, CS-02 y CS-03 están fusionados en `master` mediante los
-PR #2, #3 y #4, después del plan inicial del PR #1. El siguiente frente integrado es INT-01:
-ejecutar una fixture sintética completa de Scout, exportarla, validar el contrato y hacer el
-dry-run de importación en PeruGrid. Conservar en ambos repositorios los archivos locales ajenos.
+responsive/táctil mediante el PR #43 y los filtros combinables mediante el PR #47. En Coworking
+Scout, CS-01, CS-02 y CS-03 están fusionados mediante los PR #2, #3 y #4. INT-01 está fusionado
+en ambos repositorios (Scout #5–6 y PeruGrid #46). DATA-01 aplica la matriz
+`docs/data-reconciliation-2026-09-09.md`, sustituye pins genéricos por ocho sedes trazables y
+mantiene los casos sin coordenada exacta como pendientes. El siguiente frente es PG-04: integrar
+la vista pública «Trabajar remoto». Conservar en ambos repositorios los archivos locales ajenos.
 
 ## PG-03.1 — Corrección UX del selector de filtros
 

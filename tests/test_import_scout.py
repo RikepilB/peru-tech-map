@@ -291,7 +291,7 @@ class ScoutImportTests(unittest.TestCase):
         package_before = copy.deepcopy(self.package)
         result = plan_import(self.package, self.companies)
 
-        self.assertEqual((result.records, result.added, result.unchanged, result.total), (1, 1, 0, 91))
+        self.assertEqual((result.records, result.added, result.unchanged, result.total), (1, 1, 0, 90))
         self.assertEqual(self.companies, companies_before)
         self.assertEqual(self.package, package_before)
         self.assertEqual(result.companies[-1], {
@@ -325,11 +325,11 @@ class ScoutImportTests(unittest.TestCase):
             companies_path.write_bytes((ROOT / "companies.json").read_bytes())
 
             first = import_package(FIXTURE_PATH, companies_path, write=True)
-            self.assertEqual((first.added, first.unchanged, first.total), (1, 0, 91))
+            self.assertEqual((first.added, first.unchanged, first.total), (1, 0, 90))
             first_bytes = companies_path.read_bytes()
 
             second = import_package(FIXTURE_PATH, companies_path, write=True)
-            self.assertEqual((second.added, second.unchanged, second.total), (0, 1, 91))
+            self.assertEqual((second.added, second.unchanged, second.total), (0, 1, 90))
             self.assertEqual(companies_path.read_bytes(), first_bytes)
 
     def test_default_dry_run_never_changes_destination(self):
@@ -340,7 +340,7 @@ class ScoutImportTests(unittest.TestCase):
 
             result = import_package(FIXTURE_PATH, companies_path)
 
-            self.assertEqual((result.added, result.total), (1, 91))
+            self.assertEqual((result.added, result.total), (1, 90))
             self.assertEqual(companies_path.read_bytes(), before)
 
     def test_same_site_id_with_changed_payload_is_a_conflict(self):
@@ -444,7 +444,7 @@ class ScoutImportTests(unittest.TestCase):
             result = subprocess.run(command, capture_output=True, text=True)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(result.stdout.strip(),
-                             "OK — mode=dry-run, records=1, added=1, unchanged=0, total=91")
+                             "OK — mode=dry-run, records=1, added=1, unchanged=0, total=90")
             before = companies_path.read_bytes()
 
             invalid_path = Path(tmp) / "invalid.json"

@@ -24,17 +24,17 @@ FIXTURE = json.loads((ROOT / "tests/fixtures/security.json").read_text(encoding=
 class DataValidationTests(unittest.TestCase):
     def test_current_dataset_has_complete_explicit_taxonomy(self):
         companies = load_json(ROOT / "companies.json")
-        self.assertEqual(len(companies), 90)
+        self.assertEqual(len(companies), 89)
         self.assertEqual(
             {category: sum(row["category"] == category for row in companies) for category in CATEGORIES},
             {
-                "Startup": 40,
+                "Startup": 37,
                 "Incubator": 8,
                 "Accelerator": 3,
                 "VC": 4,
                 "Nonprofit": 6,
                 "Technology Consultancy": 12,
-                "Coworking Space": 17,
+                "Coworking Space": 19,
             },
         )
         for row in companies:
@@ -59,6 +59,41 @@ class DataValidationTests(unittest.TestCase):
                 "Wayra Perú": "Accelerator",
                 "LIQUID Venture Studio": "Accelerator",
             },
+        )
+
+    def test_data01_reconciles_verified_sites_without_generic_pins(self):
+        companies = load_json(ROOT / "companies.json")
+        by_name = {row["name"]: row for row in companies}
+
+        for removed in ("WeWork San Isidro", "MindQube", "Talently", "uDocz"):
+            self.assertNotIn(removed, by_name)
+
+        expected_sites = {
+            "WeWork Jorge Basadre 349": (-12.0948671, -77.0360040, "coworking"),
+            "WeWork Real 2": (-12.0962186, -77.0368662, "coworking"),
+            "Regus Real Ocho": (-12.0968638, -77.0378679, "coworking"),
+            "Vallejo Librería-Café": (-12.1052878, -77.0388445, "cafe"),
+            "La Bodega Verde": (-12.1482221, -77.0225903, "cafe"),
+            "Sofá Café Barranco": (-12.1413883, -77.0231407, "cafe"),
+            "Biblioteca Municipal de Barranco": (-12.1501191, -77.0214626, "library"),
+            "Biblioteca Municipal de San Isidro": (-12.1015418, -77.0356762, "library"),
+        }
+        for name, (lat, lng, workspace_type) in expected_sites.items():
+            with self.subTest(name=name):
+                row = by_name[name]
+                self.assertEqual((row["lat"], row["lng"]), (lat, lng))
+                self.assertEqual(row["workspace_type"], workspace_type)
+                self.assertTrue(row["site_id"])
+                self.assertTrue(row["organization_id"])
+                self.assertEqual(row["sources"][0]["provider"], "openstreetmap")
+                self.assertEqual(row["sources"][0]["provenance_class"], "public")
+                self.assertEqual(row["sources"][0]["use_classification"], "redistributable")
+                self.assertIs(row["sources"][0]["export_eligible"], True)
+
+        self.assertEqual(by_name["Sofá Café Barranco"]["address"], "Av. San Martín 480, Barranco, Lima")
+        self.assertEqual(
+            by_name["Biblioteca Municipal de Barranco"]["address"],
+            "Av. San Martín s/n, Parque Municipal, Barranco, Lima",
         )
 
     def test_taxonomy_is_required_and_conditional(self):
