@@ -1,5 +1,6 @@
 """Validación de datasets V1, reutilizable por CI e importadores; nunca modifica datos."""
 import argparse
+import ipaddress
 import json
 import math
 from pathlib import Path
@@ -59,6 +60,20 @@ def _normal_name(value: str) -> str:
     return " ".join(unicodedata.normalize("NFKC", value).casefold().split())
 
 
+def canonical_scout_text(value: object, maximum: int) -> bool:
+    """Texto no vacío ya normalizado a espacios simples por el productor."""
+    return (
+        isinstance(value, str)
+        and bool(value)
+        and len(value) <= maximum
+        and value == " ".join(value.split())
+    )
+
+
+def canonical_scout_id(value: str) -> str:
+    return unicodedata.normalize("NFKC", value).casefold()
+
+
 def company_identity(row: dict) -> tuple:
     """Identidad estable usada por el validador y los importadores."""
     return (_normal_name(row["name"]), row["city"], row["lat"], row["lng"])
@@ -70,8 +85,57 @@ def _extra_fields(row: dict, allowed: set[str], path: str, errors: list[str]) ->
 
 
 def _is_google_provider(value: str) -> bool:
-    compact = re.sub(r"[^a-z0-9]+", "", value.casefold())
-    return compact.startswith("google")
+    normalized = unicodedata.normalize("NFKC", value).casefold()
+    compact = "".join(char for char in normalized if char.isalnum())
+    return "google" in compact
+
+
+def _blocked_source_host(hostname: str) -> bool:
+    try:
+        host = hostname.encode("idna").decode("ascii").casefold()
+    except UnicodeError:
+        return True
+    if (not host or len(host) > 253 or host.startswith(".")
+            or host.endswith(".") or ".." in host):
+        return True
+    try:
+        address = ipaddress.ip_address(host)
+    except ValueError:
+        labels = host.split(".")
+        if len(labels) < 2 or all(label.isdigit() for label in labels):
+            return True
+        if any(not re.fullmatch(r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?", label)
+               for label in labels):
+            return True
+        reserved_suffixes = (
+            ".localhost", ".local", ".internal", ".intranet", ".lan", ".home",
+            ".localdomain", ".test", ".invalid", ".example", ".onion", ".alt",
+            ".arpa", ".corp", ".private",
+        )
+        if host == "localhost" or host.endswith(reserved_suffixes):
+            return True
+        if host == "home.arpa" or host.endswith(".home.arpa"):
+            return True
+        if any(host == domain or host.endswith("." + domain)
+               for domain in ("example.com", "example.net", "example.org")):
+            return True
+        google_domains = (
+            "googleapis.com", "googleusercontent.com", "gstatic.com", "goo.gl",
+            "maps.app.goo.gl",
+        )
+        if "google" in labels or any(
+            host == domain or host.endswith("." + domain) for domain in google_domains
+        ):
+            return True
+        return False
+    return not address.is_global
+
+
+def _has_explicit_port(netloc: str) -> bool:
+    if netloc.startswith("["):
+        closing = netloc.find("]")
+        return closing < 0 or bool(netloc[closing + 1:])
+    return ":" in netloc
 
 
 def _safe_public_source_url(value: object) -> bool:
@@ -91,8 +155,10 @@ def _safe_public_source_url(value: object) -> bool:
         and parsed.username is None
         and parsed.password is None
         and port is None
+        and not _has_explicit_port(parsed.netloc)
         and not parsed.query
         and not parsed.fragment
+        and not _blocked_source_host(parsed.hostname)
     )
 
 
@@ -113,7 +179,7 @@ def validate_scout_source(source: object, path: str) -> list[str]:
     errors: list[str] = []
     _extra_fields(source, SCOUT_SOURCE_FIELDS, path, errors)
     provider = source.get("provider")
-    if not _text(provider, 200) or _is_google_provider(provider):
+    if not canonical_scout_text(provider, 200) or _is_google_provider(provider):
         errors.append(f"{path}.provider: proveedor público no permitido")
     if not _safe_public_source_url(source.get("source_url")):
         errors.append(f"{path}.source_url: URL HTTPS pública no permitida")
@@ -125,6 +191,23 @@ def validate_scout_source(source: object, path: str) -> list[str]:
         errors.append(f"{path}.use_classification: debe ser redistributable")
     if source.get("export_eligible") is not True:
         errors.append(f"{path}.export_eligible: debe ser true")
+    return errors
+
+
+def validate_scout_sources(sources: object, path: str) -> list[str]:
+    if not isinstance(sources, list) or not sources:
+        return [f"{path}: array no vacío requerido"]
+    errors: list[str] = []
+    if len(sources) > 100:
+        errors.append(f"{path}: máximo 100 fuentes")
+    seen: list[dict] = []
+    for index, source in enumerate(sources[:100]):
+        source_path = f"{path}[{index}]"
+        errors.extend(validate_scout_source(source, source_path))
+        if isinstance(source, dict):
+            if any(source == previous for previous in seen):
+                errors.append(f"{source_path}: fuente duplicada")
+            seen.append(source)
     return errors
 
 
@@ -192,26 +275,32 @@ def validate_companies(data: object) -> list[str]:
             model = row["operating_model"]
             if not isinstance(model, str) or model not in OPERATING_MODELS:
                 errors.append(f"{path}.operating_model: valor no permitido")
+        scout_fields_present = SCOUT_COMPANY_FIELDS.intersection(row)
+        if scout_fields_present and scout_fields_present != SCOUT_COMPANY_FIELDS:
+            errors.append(f"{path}: metadata Scout debe incluir el grupo completo")
+        if scout_fields_present:
+            if not canonical_scout_text(row.get("name"), 200):
+                errors.append(f"{path}.name: texto canónico requerido para Scout")
+            if not canonical_scout_text(row.get("address"), 500):
+                errors.append(f"{path}.address: texto canónico requerido para Scout")
+            if category != "Coworking Space":
+                errors.append(f"{path}.category: Scout requiere Coworking Space")
+            if funding != {"type": "Coworking"}:
+                errors.append(f"{path}.funding: Scout requiere tipo Coworking")
         for field in ("site_id", "organization_id"):
-            if field in row and not _text(row[field], 200):
-                errors.append(f"{path}.{field}: texto no vacío, máximo 200 caracteres")
+            if field in row and not canonical_scout_text(row[field], 200):
+                errors.append(f"{path}.{field}: texto canónico requerido, máximo 200 caracteres")
         if "workspace_type" in row:
             workspace_type = row["workspace_type"]
             if not isinstance(workspace_type, str) or workspace_type not in SCOUT_WORKSPACE_TYPES:
                 errors.append(f"{path}.workspace_type: valor no permitido")
         if "sources" in row:
-            sources = row["sources"]
-            if not isinstance(sources, list) or not sources:
-                errors.append(f"{path}.sources: array no vacío requerido")
-            elif len(sources) > 100:
-                errors.append(f"{path}.sources: máximo 100 fuentes")
-            else:
-                for source_index, source in enumerate(sources):
-                    errors.extend(validate_scout_source(source, f"{path}.sources[{source_index}]"))
-        if _text(row.get("site_id"), 200):
-            if row["site_id"] in seen_site_ids:
+            errors.extend(validate_scout_sources(row["sources"], f"{path}.sources"))
+        if canonical_scout_text(row.get("site_id"), 200):
+            site_identity = canonical_scout_id(row["site_id"])
+            if site_identity in seen_site_ids:
                 errors.append(f"{path}.site_id: identificador duplicado")
-            seen_site_ids.add(row["site_id"])
+            seen_site_ids.add(site_identity)
         # Coordenadas compartidas no son duplicados: existen oficinas con varias empresas.
         if bbox and coordinates_ok and _text(row.get("name"), 200):
             identity = company_identity(row)

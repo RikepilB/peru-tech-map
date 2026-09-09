@@ -15,10 +15,12 @@ if __package__ in (None, ""):
 
 from scripts.validate_data import (
     BBOXES,
+    canonical_scout_id,
+    canonical_scout_text,
     company_identity,
     load_json,
     validate_companies,
-    validate_scout_source,
+    validate_scout_sources,
 )
 
 
@@ -31,6 +33,7 @@ RECORD_FIELDS = {
 }
 CITY_MAP = {"Lima": "lima", "Arequipa": "arequipa"}
 WORKSPACE_TYPES = {"coworking", "cafe", "library"}
+MAX_RECORDS = 1000
 
 
 class ScoutImportError(ValueError):
@@ -49,10 +52,6 @@ class ImportResult:
         return len(self.companies)
 
 
-def _text(value: object, maximum: int = 500) -> bool:
-    return isinstance(value, str) and bool(value.strip()) and len(value) <= maximum
-
-
 def _finite_number(value: object) -> bool:
     return type(value) is int or (
         type(value) is float and value == value and value not in (float("inf"), float("-inf"))
@@ -60,8 +59,8 @@ def _finite_number(value: object) -> bool:
 
 
 def _exact_fields(value: dict, fields: set[str], path: str, errors: list[str]) -> None:
-    missing = sorted(fields - value.keys())
-    extra = sorted(value.keys() - fields)
+    missing = fields - value.keys()
+    extra = value.keys() - fields
     if missing:
         errors.append(f"{path}: faltan campos requeridos")
     if extra:
@@ -80,9 +79,11 @@ def validate_scout_package(package: object) -> list[str]:
     if not isinstance(records, list):
         errors.append("package.records: debe ser un array")
         return errors
+    if len(records) > MAX_RECORDS:
+        errors.append(f"package.records: máximo {MAX_RECORDS} registros")
 
     seen_site_ids: set[str] = set()
-    for index, record in enumerate(records):
+    for index, record in enumerate(records[:MAX_RECORDS]):
         path = f"package.records[{index}]"
         if not isinstance(record, dict):
             errors.append(f"{path}: debe ser un objeto")
@@ -90,13 +91,14 @@ def validate_scout_package(package: object) -> list[str]:
         _exact_fields(record, RECORD_FIELDS, path, errors)
         for field, maximum in (("site_id", 200), ("organization_id", 200),
                                ("name", 200), ("address", 500)):
-            if not _text(record.get(field), maximum):
-                errors.append(f"{path}.{field}: texto requerido")
+            if not canonical_scout_text(record.get(field), maximum):
+                errors.append(f"{path}.{field}: texto canónico requerido")
         site_id = record.get("site_id")
-        if _text(site_id, 200):
-            if site_id in seen_site_ids:
+        if canonical_scout_text(site_id, 200):
+            site_identity = canonical_scout_id(site_id)
+            if site_identity in seen_site_ids:
                 errors.append(f"{path}.site_id: identificador duplicado")
-            seen_site_ids.add(site_id)
+            seen_site_ids.add(site_identity)
 
         city = record.get("city")
         if not isinstance(city, str) or city not in CITY_MAP:
@@ -120,14 +122,7 @@ def validate_scout_package(package: object) -> list[str]:
                     and bbox[1] <= record["lat"] <= bbox[3]):
                 errors.append(f"{path}: coordenadas fuera del bbox de la ciudad")
 
-        sources = record.get("sources")
-        if not isinstance(sources, list) or not sources:
-            errors.append(f"{path}.sources: array no vacío requerido")
-        elif len(sources) > 100:
-            errors.append(f"{path}.sources: máximo 100 fuentes")
-        else:
-            for source_index, source in enumerate(sources):
-                errors.extend(validate_scout_source(source, f"{path}.sources[{source_index}]"))
+        errors.extend(validate_scout_sources(record.get("sources"), f"{path}.sources"))
     return errors
 
 
@@ -162,7 +157,7 @@ def plan_import(package: object, companies: object) -> ImportResult:
 
     prospective = copy.deepcopy(companies)
     by_site_id = {
-        row["site_id"]: row for row in prospective
+        canonical_scout_id(row["site_id"]): row for row in prospective
         if isinstance(row, dict) and "site_id" in row
     }
     identities = {company_identity(row) for row in prospective}
@@ -170,7 +165,8 @@ def plan_import(package: object, companies: object) -> ImportResult:
     unchanged = 0
     for record in sorted(package["records"], key=lambda item: item["site_id"]):
         mapped = _mapped_company(record)
-        existing = by_site_id.get(mapped["site_id"])
+        site_identity = canonical_scout_id(mapped["site_id"])
+        existing = by_site_id.get(site_identity)
         if existing is not None:
             if existing == mapped:
                 unchanged += 1
@@ -180,7 +176,7 @@ def plan_import(package: object, companies: object) -> ImportResult:
         if identity in identities:
             raise ScoutImportError("colisión: nombre, ciudad y coordenadas ya existen")
         prospective.append(mapped)
-        by_site_id[mapped["site_id"]] = mapped
+        by_site_id[site_identity] = mapped
         identities.add(identity)
         added += 1
 
@@ -198,6 +194,8 @@ def plan_import(package: object, companies: object) -> ImportResult:
 def _atomic_json_write(path: Path, data: list[dict]) -> None:
     temp_name: str | None = None
     try:
+        if path.is_symlink():
+            raise ScoutImportError("destino companies: no se permite un enlace simbólico")
         with tempfile.NamedTemporaryFile(
             "w", encoding="utf-8", newline="\n", dir=path.parent,
             prefix=f".{path.name}.", suffix=".tmp", delete=False,
@@ -205,6 +203,8 @@ def _atomic_json_write(path: Path, data: list[dict]) -> None:
             temp_name = handle.name
             json.dump(data, handle, ensure_ascii=False, indent=2)
             handle.write("\n")
+        if path.is_symlink():
+            raise ScoutImportError("destino companies: no se permite un enlace simbólico")
         os.replace(temp_name, path)
     except Exception:
         if temp_name:
@@ -218,11 +218,14 @@ def import_package(
     *,
     write: bool = False,
 ) -> ImportResult:
+    destination = Path(companies_path)
+    if write and destination.is_symlink():
+        raise ScoutImportError("destino companies: no se permite un enlace simbólico")
     package = load_json(package_path)
-    companies = load_json(companies_path)
+    companies = load_json(destination)
     result = plan_import(package, companies)
     if write and result.added:
-        _atomic_json_write(Path(companies_path), result.companies)
+        _atomic_json_write(destination, result.companies)
     return result
 
 

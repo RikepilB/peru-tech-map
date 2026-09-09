@@ -87,7 +87,7 @@ Un array de objetos de lugar. Este es el archivo que la mayoría de las contribu
 | `tag` | ⬜ | Descripción de una oración mostrada en el popover y usada como línea secundaria en la barra lateral. |
 | `site_id`, `organization_id` | ⬜ | IDs estables de sede y organización emitidos por el paquete público de Coworking Scout. No son IDs de APIs de proveedores. |
 | `workspace_type` | ⬜ | Para sedes importadas: `coworking`, `cafe` o `library`. Las tres conservan `category: "Coworking Space"` durante V1. |
-| `sources` | ⬜ | Referencias públicas de Scout con URL HTTPS, fecha de observación, procedencia `public`, uso `redistributable` y elegibilidad explícita. |
+| `sources` | ⬜ | Hasta 100 referencias públicas distintas de Scout con URL HTTPS, fecha de observación, procedencia `public`, uso `redistributable` y elegibilidad explícita. Los cuatro campos Scout forman un grupo: si uno aparece, todos son obligatorios. |
 
 **Validación De Coordenadas:** cada entrada debe caer dentro del bounding box de su ciudad —
 
@@ -116,7 +116,10 @@ Antes de escribir valida el paquete, detecta conflictos por `site_id` o por nomb
 coordenadas, construye el dataset candidato completo y ejecuta el validador de PeruGrid.
 `--write` usa un reemplazo atómico; sin esa opción `companies.json` no cambia. Reimportar el
 mismo paquete es un no-op. Fuentes restringidas, privadas, sin clasificar o de proveedores
-Google se rechazan. El fixture de integración es sintético y no forma parte del dataset público.
+Google se rechazan, igual que hosts Google, locales, internos o reservados e IPs no globales.
+El paquete admite hasta 1.000 sedes y 100 fuentes por sede, y `--write` rechaza destinos que sean
+enlaces simbólicos. La URL del fixture sintético identifica la prueba pública; no es evidencia
+sobre una sede real y su registro no forma parte del dataset público.
 
 ### Filtros Del Mapa
 

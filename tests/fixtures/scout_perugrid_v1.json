@@ -15,8 +15,8 @@
           "export_eligible": true,
           "observed_at": "2026-09-08T00:00:00Z",
           "provenance_class": "public",
-          "provider": "synthetic_open_directory",
-          "source_url": "https://directory.example.org/lima/nomad-miraflores",
+          "provider": "synthetic_fixture",
+          "source_url": "https://github.com/RikepilB/peru-tech-map/blob/master/tests/fixtures/scout_perugrid_v1.json",
           "use_classification": "redistributable"
         }
       ],

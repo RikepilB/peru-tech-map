@@ -30,6 +30,12 @@ class ScoutPackageValidationTests(unittest.TestCase):
         package = fixture_package()
         self.assertEqual(validate_scout_package(package), [])
         self.assertEqual(package["records"][0]["city"], "Lima")
+        self.assertEqual(package["records"][0]["sources"][0]["provider"], "synthetic_fixture")
+        self.assertEqual(
+            package["records"][0]["sources"][0]["source_url"],
+            "https://github.com/RikepilB/peru-tech-map/blob/master/tests/fixtures/"
+            "scout_perugrid_v1.json",
+        )
         self.assertNotIn("provider_ref", json.dumps(package))
 
     def test_rejects_unknown_version_roots_keys_and_record_keys(self):
@@ -71,6 +77,95 @@ class ScoutPackageValidationTests(unittest.TestCase):
                     package["records"][0][field] = value
                     self.assertTrue(validate_scout_package(package))
 
+    def test_requires_canonical_collapsed_record_and_source_text(self):
+        paths = (
+            ("site_id", " site-nomad-miraflores "),
+            ("organization_id", "org-nomad-  house"),
+            ("name", "Nomad\nHouse Miraflores"),
+            ("address", "Avenida  Larco 123"),
+        )
+        for field, value in paths:
+            with self.subTest(field=field):
+                package = fixture_package()
+                package["records"][0][field] = value
+                self.assertTrue(validate_scout_package(package))
+        for field, value in (("site_id", "x" * 201), ("organization_id", "x" * 201),
+                             ("name", "x" * 201), ("address", "x" * 501)):
+            with self.subTest(field=field, limit=True):
+                package = fixture_package()
+                package["records"][0][field] = value
+                self.assertTrue(validate_scout_package(package))
+
+        package = fixture_package()
+        package["records"][0]["sources"][0]["provider"] = "synthetic  directory"
+        self.assertTrue(validate_scout_package(package))
+        package["records"][0]["sources"][0]["provider"] = "x" * 201
+        self.assertTrue(validate_scout_package(package))
+
+        package = fixture_package()
+        package["records"][0].update(
+            site_id="s" * 200,
+            organization_id="o" * 200,
+            name="n" * 200,
+            address="a" * 500,
+        )
+        source = package["records"][0]["sources"][0]
+        source["provider"] = "p" * 200
+        prefix = "https://github.com/"
+        source["source_url"] = prefix + "x" * (2048 - len(prefix))
+        self.assertEqual(validate_scout_package(package), [])
+
+    def test_rejects_canonical_duplicate_site_ids_and_duplicate_sources(self):
+        package = fixture_package()
+        second = copy.deepcopy(package["records"][0])
+        second["site_id"] = "SITE-NOMAD-MIRAFLORES"
+        second["name"] = "Second synthetic site"
+        second["lat"] = -12.12
+        package["records"].append(second)
+        self.assertTrue(validate_scout_package(package))
+
+        package = fixture_package()
+        second = copy.deepcopy(package["records"][0])
+        package["records"][0]["site_id"] = "site-nomad-miraflores-e\u0301"
+        second["site_id"] = "site-nomad-miraflores-é"
+        second["name"] = "Second synthetic site"
+        second["lat"] = -12.12
+        package["records"].append(second)
+        self.assertTrue(validate_scout_package(package))
+
+        package = fixture_package()
+        package["records"][0]["sources"].append(
+            copy.deepcopy(package["records"][0]["sources"][0])
+        )
+        self.assertTrue(validate_scout_package(package))
+
+    def test_package_and_source_counts_are_bounded(self):
+        package = fixture_package()
+        prototype = package["records"][0]
+        package["records"] = []
+        for index in range(1000):
+            row = copy.deepcopy(prototype)
+            row["site_id"] = f"site-{index:04d}"
+            package["records"].append(row)
+        self.assertEqual(validate_scout_package(package), [])
+        overflow = copy.deepcopy(prototype)
+        overflow["site_id"] = "site-overflow"
+        package["records"].append(overflow)
+        self.assertTrue(validate_scout_package(package))
+
+        package = fixture_package()
+        source = package["records"][0]["sources"][0]
+        package["records"][0]["sources"] = []
+        for index in range(100):
+            item = copy.deepcopy(source)
+            item["source_url"] = f"https://github.com/RikepilB/coworking-scout/source-{index:03d}"
+            package["records"][0]["sources"].append(item)
+        self.assertEqual(validate_scout_package(package), [])
+        overflow_source = copy.deepcopy(source)
+        overflow_source["source_url"] = "https://github.com/RikepilB/coworking-scout/source-overflow"
+        package["records"][0]["sources"].append(overflow_source)
+        self.assertTrue(validate_scout_package(package))
+
     def test_rejects_unapproved_or_malformed_sources(self):
         cases = {
             "provider": ["Google", "google_maps", "Google Maps Platform", "", None],
@@ -80,11 +175,17 @@ class ScoutPackageValidationTests(unittest.TestCase):
                 "https://example.org/site?token=1",
                 "https://example.org/site#private",
                 "https://example.org:8443/site",
+                "https://example.org:/site",
                 "//example.org/site",
                 "https://exa mple.org/site",
+                "https://bad_label.example.dev/site",
+                "https://" + ".".join(["a" * 60] * 5) + ".com/site",
+                "https://github.com/" + "x" * 2040,
                 None,
             ],
-            "observed_at": ["2026-09-08", "2026-09-08T00:00:00", "not-a-date", None],
+            "observed_at": [
+                "2026-09-08", "2026-09-08T00:00:00", "not-a-date", "x" * 81, None,
+            ],
             "provenance_class": ["private", "unclassified", None, True],
             "use_classification": ["restricted", "unclassified", None, True],
             "export_eligible": [False, 1, "true", None],
@@ -95,6 +196,40 @@ class ScoutPackageValidationTests(unittest.TestCase):
                     package = fixture_package()
                     package["records"][0]["sources"][0][field] = value
                     self.assertTrue(validate_scout_package(package))
+
+    def test_rejects_unicode_google_provider_and_google_source_hosts(self):
+        for provider in ("Ｇｏｏｇｌｅ Maps", "official_google_directory", "Not Google Maps"):
+            with self.subTest(provider=provider):
+                package = fixture_package()
+                package["records"][0]["sources"][0]["provider"] = provider
+                self.assertTrue(validate_scout_package(package))
+        for host in (
+            "google.com", "maps.google.com", "google.co.uk", "maps.googleapis.com",
+            "images.googleusercontent.com", "gstatic.com", "goo.gl", "maps.app.goo.gl",
+        ):
+            with self.subTest(host=host):
+                package = fixture_package()
+                package["records"][0]["sources"][0]["source_url"] = f"https://{host}/place"
+                self.assertTrue(validate_scout_package(package))
+
+    def test_rejects_local_reserved_and_non_global_source_hosts(self):
+        urls = (
+            "https://localhost/site", "https://workspace/site", "https://x.local/site",
+            "https://x.internal/site", "https://x.lan/site", "https://example.com/site",
+            "https://sub.example.org/site", "https://x.invalid/site", "https://x.test/site",
+            "https://x.arpa/site", "https://x.corp/site", "https://x.private/site",
+            "https://127.0.0.1/site", "https://10.0.0.1/site", "https://192.168.1.1/site",
+            "https://[::1]/site", "https://192.0.2.1/site", "https://[2001:db8::1]/site",
+        )
+        for url in urls:
+            with self.subTest(url=url):
+                package = fixture_package()
+                package["records"][0]["sources"][0]["source_url"] = url
+                self.assertTrue(validate_scout_package(package))
+
+        package = fixture_package()
+        package["records"][0]["sources"][0]["source_url"] = "https://1.1.1.1/source"
+        self.assertEqual(validate_scout_package(package), [])
 
     def test_city_coordinate_pair_must_match_existing_bounds(self):
         package = fixture_package()
@@ -209,6 +344,26 @@ class ScoutImportTests(unittest.TestCase):
             before = companies_path.read_bytes()
             with mock.patch("scripts.import_scout.os.replace", side_effect=OSError("simulated")):
                 with self.assertRaises(OSError):
+                    import_package(FIXTURE_PATH, companies_path, write=True)
+            self.assertEqual(companies_path.read_bytes(), before)
+            self.assertEqual(list(Path(tmp).glob("*.tmp")), [])
+
+    def test_write_refuses_a_symlink_destination_before_loading_or_replacing(self):
+        with mock.patch("scripts.import_scout.Path.is_symlink", return_value=True):
+            with mock.patch("scripts.import_scout.load_json") as load:
+                with self.assertRaisesRegex(ScoutImportError, "enlace simbólico"):
+                    import_package(FIXTURE_PATH, ROOT / "companies.json", write=True)
+                load.assert_not_called()
+
+    def test_symlink_swap_before_replace_preserves_destination(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            companies_path = Path(tmp) / "companies.json"
+            companies_path.write_bytes((ROOT / "companies.json").read_bytes())
+            before = companies_path.read_bytes()
+            with mock.patch(
+                "scripts.import_scout.Path.is_symlink", side_effect=(False, False, True)
+            ):
+                with self.assertRaisesRegex(ScoutImportError, "enlace simbólico"):
                     import_package(FIXTURE_PATH, companies_path, write=True)
             self.assertEqual(companies_path.read_bytes(), before)
             self.assertEqual(list(Path(tmp).glob("*.tmp")), [])

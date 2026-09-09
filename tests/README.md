@@ -59,11 +59,15 @@ python scripts/import_scout.py --package ruta/scout.json
 python scripts/import_scout.py --package ruta/scout.json --companies ruta/companies.json --write
 ```
 
-El contrato exige sedes verificadas y elegibles, coordenadas dentro de Lima o Arequipa y todas
-sus fuentes públicas, redistribuibles y elegibles. Rechaza proveedores Google, URLs con
-credenciales, puerto, query o fragmento, versiones/campos desconocidos y conflictos de sede.
+El contrato admite como máximo 1.000 sedes y 100 fuentes distintas por sede. Exige textos
+canónicos, sedes verificadas y elegibles, coordenadas dentro de Lima o Arequipa y todas sus
+fuentes públicas, redistribuibles y elegibles. Rechaza proveedores y hosts Google, hosts locales,
+internos o reservados, IPs no globales, URLs con credenciales, puerto, query o fragmento,
+versiones/campos desconocidos y conflictos de sede. El destino de `--write` no puede ser un
+enlace simbólico.
 Una segunda importación idéntica informa `added=0, unchanged=1` y no reescribe el archivo.
 
 `fixtures/scout_perugrid_v1.json` se generó con el exportador real de Scout a partir de su
-fixture `synthetic_perugrid_candidate.json`; contiene solo nombres, URLs e IDs sintéticos. La
-prueba integral usa una copia temporal de las 90 entradas y nunca agrega la sede a este repo.
+fixture `synthetic_perugrid_candidate.json`; contiene solo nombres e IDs sintéticos. Su URL
+identifica este fixture público de integración y no constituye evidencia sobre una sede real.
+La prueba integral usa una copia temporal de las 90 entradas y nunca agrega la sede a este repo.
