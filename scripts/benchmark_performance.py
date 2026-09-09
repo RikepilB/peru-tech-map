@@ -135,12 +135,13 @@ MAPLIBRE_STUB = r"""
 INIT_SCRIPT = r"""
 delay => {
   window.__PERF_MAP_DELAY_MS = delay;
-  window.__perfFirstListMs = null;
+  window.__perfListCountMs = null;
+  window.__perfFirstUsefulListMs = null;
   const observe = () => {
     const record = () => {
       const count = document.getElementById('coCount');
-      if (window.__perfFirstListMs === null && count && /^\d+ /.test(count.textContent || '')) {
-        window.__perfFirstListMs = performance.now();
+      if (window.__perfListCountMs === null && count && /^\d+ /.test(count.textContent || '')) {
+        window.__perfListCountMs = performance.now();
       }
     };
     new MutationObserver(record).observe(document.documentElement, {subtree: true, childList: true, characterData: true});
@@ -188,35 +189,95 @@ def configure_context(context: BrowserContext, map_delay_ms: int, external_reque
 
 
 def wait_for_list(page: Page) -> None:
-    page.wait_for_function("window.__perfFirstListMs !== null", timeout=10_000)
-    page.evaluate("() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))")
+    page.wait_for_function("window.__perfListCountMs !== null", timeout=10_000)
     counts = page.evaluate(
-        "() => ({label: parseInt(document.getElementById('coCount').textContent, 10), rows: document.querySelectorAll('.co').length, markers: document.querySelectorAll('.co-marker').length})"
+        """async () => {
+          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+          const counts = {
+            label: parseInt(document.getElementById('coCount').textContent, 10),
+            rows: document.querySelectorAll('.co').length,
+            markers: document.querySelectorAll('.co-marker').length,
+          };
+          window.__perfFirstUsefulListMs = performance.now();
+          return counts;
+        }"""
     )
     if not counts["label"] or counts["label"] != counts["rows"] or counts["rows"] != counts["markers"]:
         raise RuntimeError(f"first useful list is inconsistent: {counts}")
 
 
-def read_load_sample(page: Page, mode: str, run: int, errors: list[str]) -> dict[str, object]:
-    metrics = page.evaluate(
-        """
-        ({mode, run}) => {
-          const resources = performance.getEntriesByType('resource')
-            .filter(entry => entry.name.startsWith(location.origin));
-          return {
-            mode,
-            run,
-            first_list_ms: window.__perfFirstListMs,
-            visible_rows: document.querySelectorAll('.co').length,
-            marker_count: document.querySelectorAll('.co-marker').length,
-            same_origin_requests: resources.length,
-            same_origin_transfer_bytes: resources.reduce((sum, entry) => sum + (entry.transferSize || 0), 0),
-            same_origin_body_bytes: resources.reduce((sum, entry) => sum + (entry.encodedBodySize || 0), 0),
-          };
+class NetworkRecorder:
+    def __init__(self, session) -> None:
+        self.responses: dict[str, dict[str, object]] = {}
+        self.extra_status: dict[str, int] = {}
+        self.finished_bytes: dict[str, int] = {}
+        session.on("Network.responseReceived", self._response_received)
+        session.on("Network.responseReceivedExtraInfo", self._extra_info)
+        session.on("Network.loadingFinished", self._loading_finished)
+        session.send("Network.enable")
+
+    def reset(self) -> None:
+        self.responses.clear()
+        self.extra_status.clear()
+        self.finished_bytes.clear()
+
+    def _response_received(self, event: dict[str, object]) -> None:
+        self.responses[str(event["requestId"])] = dict(event["response"])
+
+    def _extra_info(self, event: dict[str, object]) -> None:
+        self.extra_status[str(event["requestId"])] = int(event["statusCode"])
+
+    def _loading_finished(self, event: dict[str, object]) -> None:
+        self.finished_bytes[str(event["requestId"])] = int(event.get("encodedDataLength", 0))
+
+    def summarize(self, origin: str) -> dict[str, object]:
+        entries = []
+        for request_id, response in self.responses.items():
+            url = str(response.get("url", ""))
+            if not url.startswith(origin):
+                continue
+            entries.append({
+                "url": url,
+                "status": self.extra_status.get(request_id, int(response.get("status", 0))),
+                "transfer_bytes": self.finished_bytes.get(request_id, int(response.get("encodedDataLength", 0))),
+                "from_disk_cache": bool(response.get("fromDiskCache", False)),
+                "from_prefetch_cache": bool(response.get("fromPrefetchCache", False)),
+            })
+        statuses: dict[str, int] = {}
+        for entry in entries:
+            key = str(entry["status"])
+            statuses[key] = statuses.get(key, 0) + 1
+        return {
+            "request_count": len(entries),
+            "transfer_bytes": sum(int(entry["transfer_bytes"]) for entry in entries),
+            "status_counts": statuses,
+            "disk_cache_hits": sum(bool(entry["from_disk_cache"]) for entry in entries),
+            "prefetch_cache_hits": sum(bool(entry["from_prefetch_cache"]) for entry in entries),
+            "responses": entries,
         }
-        """,
+
+
+def read_load_sample(
+    page: Page,
+    mode: str,
+    run: int,
+    errors: list[str],
+    network: NetworkRecorder,
+    origin: str,
+) -> dict[str, object]:
+    page.wait_for_timeout(50)
+    metrics = page.evaluate(
+        """({mode, run}) => ({
+          mode,
+          run,
+          first_useful_list_ms: window.__perfFirstUsefulListMs,
+          list_count_ready_ms: window.__perfListCountMs,
+          visible_rows: document.querySelectorAll('.co').length,
+          marker_count: document.querySelectorAll('.co-marker').length,
+        })""",
         {"mode": mode, "run": run},
     )
+    metrics["first_party_network"] = network.summarize(origin)
     metrics["page_errors"] = errors
     return metrics
 
@@ -317,7 +378,13 @@ def summarize_interactions(samples: list[dict[str, float]]) -> dict[str, object]
     }
 
 
-def run_benchmark(runs: int, map_delay_ms: int, require_no_repeated_set_data: bool = False) -> dict[str, object]:
+def run_benchmark(
+    runs: int,
+    map_delay_ms: int,
+    require_no_repeated_set_data: bool = False,
+    trace_path: Path | None = None,
+    trace_versioned: bool = False,
+) -> dict[str, object]:
     companies_path = ROOT / "companies.json"
     companies = json.loads(companies_path.read_text(encoding="utf-8"))
     counts = expected_counts(companies)
@@ -339,16 +406,19 @@ def run_benchmark(runs: int, map_delay_ms: int, require_no_repeated_set_data: bo
             run_external_requests: list[str] = []
             configure_context(context, map_delay_ms, run_external_requests)
             page = context.new_page()
+            network = NetworkRecorder(context.new_cdp_session(page))
             errors: list[str] = []
             page.on("pageerror", lambda error: errors.append(str(error)))
+            network.reset()
             page.goto(url, wait_until="load")
             wait_for_list(page)
-            cold.append(read_load_sample(page, "cold", run, list(errors)))
+            cold.append(read_load_sample(page, "cold", run, list(errors), network, url))
 
             error_start = len(errors)
+            network.reset()
             page.reload(wait_until="load")
             wait_for_list(page)
-            warm.append(read_load_sample(page, "warm", run, errors[error_start:]))
+            warm.append(read_load_sample(page, "warm", run, errors[error_start:], network, url))
 
             interaction_runs["ecosystem_add_coworking"].append(measure_click(
                 page, '[data-view-category="Coworking Space"]', counts["ecosystem_with_coworking"]
@@ -364,6 +434,21 @@ def run_benchmark(runs: int, map_delay_ms: int, require_no_repeated_set_data: bo
 
             external_requests.extend(run_external_requests)
             context.close()
+
+        if trace_path:
+            trace_path.parent.mkdir(parents=True, exist_ok=True)
+            trace_context = browser.new_context(locale="es-PE", viewport={"width": 1280, "height": 800})
+            configure_context(trace_context, map_delay_ms, [])
+            trace_context.tracing.start(screenshots=True, snapshots=True, sources=True)
+            trace_page = trace_context.new_page()
+            trace_page.goto(url, wait_until="load")
+            wait_for_list(trace_page)
+            measure_click(trace_page, '[data-view-category="Coworking Space"]', counts["ecosystem_with_coworking"])
+            measure_click(trace_page, '[data-view-mode="remote"]', counts["remote_all_types"])
+            measure_click(trace_page, '[data-workspace-type="cafe"]', counts["remote_without_cafe"])
+            stable_idle_writes(trace_page)
+            trace_context.tracing.stop(path=str(trace_path))
+            trace_context.close()
         browser.close()
 
     if idle_writes is None:
@@ -381,11 +466,24 @@ def run_benchmark(runs: int, map_delay_ms: int, require_no_repeated_set_data: bo
     git_head = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True
     ).stdout.strip()
+    base_result = subprocess.run(
+        ["git", "merge-base", "origin/master", "HEAD"], cwd=ROOT, check=False, capture_output=True, text=True
+    )
+    comparison_base = base_result.stdout.strip() or None
+    trace_artifact = None
+    if trace_path:
+        trace_artifact = {
+            "filename": trace_path.name,
+            "sha256": hashlib.sha256(trace_path.read_bytes()).hexdigest(),
+            "excluded_from_timings": True,
+            "versioned": trace_versioned,
+        }
     result = {
         "schema_version": 1,
         "captured_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "git": {
-            "subject_commit": git_head,
+            "repository_head": git_head,
+            "comparison_base": comparison_base,
             "index_sha256": hashlib.sha256((ROOT / "index.html").read_bytes()).hexdigest(),
         },
         "environment": {
@@ -410,8 +508,8 @@ def run_benchmark(runs: int, map_delay_ms: int, require_no_repeated_set_data: bo
         "loads": {
             "cold": cold,
             "warm": warm,
-            "cold_first_list": summarize([float(sample["first_list_ms"]) for sample in cold]),
-            "warm_first_list": summarize([float(sample["first_list_ms"]) for sample in warm]),
+            "cold_first_useful_list": summarize([float(sample["first_useful_list_ms"]) for sample in cold]),
+            "warm_first_useful_list": summarize([float(sample["first_useful_list_ms"]) for sample in warm]),
         },
         "interactions": {
             scenario: summarize_interactions(samples) for scenario, samples in interaction_runs.items()
@@ -423,6 +521,7 @@ def run_benchmark(runs: int, map_delay_ms: int, require_no_repeated_set_data: bo
             "external_hosts": sorted({url.split("/", 3)[2] for url in external_requests}),
             "public_tile_requests": tile_requests,
         },
+        "trace_artifact": trace_artifact,
         "limitations": [
             "The fixed map delay isolates application scheduling; it is not a production tile benchmark.",
             "Playwright timing on this host is useful for before/after comparisons on the same host only.",
@@ -437,12 +536,34 @@ def main() -> int:
     parser.add_argument("--runs", type=int, default=DEFAULT_RUNS)
     parser.add_argument("--map-delay-ms", type=int, default=DEFAULT_MAP_DELAY_MS)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--trace", type=Path, help="Trace diagnóstico separado de las muestras")
+    parser.add_argument(
+        "--trace-versioned",
+        action="store_true",
+        help="Declara que el trace se añadirá al repositorio junto al resultado",
+    )
     parser.add_argument("--require-no-repeated-set-data", action="store_true")
     args = parser.parse_args()
     if args.runs < 1 or args.map_delay_ms < 0:
         parser.error("--runs must be positive and --map-delay-ms cannot be negative")
 
-    result = run_benchmark(args.runs, args.map_delay_ms, args.require_no_repeated_set_data)
+    trace_path = None
+    if args.trace:
+        trace_path = args.trace if args.trace.is_absolute() else ROOT / args.trace
+    if args.trace_versioned:
+        if trace_path is None:
+            parser.error("--trace-versioned requires --trace")
+        try:
+            trace_path.relative_to(ROOT)
+        except ValueError:
+            parser.error("--trace-versioned requires a trace path inside the repository")
+    result = run_benchmark(
+        args.runs,
+        args.map_delay_ms,
+        args.require_no_repeated_set_data,
+        trace_path,
+        args.trace_versioned,
+    )
     rendered = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
     if args.output:
         output = args.output if args.output.is_absolute() else ROOT / args.output
