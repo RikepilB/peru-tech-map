@@ -1,8 +1,8 @@
 # Rendimiento de PeruGrid y Cowork Scout
 
-Estado: propuesta, 2026-09-08. Complementa [V1 + Scout](2026-09-08-v1-cowork-scout.md).
-Richard propone evaluar lazy loading, Astro, React/Next.js, Go y caché. No se ha autorizado
-una migración concreta ni se han implementado optimizaciones durante esta evaluación.
+Estado: PERF-00 ejecutado el 2026-09-09; PERF-01 es el siguiente frente. Complementa
+[V1 + Scout](2026-09-08-v1-cowork-scout.md). La evaluación conserva la aplicación estática;
+Astro, React/Next.js y Go continúan condicionados a una necesidad y comparación medible.
 
 ## Recomendación
 
@@ -13,8 +13,8 @@ No atribuir una mejora de velocidad a un framework o lenguaje sin comparar el mi
 
 ## Evidencia del código y del servicio actual
 
-- Archivos locales sin comprimir: `index.html` 72.799 bytes; `companies.json` 47.784;
-  `ticker.json` 2.037. El dataset tiene 90 entradas: dividirlo ya añade complejidad para
+- Archivos locales sin comprimir tras PG-04: `index.html` 96.019 bytes; `companies.json` 53.624;
+  `ticker.json` 2.037. El dataset tiene 89 entradas: dividirlo ya añade complejidad para
   ahorrar una carga pequeña. No se midió el peso total de MapLibre, tiles, fuentes ni logos.
 - `index.html:650`: las peticiones de empresas y ticker comienzan dentro de `map.on("load")`.
   La descarga de datos puede solaparse con la inicialización del mapa.
@@ -153,4 +153,11 @@ dataset objetivo; cero crecimiento sostenido de objetos retenidos después de ci
 ningún bucle de `setData` con viewport/datos estables. En Scout, rerun sin cambios evita scoring
 repetido; duplicar entrada no implica duplicar llamadas a fuentes dentro de TTL permitido.
 Para 1.000/10.000 registros, p95 y memoria determinan cuándo adoptar PERF-04; no se promete
-ese rendimiento antes de medir. No hay resultados de browser ni aceleraciones demostradas aún.
+ese rendimiento antes de medir.
+
+PERF-00 guarda cinco pares fríos/calientes y muestras de interacción en
+`docs/performance/perf00-browser-baseline-2026-09-09.json`. La primera lista tuvo mediana
+267,4 ms en frío y 233,3 ms en caliente bajo un retraso determinista de mapa de 200 ms. Los
+filtros quedaron por debajo de 10 ms de handler. Cinco estados `idle` equivalentes repitieron
+diez escrituras GeoJSON; este es el objetivo comprobable de PERF-01. Estas cifras no incluyen
+WebGL, tiles ni red pública y solo se comparan en el mismo host/protocolo.

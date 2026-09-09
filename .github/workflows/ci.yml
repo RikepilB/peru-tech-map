@@ -21,3 +21,5 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: Probar render seguro en Chromium sin red
         run: python tests/browser/test_render.py -v
+      - name: Verificar el harness de rendimiento sin red pública
+        run: python scripts/benchmark_performance.py --runs 1 --output perf-smoke.json

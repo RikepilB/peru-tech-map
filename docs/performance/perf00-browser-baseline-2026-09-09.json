@@ -1,0 +1,255 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-09-09T04:50:58.261163Z",
+  "git": {
+    "subject_commit": "c4ea0553f0060c2bb2bc799c7e657a5e7feca344",
+    "index_sha256": "df38f8b92819952c1ae2fc8e3fd8f661aa9bbd1e33612fd1975c9b673c85d0d1"
+  },
+  "environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+    "logical_cpus": 16,
+    "python": "3.12.2",
+    "playwright": "1.58.0",
+    "browser": "playwright-chromium-145.0.7632.6-headless",
+    "viewport": [
+      1280,
+      800
+    ],
+    "locale": "es-PE"
+  },
+  "dataset": {
+    "companies": 89,
+    "sha256": "56fa6f7f7ee42026cde58e2204ace8f0989afb50c8eda57acf1976535578cc2c",
+    "file_bytes": {
+      "index.html": 96019,
+      "companies.json": 53624,
+      "ticker.json": 2037
+    }
+  },
+  "protocol": {
+    "runs_per_load_mode": 5,
+    "cold": "first navigation in a new BrowserContext",
+    "warm": "immediate reload in the same BrowserContext",
+    "first_useful_list": "numeric count equals rows and markers, followed by two animation frames",
+    "synthetic_map_load_delay_ms": 200,
+    "public_network": "blocked; MapLibre replaced by deterministic local stub"
+  },
+  "loads": {
+    "cold": [
+      {
+        "mode": "cold",
+        "run": 1,
+        "first_list_ms": 557.8000000119209,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "same_origin_requests": 3,
+        "same_origin_transfer_bytes": 65047,
+        "same_origin_body_bytes": 64147,
+        "page_errors": []
+      },
+      {
+        "mode": "cold",
+        "run": 2,
+        "first_list_ms": 261.6000000089407,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "same_origin_requests": 3,
+        "same_origin_transfer_bytes": 65047,
+        "same_origin_body_bytes": 64147,
+        "page_errors": []
+      },
+      {
+        "mode": "cold",
+        "run": 3,
+        "first_list_ms": 273.90000000596046,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "same_origin_requests": 3,
+        "same_origin_transfer_bytes": 65047,
+        "same_origin_body_bytes": 64147,
+        "page_errors": []
+      },
+      {
+        "mode": "cold",
+        "run": 4,
+        "first_list_ms": 228.90000000596046,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "same_origin_requests": 3,
+        "same_origin_transfer_bytes": 65047,
+        "same_origin_body_bytes": 64147,
+        "page_errors": []
+      },
+      {
+        "mode": "cold",
+        "run": 5,
+        "first_list_ms": 267.40000000596046,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "same_origin_requests": 3,
+        "same_origin_transfer_bytes": 65047,
+        "same_origin_body_bytes": 64147,
+        "page_errors": []
+      }
+    ],
+    "warm": [
+      {
+        "mode": "warm",
+        "run": 1,
+        "first_list_ms": 232.20000000298023,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "same_origin_requests": 3,
+        "same_origin_transfer_bytes": 65047,
+        "same_origin_body_bytes": 64147,
+        "page_errors": []
+      },
+      {
+        "mode": "warm",
+        "run": 2,
+        "first_list_ms": 248.29999999701977,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "same_origin_requests": 3,
+        "same_origin_transfer_bytes": 65047,
+        "same_origin_body_bytes": 64147,
+        "page_errors": []
+      },
+      {
+        "mode": "warm",
+        "run": 3,
+        "first_list_ms": 233.29999999701977,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "same_origin_requests": 3,
+        "same_origin_transfer_bytes": 65047,
+        "same_origin_body_bytes": 64147,
+        "page_errors": []
+      },
+      {
+        "mode": "warm",
+        "run": 4,
+        "first_list_ms": 241,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "same_origin_requests": 3,
+        "same_origin_transfer_bytes": 65047,
+        "same_origin_body_bytes": 64147,
+        "page_errors": []
+      },
+      {
+        "mode": "warm",
+        "run": 5,
+        "first_list_ms": 231.19999998807907,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "same_origin_requests": 3,
+        "same_origin_transfer_bytes": 65047,
+        "same_origin_body_bytes": 64147,
+        "page_errors": []
+      }
+    ],
+    "cold_first_list": {
+      "median_ms": 267.4,
+      "mad_ms": 6.5,
+      "p95_ms": 557.8,
+      "min_ms": 228.9,
+      "max_ms": 557.8
+    },
+    "warm_first_list": {
+      "median_ms": 233.3,
+      "mad_ms": 2.1,
+      "p95_ms": 248.3,
+      "min_ms": 231.2,
+      "max_ms": 248.3
+    }
+  },
+  "interactions": {
+    "ecosystem_add_coworking": {
+      "handler": {
+        "median_ms": 1.8,
+        "mad_ms": 0.0,
+        "p95_ms": 2.0,
+        "min_ms": 1.8,
+        "max_ms": 2.0
+      },
+      "settled_after_two_frames": {
+        "median_ms": 27.7,
+        "mad_ms": 0.4,
+        "p95_ms": 28.1,
+        "min_ms": 25.7,
+        "max_ms": 28.1
+      }
+    },
+    "switch_to_remote": {
+      "handler": {
+        "median_ms": 8.9,
+        "mad_ms": 0.3,
+        "p95_ms": 9.3,
+        "min_ms": 8.6,
+        "max_ms": 9.3
+      },
+      "settled_after_two_frames": {
+        "median_ms": 27.7,
+        "mad_ms": 4.6,
+        "p95_ms": 32.3,
+        "min_ms": 19.9,
+        "max_ms": 32.3
+      }
+    },
+    "remote_remove_cafe": {
+      "handler": {
+        "median_ms": 0.9,
+        "mad_ms": 0.1,
+        "p95_ms": 1.0,
+        "min_ms": 0.8,
+        "max_ms": 1.0
+      },
+      "settled_after_two_frames": {
+        "median_ms": 31.7,
+        "mad_ms": 0.4,
+        "p95_ms": 32.5,
+        "min_ms": 30.6,
+        "max_ms": 32.5
+      }
+    }
+  },
+  "correctness": {
+    "expected_counts": {
+      "initial_ecosystem": 38,
+      "ecosystem_with_coworking": 55,
+      "remote_all_types": 8,
+      "remote_without_cafe": 5
+    },
+    "all_samples_valid": true
+  },
+  "stable_view_building_source_writes": {
+    "stable_idle_events": 5,
+    "sources": {
+      "co-buildings-3d": {
+        "calls": 5,
+        "repeated_payload_calls": 5
+      },
+      "co-buildings-2d": {
+        "calls": 5,
+        "repeated_payload_calls": 5
+      }
+    },
+    "repeated_set_data_detected": true
+  },
+  "network": {
+    "external_requests_blocked_or_stubbed": 615,
+    "external_hosts": [
+      "fonts.googleapis.com",
+      "unpkg.com",
+      "www.google.com"
+    ],
+    "public_tile_requests": []
+  },
+  "limitations": [
+    "The fixed map delay isolates application scheduling; it is not a production tile benchmark.",
+    "Playwright timing on this host is useful for before/after comparisons on the same host only.",
+    "External logos, fonts, MapLibre, styles and tiles are excluded from transfer byte totals."
+  ]
+}

@@ -159,6 +159,18 @@ npx serve .
 
 Luego abre **http://localhost:8000**.
 
+### Medir el shell y los filtros
+
+La línea base PERF-00 usa Chromium y un doble determinista del mapa para comparar el shell,
+los datos y las interacciones sin depender de tiles públicos:
+
+```powershell
+python scripts/benchmark_performance.py --runs 5
+```
+
+El reporte y sus límites están en
+[`docs/performance/perf00-browser-baseline-2026-09-09.md`](docs/performance/perf00-browser-baseline-2026-09-09.md).
+
 ---
 
 ## TODOs Conocidos Antes De Lanzar
