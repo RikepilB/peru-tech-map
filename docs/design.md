@@ -127,3 +127,23 @@ limpios.
   teclado y lectores de pantalla. No se agregan paneles, efectos ni decoración nuevos.
 - Estados que deben revalidarse al modificar el panel: español/inglés, foco por teclado, cero
   resultados, restauración de Empresas, hoja móvil expandida y selección de un resultado.
+
+---
+
+## 8. Modos Ecosistema y Trabajar remoto
+
+**Veredicto visual:** aprobado después de revisión responsive.
+
+- El modo del mapa es una decisión principal y exclusiva, presentada como dos radios nativos:
+  Ecosistema y Trabajar remoto. Cambiar de modo conserva ciudad, orden y los filtros propios de
+  cada vista.
+- Ecosistema mantiene sus categorías y etapas combinables. Trabajar remoto ofrece Coworking,
+  Café y Biblioteca como tres filtros combinables, todos visibles al mismo tiempo.
+- Un lugar solo aparece en Trabajar remoto cuando tiene un `workspace_type` permitido y al menos
+  una fuente pública, redistribuible y exportable. La interfaz muestra el tipo, la fuente más
+  reciente y su fecha; no infiere Wi-Fi, precios, horarios ni otros servicios.
+- En 1280 × 800, 390 × 844 y 320 × 700 el control conserva la jerarquía del panel, resultados
+  visibles y objetivos táctiles de 44 px. No hay desborde horizontal en 320 px.
+- Los estados vacíos distinguen entre no seleccionar ningún tipo y elegir una ciudad sin lugares
+  respaldados. Restaurar filtros en Trabajar remoto vuelve a seleccionar los tres tipos sin
+  cambiar de modo.

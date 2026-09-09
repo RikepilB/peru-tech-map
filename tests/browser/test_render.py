@@ -47,7 +47,14 @@ PAGE = f"""<style>{STYLES}</style>
 <div id="map"></div><aside id="panel"><div id="handle"></div><div id="panelHead"><div id="coCount" aria-live="polite" aria-atomic="true"></div>
 <button class="barbtn active" data-city="lima">Lima</button><button class="barbtn" data-city="arequipa">Arequipa</button>
 <button class="barbtn active" data-sort="default">Default</button><button class="barbtn" data-sort="alpha">A-Z</button>
-<div class="filter-stack"><fieldset class="filter-field filter-group"><legend class="filter-label">Organization types</legend>
+<div class="filter-stack">
+<fieldset class="filter-field filter-group"><legend class="filter-label">Map mode</legend>
+  <div class="mode-switch" id="viewModes">
+    <label class="mode-choice"><input class="filter-input" type="radio" name="view-mode" value="ecosystem" data-view-mode="ecosystem" checked><span class="mode-choice-label">Ecosystem</span></label>
+    <label class="mode-choice"><input class="filter-input" type="radio" name="view-mode" value="remote" data-view-mode="remote"><span class="mode-choice-label">Work remotely</span></label>
+  </div>
+</fieldset>
+<fieldset class="filter-field filter-group" id="viewCategoryField"><legend class="filter-label">Organization types</legend>
 <div class="filter-grid" id="viewCategories">
   <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-category="Startup" value="Startup" checked><span class="filter-choice-label">Startups</span></label>
   <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-category="Technology Consultancy" value="Technology Consultancy" checked><span class="filter-choice-label">Consultancies</span></label>
@@ -64,6 +71,14 @@ PAGE = f"""<style>{STYLES}</style>
     <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-stage="Bootstrap" value="Bootstrap"><span class="filter-choice-label">Bootstrap</span></label>
     <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-stage="Series A+" value="Series A+"><span class="filter-choice-label">Series A+</span></label>
   </div>
+</fieldset>
+<fieldset class="filter-field filter-group" id="viewWorkspaceField" hidden><legend class="filter-label">Place types</legend>
+  <div class="filter-grid filter-workspace-grid" id="viewWorkspaces">
+    <label class="filter-choice"><input class="filter-input" type="checkbox" data-workspace-type="coworking" value="coworking" checked><span class="filter-choice-label">Coworking</span></label>
+    <label class="filter-choice"><input class="filter-input" type="checkbox" data-workspace-type="cafe" value="cafe" checked><span class="filter-choice-label">Cafés</span></label>
+    <label class="filter-choice"><input class="filter-input" type="checkbox" data-workspace-type="library" value="library" checked><span class="filter-choice-label">Libraries</span></label>
+  </div>
+  <p class="filter-note">Verified locations only.</p>
 </fieldset>
 <button class="filter-reset" id="clearViewFilters" hidden>Restore companies</button></div></div><div id="coList"></div></aside>
 <button id="panelToggle"></button><div id="gridStatus"></div>
@@ -111,6 +126,20 @@ class RenderTests(unittest.TestCase):
                 option.locator("xpath=..").click()
             elif value not in wanted and option.is_checked():
                 option.locator("xpath=..").click()
+
+    def set_workspace_types(self, *workspace_types):
+        wanted = set(workspace_types)
+        for option in self.page.locator("[data-workspace-type]").all():
+            value = option.get_attribute("value")
+            if value in wanted and not option.is_checked():
+                option.locator("xpath=..").click()
+            elif value not in wanted and option.is_checked():
+                option.locator("xpath=..").click()
+
+    def set_mode(self, mode):
+        option = self.page.locator(f'[data-view-mode="{mode}"]')
+        if not option.is_checked():
+            option.locator("xpath=..").click()
 
     def test_malicious_text_renders_literally_in_list_popup_and_ticker(self):
         self.render(FIXTURE["company"])
@@ -283,6 +312,146 @@ class RenderTests(unittest.TestCase):
                     lang,
                 )
                 self.assertEqual(tuple(values), labels)
+
+    def test_remote_work_mode_filters_verified_types_and_preserves_navigation(self):
+        companies = json.loads((ROOT / "companies.json").read_text(encoding="utf-8"))
+        unverified = dict(next(company for company in companies if company.get("workspace_type")))
+        unverified.update(name="Unverified Workspace", lat=-12.1101, lng=-77.0301)
+        unverified.pop("sources")
+        restricted = dict(next(company for company in companies if company.get("workspace_type")))
+        restricted.update(name="Restricted Workspace", lat=-12.1102, lng=-77.0302)
+        restricted["sources"] = [dict(restricted["sources"][0], provenance_class="private")]
+        self.page.evaluate("data => { ALL_COMPANIES = data; applyCity('lima'); }", companies + [unverified, restricted])
+        self.page.locator('[data-sort="alpha"]').click()
+        self.set_mode("remote")
+
+        expected = [
+            company for company in companies
+            if company["city"] == "lima" and company.get("workspace_type") in ("coworking", "cafe", "library")
+        ]
+        self.assertEqual(self.page.locator(".co").count(), len(expected))
+        self.assertEqual(self.page.locator(".co-marker").count(), len(expected))
+        self.assertEqual(self.page.locator(".co", has_text="Unverified Workspace").count(), 0)
+        self.assertEqual(self.page.locator(".co", has_text="Restricted Workspace").count(), 0)
+        self.assertTrue(self.page.locator("#viewCategoryField").is_hidden())
+        self.assertFalse(self.page.locator("#viewWorkspaceField").is_hidden())
+        self.assertTrue(self.page.locator('[data-view-mode="remote"]').is_checked())
+        self.assertEqual(self.page.locator('[data-city="lima"]').get_attribute("class"), "barbtn active")
+        self.assertEqual(self.page.locator('[data-sort="alpha"]').get_attribute("class"), "barbtn active")
+
+        self.set_workspace_types("cafe", "library")
+        expected = [company for company in expected if company["workspace_type"] in ("cafe", "library")]
+        self.assertEqual(self.page.locator(".co").count(), len(expected))
+        self.assertEqual(set(self.page.locator(".co .tag").all_text_contents()), {"Café", "Biblioteca"})
+
+        self.assertFalse(self.page.locator("#clearViewFilters").is_hidden())
+        self.page.locator("#clearViewFilters").click()
+        self.assertTrue(self.page.locator('[data-view-mode="remote"]').is_checked())
+        self.assertEqual(self.page.locator("[data-workspace-type]").evaluate_all(
+            "options => options.filter(option => option.checked).map(option => option.value)"
+        ), ["coworking", "cafe", "library"])
+        self.assertEqual(self.page.locator(".co").count(), len([
+            company for company in companies if company["city"] == "lima" and company.get("workspace_type")
+        ]))
+        self.assertTrue(self.page.locator("#clearViewFilters").is_hidden())
+
+        self.set_workspace_types()
+        self.assertEqual(self.page.locator(".panel-empty").text_content(), "Selecciona al menos un tipo de lugar.")
+        self.page.locator("#clearViewFilters").click()
+        self.page.locator('[data-city="arequipa"]').click()
+        self.assertEqual(
+            self.page.locator(".panel-empty").text_content(),
+            "Aún no hay lugares con una fuente pública en Arequipa.",
+        )
+        self.assertTrue(self.page.locator('[data-view-mode="remote"]').is_checked())
+        self.page.locator('[data-city="lima"]').click()
+
+        remote_mode = self.page.locator('[data-view-mode="remote"]')
+        remote_mode.focus()
+        remote_mode.press("ArrowLeft")
+        self.assertTrue(self.page.locator('[data-view-mode="ecosystem"]').is_checked())
+        self.page.locator('[data-view-mode="ecosystem"]').press("ArrowRight")
+        self.assertTrue(remote_mode.is_checked())
+
+        self.set_mode("ecosystem")
+        default_expected = [
+            company for company in companies
+            if company["city"] == "lima" and company["category"] in ("Startup", "Technology Consultancy")
+        ]
+        self.assertEqual(self.page.locator(".co").count(), len(default_expected))
+        self.assertFalse(self.page.locator("#viewCategoryField").is_hidden())
+        self.assertTrue(self.page.locator("#viewWorkspaceField").is_hidden())
+
+    def test_remote_work_popup_shows_safe_source_date_without_amenity_claims(self):
+        companies = json.loads((ROOT / "companies.json").read_text(encoding="utf-8"))
+        expected = next(company for company in companies if company["name"] == "WeWork Jorge Basadre 349")
+        self.page.evaluate("data => { ALL_COMPANIES = data; applyCity('lima'); }", companies)
+        self.set_mode("remote")
+        self.page.locator(".co", has_text=expected["name"]).click()
+
+        self.assertEqual(self.page.locator(".test-popup .workspace-chip").text_content(), "Coworking")
+        self.assertEqual(self.page.locator(".test-popup .source-link").get_attribute("href"), expected["sources"][0]["source_url"])
+        self.assertIn("2026", self.page.locator(".test-popup .source-observed").text_content())
+        self.assertNotIn("2026-09-09", self.page.locator(".test-popup .source-observed").text_content())
+        self.assertEqual(self.page.locator(".test-popup .source-observed").get_attribute("datetime"), expected["sources"][0]["observed_at"])
+        popup_text = self.page.locator(".test-popup").text_content().casefold()
+        for unsupported_claim in ("wifi", "hours", "horario", "precio", "price"):
+            self.assertNotIn(unsupported_claim, popup_text)
+
+        unsafe_urls = (
+            "javascript:window.__injected=1",
+            "http://www.openstreetmap.org/node/1",
+            "https://user:pass@www.openstreetmap.org/node/1",
+            "https://localhost/node/1",
+            "https://maps.googleapis.com/maps/api/place/1",
+            "https://www.openstreetmap.org/node/1?token=secret",
+            "https://www.wikipedia.org/wiki/OpenStreetMap",
+        )
+        for source_url in unsafe_urls:
+            with self.subTest(source_url=source_url):
+                unsafe = dict(expected, name='<img src=x onerror="window.__injected=1">')
+                unsafe["sources"] = [dict(expected["sources"][0], source_url=source_url)]
+                self.render(unsafe)
+                self.assertEqual(self.page.locator(".test-popup .source-link").count(), 0)
+                self.assert_no_injection()
+
+        for provider in ('<svg onload="window.__injected=1">', "Google Maps Platform", "OPENSTREETMAP"):
+            with self.subTest(provider=provider):
+                unsafe = dict(expected)
+                unsafe["sources"] = [dict(expected["sources"][0], provider=provider)]
+                self.render(unsafe)
+                self.assertEqual(self.page.locator(".test-popup .source-link").count(), 0)
+                self.assert_no_injection()
+
+        no_timezone = dict(expected)
+        no_timezone["sources"] = [dict(expected["sources"][0], observed_at="2026-09-09T00:00:00")]
+        self.render(no_timezone)
+        self.assertEqual(self.page.locator(".test-popup .source-link").count(), 0)
+
+    def test_remote_work_controls_have_bilingual_copy_and_mobile_targets(self):
+        expected = {
+            "en": ("Map mode", "Ecosystem", "Work remotely", "Place types", "Coworking", "Café", "Library", "Location backed by a public source. Wi-Fi and amenities are not yet verified."),
+            "es": ("Modo del mapa", "Ecosistema", "Trabajar remoto", "Tipos de lugar", "Coworking", "Café", "Biblioteca", "Ubicación respaldada por una fuente pública. Wi-Fi y servicios aún no verificados."),
+        }
+        for lang, labels in expected.items():
+            with self.subTest(lang=lang):
+                values = self.page.evaluate(
+                    "lang => { localStorage.setItem('pg_lang', lang); return [t('mapMode'), t('ecosystemMode'), t('remoteWorkMode'), t('filterWorkspace'), t('workspaceCoworking'), t('workspaceCafe'), t('workspaceLibrary'), t('remoteNotice')]; }",
+                    lang,
+                )
+                self.assertEqual(tuple(values), labels)
+
+        companies = json.loads((ROOT / "companies.json").read_text(encoding="utf-8"))
+        self.page.set_viewport_size({"width": 320, "height": 700})
+        self.page.evaluate("data => { ALL_COMPANIES = data; applyCity('lima'); }", companies)
+        self.set_mode("remote")
+        self.assertGreaterEqual(self.page.locator('[data-view-mode="remote"]').locator("xpath=..").bounding_box()["height"], 44)
+        for option in self.page.locator("[data-workspace-type]").all():
+            self.assertGreaterEqual(option.locator("xpath=..").bounding_box()["height"], 44)
+        self.assertLessEqual(
+            self.page.locator("#viewWorkspaces").evaluate("el => el.scrollWidth"),
+            self.page.locator("#viewWorkspaces").evaluate("el => el.clientWidth"),
+        )
 
     def test_desktop_filter_row_selection_and_popup_leave_panel_as_sidebar(self):
         companies = json.loads((ROOT / "companies.json").read_text(encoding="utf-8"))
