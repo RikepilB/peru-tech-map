@@ -157,7 +157,7 @@ ese rendimiento antes de medir.
 
 PERF-00 guarda cinco pares fríos/calientes y muestras de interacción en
 `docs/performance/perf00-browser-baseline-2026-09-09.json`. La primera lista útil, medida después
-de dos frames, tuvo mediana 364,2 ms en frío y 327,6 ms en caliente bajo un retraso determinista
+de dos frames, tuvo mediana 344,1 ms en frío y 353,7 ms en caliente bajo un retraso determinista
 de mapa de 200 ms. Los filtros quedaron cerca o por debajo de 10 ms de handler. CDP registra la
 navegación, JSON, status y bytes; la recarga local devolvió respuestas 200 completas sin hits de
 caché. Cinco estados `idle` equivalentes repitieron diez escrituras GeoJSON; este es el objetivo

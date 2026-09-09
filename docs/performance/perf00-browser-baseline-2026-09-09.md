@@ -1,6 +1,6 @@
 # PERF-00: línea base reproducible del navegador
 
-Fecha: 2026-09-09. Harness medido: `f167f664913c773abf9bd6ebb166cd68b704e1ef`;
+Fecha: 2026-09-09. Harness medido: `4a9a40b757c7c022effa710fe93185581db254fc`;
 base de comparación: `c4ea0553f0060c2bb2bc799c7e657a5e7feca344`.
 Datos crudos: [perf00-browser-baseline-2026-09-09.json](perf00-browser-baseline-2026-09-09.json).
 
@@ -19,19 +19,22 @@ este mismo entorno, no como cifra de producción.
 
 | Escenario | Mediana | MAD | p95 | Resultado comprobado |
 |---|---:|---:|---:|---|
-| Primera lista útil, carga fría | 364,2 ms | 33,0 ms | 1.818,1 ms | 38 filas y 38 marcadores |
-| Primera lista útil, carga caliente | 327,6 ms | 0,4 ms | 328,0 ms | 38 filas y 38 marcadores |
-| Añadir Coworking, handler | 3,0 ms | 0,3 ms | 3,3 ms | 55 resultados |
-| Cambiar a Trabajar remoto, handler | 8,7 ms | 0,0 ms | 9,0 ms | 8 resultados |
-| Quitar Café, handler | 0,9 ms | 0,1 ms | 1,4 ms | 5 resultados |
+| Primera lista útil, carga fría | 344,1 ms | 7,5 ms | 363,4 ms | 38 filas y 38 marcadores |
+| Primera lista útil, carga caliente | 353,7 ms | 6,8 ms | 363,4 ms | 38 filas y 38 marcadores |
+| Añadir Coworking, handler | 2,3 ms | 0,1 ms | 4,8 ms | 55 resultados |
+| Cambiar a Trabajar remoto, handler | 10,6 ms | 0,6 ms | 11,2 ms | 8 resultados |
+| Quitar Café, handler | 1,0 ms | 0,1 ms | 1,1 ms | 5 resultados |
 
-La primera muestra fría incluye el arranque inicial de Chromium y eleva el p95; se conserva en
-vez de elegir la mejor ejecución. Los tres recorridos de filtro quedan por debajo del presupuesto
-propuesto de 100 ms en este dataset.
+Un recorrido diagnóstico deriva primero los conteos esperados usando los controles reales y queda
+fuera de las muestras. Por eso «fría» significa un contexto nuevo dentro de un proceso Chromium
+ya iniciado. Se conservan las cinco ejecuciones, no la mejor. Los tres recorridos de filtro quedan
+por debajo del presupuesto propuesto de 100 ms en este dataset.
 
 Cinco eventos `idle` con vista y datos estables produjeron cinco llamadas idénticas a `setData`
-en cada fuente de edificios, diez escrituras repetidas en total. PERF-01 debe eliminar esas
-escrituras sin ocultar cambios reales de geometría.
+en cada fuente de edificios, diez escrituras repetidas en total. El doble no contiene geometría
+de edificios, por lo que las diez cargas fueron `FeatureCollection` vacías. Esto demuestra que
+falta comparar payloads estables; no mide el coste de repetir geometría real. PERF-01 debe
+eliminar esas escrituras sin ocultar cambios reales de geometría.
 
 Los archivos propios medidos ocupan 151.680 bytes sin compresión: `index.html` 96.019,
 `companies.json` 53.624 y `ticker.json` 2.037. CDP registró 160.930 bytes HTTP por navegación al
@@ -42,7 +45,7 @@ diez navegaciones, principalmente la librería, fuente y favicons; ningún tile 
 doble determinista.
 
 El trace diagnóstico separado se versiona como [perf00-browser-trace.zip](perf00-browser-trace.zip),
-SHA-256 `8ad5151000a58f0c06957e984fe4655b641b3c3286b19b5b803db166b5d780e0`. CI genera un trace
+SHA-256 `c5b57190f3700827795993036d81945b6c152451535c822dabf6a73cb508875d`. CI genera un trace
 smoke nuevo y lo conserva como artifact durante 14 días.
 
 ## Repetición
