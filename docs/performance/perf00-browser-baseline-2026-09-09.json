@@ -1,0 +1,633 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-09-09T05:29:52.017820Z",
+  "git": {
+    "repository_head": "4a9a40b757c7c022effa710fe93185581db254fc",
+    "comparison_base": "c4ea0553f0060c2bb2bc799c7e657a5e7feca344",
+    "index_sha256": "df38f8b92819952c1ae2fc8e3fd8f661aa9bbd1e33612fd1975c9b673c85d0d1",
+    "benchmark_sha256": "86aa0648b4b3cd712c6c6252eb480e00ec41dd963115bfc55a343c0409ebe21a"
+  },
+  "environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+    "logical_cpus": 16,
+    "python": "3.12.2",
+    "playwright": "1.58.0",
+    "browser": "playwright-chromium-145.0.7632.6-headless",
+    "viewport": [
+      1280,
+      800
+    ],
+    "locale": "es-PE"
+  },
+  "dataset": {
+    "companies": 89,
+    "sha256": "56fa6f7f7ee42026cde58e2204ace8f0989afb50c8eda57acf1976535578cc2c",
+    "file_bytes": {
+      "index.html": 96019,
+      "companies.json": 53624,
+      "ticker.json": 2037
+    }
+  },
+  "protocol": {
+    "runs_per_load_mode": 5,
+    "cold": "first navigation in a new BrowserContext",
+    "warm": "immediate reload in the same BrowserContext",
+    "first_useful_list": "numeric count equals rows and markers, followed by two animation frames",
+    "synthetic_map_load_delay_ms": 200,
+    "public_network": "blocked; MapLibre replaced by deterministic local stub"
+  },
+  "loads": {
+    "cold": [
+      {
+        "mode": "cold",
+        "run": 1,
+        "first_useful_list_ms": 336.59999999403954,
+        "list_count_ready_ms": 250.5,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "first_party_network": {
+          "request_count": 4,
+          "transfer_bytes": 160930,
+          "status_counts": {
+            "200": 4
+          },
+          "disk_cache_hits": 0,
+          "prefetch_cache_hits": 0,
+          "responses": [
+            {
+              "url": "http://127.0.0.1:51930/",
+              "status": 200,
+              "transfer_bytes": 96207,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/ticker.json",
+              "status": 200,
+              "transfer_bytes": 2231,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/companies.json",
+              "status": 200,
+              "transfer_bytes": 53819,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/assets/logos/dialogus.png",
+              "status": 200,
+              "transfer_bytes": 8673,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            }
+          ]
+        },
+        "page_errors": []
+      },
+      {
+        "mode": "cold",
+        "run": 2,
+        "first_useful_list_ms": 363.3999999910593,
+        "list_count_ready_ms": 280.69999998807907,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "first_party_network": {
+          "request_count": 4,
+          "transfer_bytes": 160930,
+          "status_counts": {
+            "200": 4
+          },
+          "disk_cache_hits": 0,
+          "prefetch_cache_hits": 0,
+          "responses": [
+            {
+              "url": "http://127.0.0.1:51930/",
+              "status": 200,
+              "transfer_bytes": 96207,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/ticker.json",
+              "status": 200,
+              "transfer_bytes": 2231,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/companies.json",
+              "status": 200,
+              "transfer_bytes": 53819,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/assets/logos/dialogus.png",
+              "status": 200,
+              "transfer_bytes": 8673,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            }
+          ]
+        },
+        "page_errors": []
+      },
+      {
+        "mode": "cold",
+        "run": 3,
+        "first_useful_list_ms": 344.1000000089407,
+        "list_count_ready_ms": 279.70000000298023,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "first_party_network": {
+          "request_count": 4,
+          "transfer_bytes": 160930,
+          "status_counts": {
+            "200": 4
+          },
+          "disk_cache_hits": 0,
+          "prefetch_cache_hits": 0,
+          "responses": [
+            {
+              "url": "http://127.0.0.1:51930/",
+              "status": 200,
+              "transfer_bytes": 96207,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/ticker.json",
+              "status": 200,
+              "transfer_bytes": 2231,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/companies.json",
+              "status": 200,
+              "transfer_bytes": 53819,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/assets/logos/dialogus.png",
+              "status": 200,
+              "transfer_bytes": 8673,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            }
+          ]
+        },
+        "page_errors": []
+      },
+      {
+        "mode": "cold",
+        "run": 4,
+        "first_useful_list_ms": 362.79999999701977,
+        "list_count_ready_ms": 255,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "first_party_network": {
+          "request_count": 4,
+          "transfer_bytes": 160930,
+          "status_counts": {
+            "200": 4
+          },
+          "disk_cache_hits": 0,
+          "prefetch_cache_hits": 0,
+          "responses": [
+            {
+              "url": "http://127.0.0.1:51930/",
+              "status": 200,
+              "transfer_bytes": 96207,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/ticker.json",
+              "status": 200,
+              "transfer_bytes": 2231,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/companies.json",
+              "status": 200,
+              "transfer_bytes": 53819,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/assets/logos/dialogus.png",
+              "status": 200,
+              "transfer_bytes": 8673,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            }
+          ]
+        },
+        "page_errors": []
+      },
+      {
+        "mode": "cold",
+        "run": 5,
+        "first_useful_list_ms": 338.79999999701977,
+        "list_count_ready_ms": 235.09999999403954,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "first_party_network": {
+          "request_count": 4,
+          "transfer_bytes": 160930,
+          "status_counts": {
+            "200": 4
+          },
+          "disk_cache_hits": 0,
+          "prefetch_cache_hits": 0,
+          "responses": [
+            {
+              "url": "http://127.0.0.1:51930/",
+              "status": 200,
+              "transfer_bytes": 96207,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/ticker.json",
+              "status": 200,
+              "transfer_bytes": 2231,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/companies.json",
+              "status": 200,
+              "transfer_bytes": 53819,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/assets/logos/dialogus.png",
+              "status": 200,
+              "transfer_bytes": 8673,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            }
+          ]
+        },
+        "page_errors": []
+      }
+    ],
+    "warm": [
+      {
+        "mode": "warm",
+        "run": 1,
+        "first_useful_list_ms": 285.40000000596046,
+        "list_count_ready_ms": 236.79999999701977,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "first_party_network": {
+          "request_count": 4,
+          "transfer_bytes": 160930,
+          "status_counts": {
+            "200": 4
+          },
+          "disk_cache_hits": 0,
+          "prefetch_cache_hits": 0,
+          "responses": [
+            {
+              "url": "http://127.0.0.1:51930/",
+              "status": 200,
+              "transfer_bytes": 96207,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/ticker.json",
+              "status": 200,
+              "transfer_bytes": 2231,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/companies.json",
+              "status": 200,
+              "transfer_bytes": 53819,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/assets/logos/dialogus.png",
+              "status": 200,
+              "transfer_bytes": 8673,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            }
+          ]
+        },
+        "page_errors": []
+      },
+      {
+        "mode": "warm",
+        "run": 2,
+        "first_useful_list_ms": 353.70000000298023,
+        "list_count_ready_ms": 252.1000000089407,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "first_party_network": {
+          "request_count": 4,
+          "transfer_bytes": 160930,
+          "status_counts": {
+            "200": 4
+          },
+          "disk_cache_hits": 0,
+          "prefetch_cache_hits": 0,
+          "responses": [
+            {
+              "url": "http://127.0.0.1:51930/",
+              "status": 200,
+              "transfer_bytes": 96207,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/ticker.json",
+              "status": 200,
+              "transfer_bytes": 2231,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/companies.json",
+              "status": 200,
+              "transfer_bytes": 53819,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/assets/logos/dialogus.png",
+              "status": 200,
+              "transfer_bytes": 8673,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            }
+          ]
+        },
+        "page_errors": []
+      },
+      {
+        "mode": "warm",
+        "run": 3,
+        "first_useful_list_ms": 346.90000000596046,
+        "list_count_ready_ms": 245.90000000596046,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "first_party_network": {
+          "request_count": 4,
+          "transfer_bytes": 160930,
+          "status_counts": {
+            "200": 4
+          },
+          "disk_cache_hits": 0,
+          "prefetch_cache_hits": 0,
+          "responses": [
+            {
+              "url": "http://127.0.0.1:51930/",
+              "status": 200,
+              "transfer_bytes": 96207,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/ticker.json",
+              "status": 200,
+              "transfer_bytes": 2231,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/companies.json",
+              "status": 200,
+              "transfer_bytes": 53819,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/assets/logos/dialogus.png",
+              "status": 200,
+              "transfer_bytes": 8673,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            }
+          ]
+        },
+        "page_errors": []
+      },
+      {
+        "mode": "warm",
+        "run": 4,
+        "first_useful_list_ms": 363.3999999910593,
+        "list_count_ready_ms": 250.8999999910593,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "first_party_network": {
+          "request_count": 4,
+          "transfer_bytes": 160930,
+          "status_counts": {
+            "200": 4
+          },
+          "disk_cache_hits": 0,
+          "prefetch_cache_hits": 0,
+          "responses": [
+            {
+              "url": "http://127.0.0.1:51930/",
+              "status": 200,
+              "transfer_bytes": 96207,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/ticker.json",
+              "status": 200,
+              "transfer_bytes": 2231,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/companies.json",
+              "status": 200,
+              "transfer_bytes": 53819,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/assets/logos/dialogus.png",
+              "status": 200,
+              "transfer_bytes": 8673,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            }
+          ]
+        },
+        "page_errors": []
+      },
+      {
+        "mode": "warm",
+        "run": 5,
+        "first_useful_list_ms": 359.09999999403954,
+        "list_count_ready_ms": 253.09999999403954,
+        "visible_rows": 38,
+        "marker_count": 38,
+        "first_party_network": {
+          "request_count": 4,
+          "transfer_bytes": 160930,
+          "status_counts": {
+            "200": 4
+          },
+          "disk_cache_hits": 0,
+          "prefetch_cache_hits": 0,
+          "responses": [
+            {
+              "url": "http://127.0.0.1:51930/",
+              "status": 200,
+              "transfer_bytes": 96207,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/ticker.json",
+              "status": 200,
+              "transfer_bytes": 2231,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/companies.json",
+              "status": 200,
+              "transfer_bytes": 53819,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:51930/assets/logos/dialogus.png",
+              "status": 200,
+              "transfer_bytes": 8673,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            }
+          ]
+        },
+        "page_errors": []
+      }
+    ],
+    "cold_first_useful_list": {
+      "median_ms": 344.1,
+      "mad_ms": 7.5,
+      "p95_ms": 363.4,
+      "min_ms": 336.6,
+      "max_ms": 363.4
+    },
+    "warm_first_useful_list": {
+      "median_ms": 353.7,
+      "mad_ms": 6.8,
+      "p95_ms": 363.4,
+      "min_ms": 285.4,
+      "max_ms": 363.4
+    }
+  },
+  "interactions": {
+    "ecosystem_add_coworking": {
+      "handler": {
+        "median_ms": 2.3,
+        "mad_ms": 0.1,
+        "p95_ms": 4.8,
+        "min_ms": 2.0,
+        "max_ms": 4.8
+      },
+      "settled_after_two_frames": {
+        "median_ms": 24.2,
+        "mad_ms": 2.9,
+        "p95_ms": 30.9,
+        "min_ms": 16.2,
+        "max_ms": 30.9
+      }
+    },
+    "switch_to_remote": {
+      "handler": {
+        "median_ms": 10.6,
+        "mad_ms": 0.6,
+        "p95_ms": 11.2,
+        "min_ms": 8.7,
+        "max_ms": 11.2
+      },
+      "settled_after_two_frames": {
+        "median_ms": 27.8,
+        "mad_ms": 2.3,
+        "p95_ms": 30.1,
+        "min_ms": 18.4,
+        "max_ms": 30.1
+      }
+    },
+    "remote_remove_cafe": {
+      "handler": {
+        "median_ms": 1.0,
+        "mad_ms": 0.1,
+        "p95_ms": 1.1,
+        "min_ms": 0.9,
+        "max_ms": 1.1
+      },
+      "settled_after_two_frames": {
+        "median_ms": 29.7,
+        "mad_ms": 1.6,
+        "p95_ms": 31.9,
+        "min_ms": 25.3,
+        "max_ms": 31.9
+      }
+    }
+  },
+  "correctness": {
+    "expected_counts": {
+      "initial_ecosystem": 38,
+      "ecosystem_with_coworking": 55,
+      "remote_all_types": 8,
+      "remote_without_cafe": 5
+    },
+    "all_samples_valid": true
+  },
+  "stable_view_building_source_writes": {
+    "stable_idle_events": 5,
+    "sources": {
+      "co-buildings-3d": {
+        "calls": 5,
+        "repeated_payload_calls": 5
+      },
+      "co-buildings-2d": {
+        "calls": 5,
+        "repeated_payload_calls": 5
+      }
+    },
+    "repeated_set_data_detected": true
+  },
+  "network": {
+    "external_requests_blocked_or_stubbed": 615,
+    "external_hosts": [
+      "fonts.googleapis.com",
+      "unpkg.com",
+      "www.google.com"
+    ],
+    "public_tile_requests": []
+  },
+  "trace_artifact": {
+    "filename": "perf00-browser-trace.zip",
+    "sha256": "c5b57190f3700827795993036d81945b6c152451535c822dabf6a73cb508875d",
+    "excluded_from_timings": true,
+    "versioned": true
+  },
+  "limitations": [
+    "The fixed map delay isolates application scheduling; it is not a production tile benchmark.",
+    "Playwright timing on this host is useful for before/after comparisons on the same host only.",
+    "External logos, fonts, MapLibre, styles and tiles are excluded from transfer byte totals."
+  ]
+}
