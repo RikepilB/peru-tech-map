@@ -44,22 +44,28 @@ window.maplibregl = {
 window.__injected = 0;
 """
 PAGE = f"""<style>{STYLES}</style>
-<div id="map"></div><aside id="panel"><div id="handle"></div><div id="panelHead"><div id="coCount"></div>
+<div id="map"></div><aside id="panel"><div id="handle"></div><div id="panelHead"><div id="coCount" aria-live="polite" aria-atomic="true"></div>
 <button class="barbtn active" data-city="lima">Lima</button><button class="barbtn" data-city="arequipa">Arequipa</button>
 <button class="barbtn active" data-sort="default">Default</button><button class="barbtn" data-sort="alpha">A-Z</button>
-<div class="filter-stack"><div class="filter-field"><label class="filter-label" for="viewCategory">What do you want to see?</label>
-<select class="filter-select" id="viewCategory">
-  <option value="">Companies</option><option value="Startup">Startup</option>
-  <option value="Technology Consultancy">Technology Consultancy</option>
-  <option value="Incubator">Incubator</option><option value="Accelerator">Accelerator</option>
-  <option value="VC">VC</option><option value="Coworking Space">Coworking Space</option>
-  <option value="Nonprofit">Nonprofit</option>
-</select></div>
-<div class="filter-field" id="viewStageField" hidden><label class="filter-label" for="viewStage">Startup stage</label>
-  <select class="filter-select" id="viewStage"><option value="">All stages</option><option value="Pre-Seed">Pre-Seed</option>
-  <option value="Seed">Seed</option><option value="Bootstrap">Bootstrap</option><option value="Series A+">Series A+</option></select>
-</div>
-<button class="filter-reset" id="clearViewFilters" hidden>Clear filters</button></div></div><div id="coList"></div></aside>
+<div class="filter-stack"><fieldset class="filter-field filter-group"><legend class="filter-label">Organization types</legend>
+<div class="filter-grid" id="viewCategories">
+  <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-category="Startup" value="Startup" checked><span class="filter-choice-label">Startups</span></label>
+  <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-category="Technology Consultancy" value="Technology Consultancy" checked><span class="filter-choice-label">Consultancies</span></label>
+  <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-category="Coworking Space" value="Coworking Space"><span class="filter-choice-label">Coworking</span></label>
+  <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-category="VC" value="VC"><span class="filter-choice-label">VC</span></label>
+  <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-category="Incubator" value="Incubator"><span class="filter-choice-label">Incubators</span></label>
+  <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-category="Accelerator" value="Accelerator"><span class="filter-choice-label">Accelerators</span></label>
+  <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-category="Nonprofit" value="Nonprofit"><span class="filter-choice-label">Nonprofits</span></label>
+</div></fieldset>
+<fieldset class="filter-field filter-group" id="viewStageField"><legend class="filter-label">Startup stage</legend>
+  <div class="filter-grid filter-stage-grid" id="viewStages">
+    <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-stage="Pre-Seed" value="Pre-Seed"><span class="filter-choice-label">Pre-Seed</span></label>
+    <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-stage="Seed" value="Seed"><span class="filter-choice-label">Seed</span></label>
+    <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-stage="Bootstrap" value="Bootstrap"><span class="filter-choice-label">Bootstrap</span></label>
+    <label class="filter-choice"><input class="filter-input" type="checkbox" data-view-stage="Series A+" value="Series A+"><span class="filter-choice-label">Series A+</span></label>
+  </div>
+</fieldset>
+<button class="filter-reset" id="clearViewFilters" hidden>Restore companies</button></div></div><div id="coList"></div></aside>
 <button id="panelToggle"></button><div id="gridStatus"></div>
 <div id="ticker"><div id="tickerTrack"></div></div>
 <select id="catSelect"><option value="Startup">Startup</option><option value="VC">VC</option></select>
@@ -96,6 +102,15 @@ class RenderTests(unittest.TestCase):
     def assert_no_injection(self):
         self.assertEqual(self.page.evaluate("window.__injected"), 0)
         self.assertEqual(self.page.locator("[onerror], [onload], [onclick], svg").count(), 0)
+
+    def set_categories(self, *categories):
+        wanted = set(categories)
+        for option in self.page.locator("[data-view-category]").all():
+            value = option.get_attribute("value")
+            if value in wanted and not option.is_checked():
+                option.locator("xpath=..").click()
+            elif value not in wanted and option.is_checked():
+                option.locator("xpath=..").click()
 
     def test_malicious_text_renders_literally_in_list_popup_and_ticker(self):
         self.render(FIXTURE["company"])
@@ -140,7 +155,7 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(self.page.locator(".ptag").text_content(), expected[0]["tag_es"])
         self.page.evaluate("localStorage.setItem('pg_lang', 'en'); window.__pgRefreshPopup()")
         self.assertEqual(self.page.locator(".ptag").text_content(), expected[0]["tag"])
-        self.page.locator("#viewCategory").select_option("Coworking Space")
+        self.set_categories("Coworking Space")
         self.page.evaluate("applyCity('arequipa')")
         expected = [c for c in companies if c["city"] == "arequipa" and c["category"] == "Coworking Space"]
         self.assertEqual(self.page.locator(".co").count(), len(expected))
@@ -174,27 +189,38 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(subcategory.input_value(), "")
         self.assertEqual(self.page.locator("#stageField").evaluate("el => el.style.display"), "none")
 
-    def test_category_select_exposes_all_public_views_and_preserves_city(self):
+    def test_category_controls_combine_public_views_and_preserve_city(self):
         companies = json.loads((ROOT / "companies.json").read_text(encoding="utf-8"))
         self.page.evaluate("data => { ALL_COMPANIES = data; applyCity('lima'); }", companies)
 
-        category_select = self.page.locator("#viewCategory")
-        self.assertEqual(category_select.locator("option").count(), 8)
-        self.assertEqual(category_select.locator("option").evaluate_all("options => options.map(option => option.value)"), [
-            "", "Startup", "Technology Consultancy", "Incubator", "Accelerator", "VC",
-            "Coworking Space", "Nonprofit",
+        categories = self.page.locator("[data-view-category]")
+        self.assertEqual(self.page.locator("#coCount").get_attribute("aria-live"), "polite")
+        self.assertEqual(categories.count(), 7)
+        self.assertEqual(categories.evaluate_all("options => options.map(option => option.value)"), [
+            "Startup", "Technology Consultancy", "Coworking Space", "VC", "Incubator", "Accelerator", "Nonprofit",
         ])
-        for category in ("Startup", "Technology Consultancy", "Incubator", "Accelerator", "VC", "Coworking Space", "Nonprofit"):
-            with self.subTest(category=category):
-                category_select.select_option(category)
-                expected = [c for c in companies if c["city"] == "lima" and c["category"] == category]
-                self.assertEqual(self.page.locator(".co").count(), len(expected))
-                self.assertEqual(category_select.input_value(), category)
-                self.assertEqual(self.page.locator('[data-city="lima"]').get_attribute("class"), "barbtn active")
+        self.assertEqual(categories.evaluate_all("options => options.filter(option => option.checked).map(option => option.value)"), [
+            "Startup", "Technology Consultancy",
+        ])
+
+        self.set_categories("Coworking Space", "VC")
+        expected = [
+            c for c in companies
+            if c["city"] == "lima" and c["category"] in ("Coworking Space", "VC")
+        ]
+        self.assertEqual(self.page.locator(".co").count(), len(expected))
+        self.assertEqual(self.page.locator(".co-marker").count(), len(expected))
+        self.assertEqual(categories.evaluate_all("options => options.filter(option => option.checked).map(option => option.value)"), [
+            "Coworking Space", "VC",
+        ])
+        self.assertEqual(self.page.locator('[data-city="lima"]').get_attribute("class"), "barbtn active")
 
         self.page.evaluate("applyCity('arequipa')")
-        self.assertEqual(self.page.locator(".co").count(), 0)
-        self.assertEqual(self.page.locator(".panel-empty").count(), 1)
+        expected = [
+            c for c in companies
+            if c["city"] == "arequipa" and c["category"] in ("Coworking Space", "VC")
+        ]
+        self.assertEqual(self.page.locator(".co").count(), len(expected))
 
     def test_startup_stage_filter_and_clear_return_to_default_feed(self):
         companies = json.loads((ROOT / "companies.json").read_text(encoding="utf-8"))
@@ -204,43 +230,56 @@ class RenderTests(unittest.TestCase):
             if c["city"] == "lima" and c["category"] in ("Startup", "Technology Consultancy")
         ])
 
-        category = self.page.locator("#viewCategory")
-        stage = self.page.locator("#viewStage")
-        category.select_option("Startup")
+        self.set_categories("Startup", "VC")
+        stage = self.page.locator('[data-view-stage="Seed"]')
         self.assertFalse(self.page.locator("#viewStageField").is_hidden())
-        stage.select_option("Seed")
+        stage.locator("xpath=..").click()
         expected_seed = [
             c for c in companies
-            if c["city"] == "lima" and c["category"] == "Startup" and c.get("subcategory") == "Seed"
+            if c["city"] == "lima" and (
+                (c["category"] == "Startup" and c.get("subcategory") == "Seed") or c["category"] == "VC"
+            )
         ]
         self.assertEqual(self.page.locator(".co").count(), len(expected_seed))
-        self.assertEqual(self.page.locator(".co .tag").first.text_content(), "Seed")
-        self.assertEqual(stage.input_value(), "Seed")
+        self.assertTrue(stage.is_checked())
 
-        stage.select_option("")
-        expected_startups = len([c for c in companies if c["city"] == "lima" and c["category"] == "Startup"])
-        self.assertEqual(self.page.locator(".co").count(), expected_startups)
+        self.page.locator('[data-view-stage="Pre-Seed"]').locator("xpath=..").click()
+        expected_stages = [
+            c for c in companies
+            if c["city"] == "lima" and (
+                (c["category"] == "Startup" and c.get("subcategory") in ("Seed", "Pre-Seed")) or c["category"] == "VC"
+            )
+        ]
+        self.assertEqual(self.page.locator(".co").count(), len(expected_stages))
 
-        stage.select_option("Bootstrap")
+        self.page.locator('[data-view-category="Startup"]').locator("xpath=..").click()
+        self.assertTrue(self.page.locator("#viewStageField").is_hidden())
+        self.assertFalse(stage.is_checked())
+        expected_vcs = len([c for c in companies if c["city"] == "lima" and c["category"] == "VC"])
+        self.assertEqual(self.page.locator(".co").count(), expected_vcs)
+
+        self.set_categories()
         self.assertEqual(self.page.locator(".co").count(), 0)
         self.assertEqual(self.page.locator(".co-marker").count(), 0)
         self.assertEqual(self.page.locator(".panel-empty").text_content(), "No hay lugares que coincidan con estos filtros.")
 
         self.page.locator("#clearViewFilters").click()
-        self.assertEqual(category.input_value(), "")
-        self.assertTrue(self.page.locator("#viewStageField").is_hidden())
+        self.assertEqual(self.page.locator("[data-view-category]").evaluate_all(
+            "options => options.filter(option => option.checked).map(option => option.value)"
+        ), ["Startup", "Technology Consultancy"])
+        self.assertFalse(self.page.locator("#viewStageField").is_hidden())
         self.assertTrue(self.page.locator("#clearViewFilters").is_hidden())
         self.assertEqual(self.page.locator(".co").count(), default_count)
 
     def test_filter_labels_have_english_and_spanish_copy(self):
         expected = {
-            "en": ("What do you want to see?", "Companies", "Startup stage", "All stages", "Clear filters"),
-            "es": ("¿Qué quieres ver?", "Empresas", "Etapa de startup", "Todas las etapas", "Limpiar filtros"),
+            "en": ("Organization types", "Startups", "Consultancies", "Startup stage · optional", "Restore companies"),
+            "es": ("Tipos de organización", "Startups", "Consultoras", "Etapa de startup · opcional", "Restaurar empresas"),
         }
         for lang, labels in expected.items():
             with self.subTest(lang=lang):
                 values = self.page.evaluate(
-                    "lang => { localStorage.setItem('pg_lang', lang); return [t('filterCategory'), t('viewCompanies'), t('filterStage'), t('allStartupStages'), t('clearFilters')]; }",
+                    "lang => { localStorage.setItem('pg_lang', lang); return [t('filterCategory'), t('showStartups'), t('showConsultancies'), t('filterStage'), t('clearFilters')]; }",
                     lang,
                 )
                 self.assertEqual(tuple(values), labels)
@@ -249,7 +288,7 @@ class RenderTests(unittest.TestCase):
         companies = json.loads((ROOT / "companies.json").read_text(encoding="utf-8"))
         self.page.set_viewport_size({"width": 1280, "height": 800})
         self.page.evaluate("data => { ALL_COMPANIES = data; applyCity('lima'); }", companies)
-        self.page.locator("#viewCategory").select_option("VC")
+        self.set_categories("VC")
         self.assertGreater(self.page.locator(".co").count(), 0)
         self.page.locator(".co").first.click()
         self.assertEqual(self.page.locator(".test-popup").count(), 1)
@@ -263,7 +302,7 @@ class RenderTests(unittest.TestCase):
         self.page.locator("#panelHead").evaluate("el => el.click()")
         self.assertIn("expanded", self.page.locator("#panel").get_attribute("class") or "")
 
-        self.page.locator("#viewCategory").select_option("Coworking Space")
+        self.set_categories("Coworking Space")
         self.assertIn("expanded", self.page.locator("#panel").get_attribute("class") or "")
         self.assertGreater(self.page.locator(".co").count(), 0)
         self.page.locator(".co").first.click()
@@ -272,33 +311,41 @@ class RenderTests(unittest.TestCase):
 
     def test_filter_hierarchy_keyboard_reset_and_mobile_targets(self):
         companies = json.loads((ROOT / "companies.json").read_text(encoding="utf-8"))
-        self.page.set_viewport_size({"width": 390, "height": 844})
+        self.page.set_viewport_size({"width": 320, "height": 700})
         self.page.evaluate("data => { ALL_COMPANIES = data; applyCity('lima'); }", companies)
         self.page.locator("#panelHead").evaluate("el => el.click()")
         self.page.locator('[data-city="arequipa"]').click()
         self.page.locator('[data-sort="alpha"]').click()
 
-        category = self.page.locator("#viewCategory")
-        stage = self.page.locator("#viewStage")
+        category = self.page.locator('[data-view-category="Coworking Space"]')
+        stage = self.page.locator('[data-view-stage="Seed"]')
         clear = self.page.locator("#clearViewFilters")
-        self.assertTrue(self.page.locator("#viewStageField").is_hidden())
+        self.assertFalse(self.page.locator("#viewStageField").is_hidden())
         self.assertTrue(clear.is_hidden())
-        self.assertGreaterEqual(category.bounding_box()["height"], 44)
+        self.assertGreaterEqual(category.locator("xpath=..").bounding_box()["height"], 44)
 
         category.focus()
-        category.press("ArrowDown")
-        self.assertEqual(category.input_value(), "Startup")
-        self.assertFalse(self.page.locator("#viewStageField").is_hidden())
+        category.press("Space")
+        self.assertTrue(category.is_checked())
         self.assertFalse(clear.is_hidden())
-        self.assertGreaterEqual(stage.bounding_box()["height"], 44)
+        self.assertGreater(self.page.locator("#coList").bounding_box()["height"], 0)
+        self.assertGreaterEqual(stage.locator("xpath=..").bounding_box()["height"], 44)
+        self.assertLessEqual(
+            self.page.locator("#viewCategories").evaluate("el => el.scrollWidth"),
+            self.page.locator("#viewCategories").evaluate("el => el.clientWidth"),
+        )
 
-        stage.select_option("Seed")
-        category.select_option("VC")
-        self.assertEqual(stage.input_value(), "")
+        stage.focus()
+        stage.press("Space")
+        self.assertTrue(stage.is_checked())
+        self.page.locator('[data-view-category="Startup"]').locator("xpath=..").click()
+        self.assertFalse(stage.is_checked())
         self.assertTrue(self.page.locator("#viewStageField").is_hidden())
 
         clear.click()
-        self.assertEqual(category.input_value(), "")
+        self.assertFalse(category.is_checked())
+        self.assertTrue(self.page.locator('[data-view-category="Startup"]').is_checked())
+        self.assertTrue(self.page.locator('[data-view-category="Technology Consultancy"]').is_checked())
         self.assertEqual(self.page.locator('[data-city="arequipa"]').get_attribute("class"), "barbtn active")
         self.assertEqual(self.page.locator('[data-sort="alpha"]').get_attribute("class"), "barbtn active")
 
