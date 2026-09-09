@@ -108,3 +108,22 @@ limpios.
 - **Ángulos:** vistas aéreas amplias y elevadas que enfatizan el borde entre ciudad y océano.
 - **Composición:** diagonales fuertes que siguen la curva de los acantilados para aportar ritmo.
 - **Texturas:** mar suave frente a concreto geométrico y asfalto organizado.
+
+---
+
+## 7. Controles de filtro del mapa
+
+**Veredicto visual:** aprobado después de revisión responsive.
+
+- Las categorías usan controles visibles en una cuadrícula estable: dos columnas en escritorio y
+  tres en móvil. La selección múltiple muestra un borde esmeralda, relleno tenue y check claro sin
+  competir con los marcadores del mapa.
+- En 1280 × 800, el panel conserva resultados visibles debajo de los filtros. En 390 × 844 y
+  320 × 700 no hay desborde horizontal; la hoja expandida conserva una zona desplazable de resultados y
+  objetivos táctiles de al menos 44 px.
+- Las etapas aparecen como un grupo compacto de cuatro opciones y refinan únicamente las startups.
+  Las categorías siguen combinándose entre sí, por ejemplo Coworking + VC.
+- Se conservan la paleta Costa Verde, la jerarquía del panel y los controles HTML nativos para
+  teclado y lectores de pantalla. No se agregan paneles, efectos ni decoración nuevos.
+- Estados que deben revalidarse al modificar el panel: español/inglés, foco por teclado, cero
+  resultados, restauración de Empresas, hoja móvil expandida y selección de un resultado.
