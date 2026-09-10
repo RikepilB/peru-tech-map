@@ -21,9 +21,9 @@ de marketing ni signos de exclamación.
 
 ## Identidad visual
 
-Consola monocromática casi negra (fondo `#070A08`) con verde Solarium como único acento:
-`#056540` para CTAs, chips y estados activos, y `#0FA968` para vías principales, enlaces,
-parpadeo del cursor y líneas finas. La tipografía es Geist Mono. Aún no hay logo.
+Consola monocromática casi negra con verde Cyber Emerald como único acento: `#1DA842` para
+CTAs, chips y estados activos, y `#05DC60` para enlaces, foco y estados destacados. La interfaz
+usa Plus Jakarta Sans y reserva JetBrains Mono para datos de consola. Aún no hay logo de marca.
 
 ## Problema y solución
 

@@ -33,8 +33,9 @@ modal para agregar empresa mediante FormSubmit; y cargador de arranque.
 - **Taxonomía explícita.** `category` describe el tipo de entidad y `subcategory` solo una etapa
   respaldada de Startup. `funding` se conserva temporalmente para compatibilidad y no determina
   el valor público cuando existe la taxonomía nueva.
-- **Sin logos locales.** Los marcadores usan el favicon de Google según `domain` y, cuando no
-  existe, una ficha con la inicial; así se evita empaquetar logos de terceros.
+- **Logos con fallback seguro.** Un registro puede usar una imagen validada de `assets/logos/`;
+  de lo contrario, los marcadores prueban el favicon del dominio y terminan en una ficha con la
+  inicial cuando la imagen no existe o es genérica.
 - **Formulario activo.** `FORM_ENDPOINT` apunta a FormSubmit y requiere que el destinatario haya
   completado su verificación. Las contribuciones siguen revisándose manualmente antes de entrar
   al dataset.

@@ -49,7 +49,7 @@ Todos los PRs son revisados por el mantenedor antes de fusionarse.
 - [ ] Lo corrí localmente por HTTP y confirmé que el mapa carga y el loader desaparece
 - [ ] Los marcadores se mantienen fijos al hacer pan/zoom
 - [ ] Sin dependencias nuevas; sigue siendo un `index.html` único y autocontenido
-- [ ] El verde Solarium (`#056540`) sigue siendo el único color de acento
+- [ ] El verde Cyber Emerald (`#1DA842` / `#05DC60`) sigue siendo el único color de acento
 
 ---
 

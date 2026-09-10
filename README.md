@@ -6,6 +6,8 @@
 
 Un mapa interactivo de startups, consultoras tecnológicas, espacios de coworking e incubadoras en Lima y Arequipa, presentado como una consola de operaciones estilo terminal. Haz clic en un lugar para volar hacia él, haz clic en su marcador para ver detalles, cambia de ciudad desde la barra lateral. En vivo en **[perugrid.com](https://perugrid.com)**.
 
+Operación y rollback: [`docs/operations.md`](docs/operations.md).
+
 ---
 
 ## Mapa Del Codebase
@@ -18,16 +20,16 @@ Mapa generado por IA de la arquitectura del proyecto (servicios, stores, integra
 
 ## Qué Es
 
-Una aplicación web autocontenida sin paso de compilación, sin framework, sin backend. Renderiza un mapa vectorial de código abierto (MapLibre GL) y superpone un conjunto de datos investigado de empresas tecnológicas, consultoras, espacios de coworking e incubadoras peruanas. Todo el proyecto son tres archivos de datos más un archivo HTML, servidos como assets estáticos.
+Una aplicación web autocontenida sin paso de compilación, sin framework, sin backend. Renderiza un mapa vectorial de código abierto (MapLibre GL) y superpone un conjunto de datos investigado de empresas tecnológicas, consultoras, espacios de coworking e incubadoras peruanas. La aplicación y sus dos archivos JSON se sirven como assets estáticos.
 
 **Stack:**
 - **[MapLibre GL JS](https://maplibre.org/)** — renderizador de mapas WebGL de código abierto (el fork abierto de Mapbox GL).
 - **[OpenFreeMap](https://openfreemap.org/)** — hosting gratuito de tiles vectoriales y estilos base. Sin API key, sin límites de uso.
 - Los tiles vectoriales siguen el **[esquema OpenMapTiles](https://openmaptiles.org/schema/)** (source-layers: `building`, `water`, `transportation`, `place`, `poi`, etc.).
-- **[Geist Mono](https://vercel.com/font)** para toda la tipografía de la interfaz.
+- **[Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans)** para la interfaz y **[JetBrains Mono](https://www.jetbrains.com/lp/mono/)** para datos de consola.
 - **[FormSubmit](https://formsubmit.co/)** para el formulario "agregar empresa" (relay de email para sitios estáticos, sin servidor).
 
-**Diseño:** consola monocromática casi negra con verde Solarium (`#056540`) como único acento. Vista 2D tipo plano en picado por defecto, con un toggle `[3D]`. Las etiquetas de calles solo aparecen en vías principales; los POI por defecto del mapa están ocultos para que solo se vean los marcadores de empresas.
+**Diseño:** consola monocromática casi negra con verde Cyber Emerald (`#1DA842` / `#05DC60`) como único acento. Vista 2D tipo plano en picado por defecto, con un toggle `[3D]`. Las etiquetas de calles solo aparecen en vías principales; los POI por defecto del mapa están ocultos para que solo se vean los marcadores de empresas.
 
 ---
 
