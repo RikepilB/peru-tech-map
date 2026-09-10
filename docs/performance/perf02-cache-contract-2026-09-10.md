@@ -43,6 +43,16 @@ La respuesta HTML protegida añadió 163 bytes y presentó como débil el mismo 
 por eso la comparación registra `/` e `/index.html` como distintos del dominio público. Este
 efecto del preview no se interpreta como un cambio del `index.html` fuente.
 
+## Evidencia de producción
+
+El reporte [perf02-cache-production-2026-09-10.json](perf02-cache-production-2026-09-10.json)
+verificó `https://www.perugrid.com` después del merge, en el despliegue
+`dpl_7Wn4GD8TjhEs7KsU35MXTgq99iKK` y commit
+`1b083826159a00f01dba9e2f910601e74ed8fa64`. Los cuatro cuerpos y ETags coincidieron con la
+línea base; cada primera lectura fue MISS, la repetición fue HIT y la revalidación devolvió 304
+sin cuerpo. Los JSON coincidieron con el checkout y los cuatro retiros históricos continuaron
+ausentes. Con esta evidencia queda cerrado PERF-02.
+
 ## Gate de despliegue
 
 Desde la raíz del checkout que representa el despliegue:
