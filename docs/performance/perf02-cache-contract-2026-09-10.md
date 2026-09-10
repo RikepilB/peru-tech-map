@@ -34,8 +34,8 @@ los cuerpos recibidos.
 ## Evidencia del preview
 
 El reporte [perf02-cache-preview-2026-09-10.json](perf02-cache-preview-2026-09-10.json) verificó
-el despliegue protegido `dpl_4CY2zkA6GM6gwdFVCHCHrSM5k8tD`, commit
-`a834a76b54f79eb15e487974ac627485beb40df5`, mediante `vercel curl` autenticado. Los cuatro
+el despliegue protegido `dpl_AVRLx5PQcvvX4uupnTxhJ1XLd2CW`, commit
+`30bbbb3fc397cb99f9501459777d178e1de3a4f9`, mediante `vercel curl` autenticado. Los cuatro
 recursos devolvieron la política exacta, 304 sin cuerpo y una repetición HIT. Los 89 lugares y 16
 titulares coincidieron semánticamente con el checkout y conservaron sus hashes de contenido.
 
@@ -60,7 +60,7 @@ python scripts/verify_cache.py `
 
 Para un preview protegido, el Vercel CLI debe estar autenticado y el checkout enlazado al proyecto.
 `--vercel-deployment` delega el acceso a `vercel curl`; el verificador no lee ni imprime el
-token de bypass.
+token de bypass, no enlaza el checkout automáticamente y registra el target realmente consultado.
 
 Cada recurso debe responder 200 con ETag y las tres directivas declaradas. La repetición debe
 conservar cuerpo y ETag; `If-None-Match` debe devolver 304 sin cuerpo. Este 304 es el gate HTTP de

@@ -1,5 +1,5 @@
 {
-  "base_url": "https://peru-tech-2ctr79430-rikepilbs-projects.vercel.app",
+  "base_url": "https://peru-tech-n4nj3pb52-rikepilbs-projects.vercel.app",
   "comparison": {
     "changed": [
       "/",
@@ -10,9 +10,9 @@
       "/ticker.json"
     ]
   },
-  "deployment_id": "dpl_4CY2zkA6GM6gwdFVCHCHrSM5k8tD",
-  "generated_at": "2026-09-10T05:38:26.684973+00:00",
-  "git_commit": "a834a76b54f79eb15e487974ac627485beb40df5",
+  "deployment_id": "dpl_AVRLx5PQcvvX4uupnTxhJ1XLd2CW",
+  "generated_at": "2026-09-10T05:48:48.033303+00:00",
+  "git_commit": "30bbbb3fc397cb99f9501459777d178e1de3a4f9",
   "local_data": {
     "matches": true,
     "resources": [
@@ -28,9 +28,9 @@
       "etag": "W/\"4106e25f363689556f705e693fb53596\"",
       "repeated_status": 200,
       "repeated_x_vercel_cache": "HIT",
-      "sha256": "d42a8fc52898f61df86c5772d4766854506680b484dbc75f8c719ebe33b495c1",
+      "sha256": "469f46d63ab008d82770c5ddd71e774d481601c25a4d532af182ca757cdc962b",
       "status": 200,
-      "x_vercel_cache": "MISS"
+      "x_vercel_cache": "HIT"
     },
     "/companies.json": {
       "bytes": 52468,
@@ -49,7 +49,7 @@
         "WeWork San Isidro",
         "uDocz"
       ],
-      "x_vercel_cache": "HIT"
+      "x_vercel_cache": "MISS"
     },
     "/index.html": {
       "bytes": 98564,
@@ -58,7 +58,7 @@
       "etag": "W/\"4106e25f363689556f705e693fb53596\"",
       "repeated_status": 200,
       "repeated_x_vercel_cache": "HIT",
-      "sha256": "d42a8fc52898f61df86c5772d4766854506680b484dbc75f8c719ebe33b495c1",
+      "sha256": "469f46d63ab008d82770c5ddd71e774d481601c25a4d532af182ca757cdc962b",
       "status": 200,
       "x_vercel_cache": "MISS"
     },
@@ -77,5 +77,6 @@
     }
   },
   "schema_version": 1,
-  "verifier_sha256": "35a04aa861b642a8e565c3e9b9bf555dcd8944342ce1393368384a0da554e29a"
+  "vercel_deployment": "dpl_AVRLx5PQcvvX4uupnTxhJ1XLd2CW",
+  "verifier_sha256": "e4043972734780eb7c7dac619bb2b273f0a2966ec8529aca028b1ccb345da5ed"
 }

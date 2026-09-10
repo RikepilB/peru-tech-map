@@ -8,6 +8,7 @@ from scripts.verify_cache import (
     CacheContractError,
     CacheResponse,
     _parse_curl_headers,
+    _verify_vercel_target,
     compare_revisions,
     probe_resources,
     verify_local_data,
@@ -189,6 +190,26 @@ class CacheContractTests(unittest.TestCase):
         self.assertEqual(status, 304)
         self.assertEqual(headers["etag"], '"dataset"')
         self.assertEqual(headers["x-vercel-cache"], "HIT")
+
+    def test_vercel_target_metadata_cannot_name_another_deployment(self):
+        with self.assertRaisesRegex(CacheContractError, "must equal --base-url"):
+            _verify_vercel_target(
+                "https://preview-a.vercel.app",
+                "https://preview-b.vercel.app",
+                None,
+            )
+        with self.assertRaisesRegex(CacheContractError, "must equal --deployment-id"):
+            _verify_vercel_target(
+                "dpl_AAAA",
+                "https://preview-a.vercel.app",
+                "dpl_BBBB",
+            )
+
+        _verify_vercel_target(
+            "dpl_AAAA",
+            "https://preview-a.vercel.app",
+            "dpl_AAAA",
+        )
 
 
 def _json_digest(value):

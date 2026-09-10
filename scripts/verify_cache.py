@@ -356,6 +356,10 @@ def _vercel_fetcher(deployment: str, timeout: float):
     executable = shutil.which("vercel")
     if not executable:
         raise CacheContractError("vercel CLI is required for a protected deployment")
+    if not (Path.cwd() / ".vercel" / "project.json").is_file():
+        raise CacheContractError(
+            "protected preview requires an explicitly linked Vercel checkout"
+        )
 
     def fetch(path: str, if_none_match: str | None = None) -> CacheResponse:
         with tempfile.TemporaryDirectory() as directory:
@@ -367,7 +371,6 @@ def _vercel_fetcher(deployment: str, timeout: float):
                 path,
                 "--deployment",
                 deployment,
-                "--yes",
                 "--",
                 "--silent",
                 "--show-error",
@@ -406,6 +409,23 @@ def _vercel_fetcher(deployment: str, timeout: float):
             return CacheResponse(status, headers, body)
 
     return fetch
+
+
+def _verify_vercel_target(
+    deployment: str | None,
+    base_url: str,
+    deployment_id: str | None,
+) -> None:
+    if not deployment:
+        return
+    if deployment.startswith("https://") and deployment != base_url:
+        raise CacheContractError(
+            "Vercel deployment URL must equal --base-url"
+        )
+    if deployment.startswith("dpl_") and deployment_id and deployment != deployment_id:
+        raise CacheContractError(
+            "Vercel deployment ID must equal --deployment-id"
+        )
 
 
 def _load_report(path: str) -> dict:
@@ -461,6 +481,9 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--timeout must be between 1 and 60 seconds")
 
     try:
+        _verify_vercel_target(
+            args.vercel_deployment, args.base_url, args.deployment_id
+        )
         report = {
             "schema_version": 1,
             "verifier_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
@@ -479,6 +502,8 @@ def main(argv: list[str] | None = None) -> int:
         }
         if args.deployment_id:
             report["deployment_id"] = args.deployment_id
+        if args.vercel_deployment:
+            report["vercel_deployment"] = args.vercel_deployment
         if args.git_commit:
             report["git_commit"] = args.git_commit
         if args.expect_local_data:
