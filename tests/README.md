@@ -7,6 +7,13 @@ python scripts/validate_data.py
 python -m unittest discover -s tests -v
 ```
 
+La suite también valida la configuración y las transiciones sintéticas del contrato de caché.
+La prueba HTTP real se ejecuta por separado porque requiere un despliegue Vercel accesible:
+
+```powershell
+python scripts/verify_cache.py --expect-local-data --require-vercel
+```
+
 El validador solo usa la biblioteca estándar. Rechaza JSON ambiguo, tipos inválidos,
 coordenadas fuera de bbox, enums desconocidos, etapas incompatibles, sedes/titulares duplicados
 y URLs no admitidas. No modifica ni sanea los archivos. Una sede duplicada tiene el mismo
