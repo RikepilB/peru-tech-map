@@ -175,6 +175,19 @@ python scripts/benchmark_performance.py --runs 5 --require-list-before-map-load 
 Consulta la [línea base PERF-00](docs/performance/perf00-browser-baseline-2026-09-09.md) y el
 [resultado PERF-01](docs/performance/perf01-browser-after-2026-09-09.md), con sus límites y trazas.
 
+### Verificar la caché pública
+
+PERF-02 conserva las URLs mutables y exige revalidación ETag en cada navegación. La comprobación
+contra el despliegue real valida 200, headers, repetición estable y 304 sin cuerpo, además de que
+los JSON desplegados coincidan con los archivos aprobados localmente:
+
+```powershell
+python scripts/verify_cache.py --expect-local-data --require-vercel
+```
+
+Consulta el [contrato y procedimiento de invalidación PERF-02](docs/performance/perf02-cache-contract-2026-09-10.md)
+para probar una versión nueva, el retiro de un registro y un rollback.
+
 ---
 
 ## TODOs Conocidos Antes De Lanzar

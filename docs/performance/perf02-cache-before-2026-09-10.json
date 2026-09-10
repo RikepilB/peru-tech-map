@@ -1,0 +1,71 @@
+{
+  "base_url": "https://www.perugrid.com",
+  "deployment_id": "dpl_BD5mfg7khkkk6ViE8zT7aHqAY5FP",
+  "generated_at": "2026-09-10T05:30:39.281786+00:00",
+  "git_commit": "fe4bd622e23b6f84f3560a132136a414c62aa2b3",
+  "local_data": {
+    "matches": true,
+    "resources": [
+      "/companies.json",
+      "/ticker.json"
+    ]
+  },
+  "resources": {
+    "/": {
+      "bytes": 98401,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "conditional_status": 304,
+      "etag": "\"4106e25f363689556f705e693fb53596\"",
+      "repeated_status": 200,
+      "repeated_x_vercel_cache": "HIT",
+      "sha256": "d3433347540541dfb64866114431e5403f735829c0a61880ccf37ac7c2f68e01",
+      "status": 200,
+      "x_vercel_cache": "HIT"
+    },
+    "/companies.json": {
+      "bytes": 52468,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "conditional_status": 304,
+      "etag": "\"7af06a8189609ba7d7b1321a625e7d85\"",
+      "json_sha256": "a015d1d3b79bc1e0dfa87a0161ab9999ebc4c30939f250b3a04319db513e2319",
+      "record_count": 89,
+      "repeated_status": 200,
+      "repeated_x_vercel_cache": "HIT",
+      "sha256": "0681a42712bb3e5230b8535210f083ad218e4d69dbf9bde486c09870f2fe07a1",
+      "status": 200,
+      "verified_absent_names": [
+        "MindQube",
+        "Talently",
+        "WeWork San Isidro",
+        "uDocz"
+      ],
+      "x_vercel_cache": "HIT"
+    },
+    "/index.html": {
+      "bytes": 98401,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "conditional_status": 304,
+      "etag": "\"4106e25f363689556f705e693fb53596\"",
+      "repeated_status": 200,
+      "repeated_x_vercel_cache": "HIT",
+      "sha256": "d3433347540541dfb64866114431e5403f735829c0a61880ccf37ac7c2f68e01",
+      "status": 200,
+      "x_vercel_cache": "HIT"
+    },
+    "/ticker.json": {
+      "bytes": 2019,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "conditional_status": 304,
+      "etag": "\"beb43f1dbf79c770e4d6a3afbbec03e9\"",
+      "json_sha256": "d07d429a0b600d393e620dd9c8acf46fc0a2160996a5caa438af130108329164",
+      "record_count": 16,
+      "repeated_status": 200,
+      "repeated_x_vercel_cache": "HIT",
+      "sha256": "85e78fdd9cadd1b496e3148c686b69a12ca3bbb8fb93467aecd3a9db0c7c02e5",
+      "status": 200,
+      "x_vercel_cache": "HIT"
+    }
+  },
+  "schema_version": 1,
+  "verifier_sha256": "54b8d92b4130409002c5c12aee22c7950fc154b1823ba0e2dc08632fa760f186"
+}
