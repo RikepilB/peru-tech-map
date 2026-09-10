@@ -67,7 +67,7 @@ en contra de ella especulativamente.
 1. Crea una rama desde `master` — nunca hagas commit directo a ella.
 2. Mantén la arquitectura de un solo archivo: todo vive dentro del `<script>` y `<style>`
    inline de `index.html`. No lo dividas en módulos ni agregues un bundler.
-3. Mantén el verde Solarium (`#056540` / `#0FA968`) como único color de acento.
+3. Mantén el verde Cyber Emerald (`#1DA842` / `#05DC60`) como único color de acento.
 4. Prueba localmente por HTTP (no `file://` — la app obtiene JSON en tiempo de ejecución y
    necesita CORS).
 5. Abre un PR describiendo qué cambió y cómo lo probaste.

@@ -6,6 +6,7 @@
 <title>Peru Grid — Where The Builders Are</title>
 <meta name="description" content="Peru Grid — an interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa." />
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231B222C'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%231DA842' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='5.5' fill='%2305DC60'/%3E%3C/svg%3E" />
+<link rel="canonical" href="https://perugrid.com/" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Peru Grid — Where The Builders Are" />
 <meta property="og:description" content="An interactive map of startups, cloud consultancies, coworking spaces and incubators across Lima and Arequipa." />
@@ -51,6 +52,7 @@ window.I18N = {
     workspacePinRequired: "Workspaces need a pin — drop one on the map first.",
     submitted: "Submitted", submittedBody: "Thanks — new companies get reviewed and added.",
     workspaceSubmittedBody: "Thanks — new workspaces are verified before they appear on the map.",
+    openPlaceDetails: name => `Open details for ${name}`,
     bootInit: "INITIALIZING MAPLIBRE GL", bootTiles: "LOADING VECTOR TILES", bootGrid: "MOUNTING COMPANY GRID",
     bootBooting: "BOOTING PERU GRID…", bootOnline: "GRID ONLINE ✓",
     bootFailed: "BOOT FAILED",
@@ -111,6 +113,7 @@ window.I18N = {
     workspacePinRequired: "Los espacios necesitan un pin — colócalo en el mapa primero.",
     submitted: "Enviado", submittedBody: "Gracias — las nuevas empresas se revisan y se agregan.",
     workspaceSubmittedBody: "Gracias — verificamos los nuevos espacios antes de mostrarlos en el mapa.",
+    openPlaceDetails: name => `Abrir detalles de ${name}`,
     bootInit: "INICIANDO MAPLIBRE GL", bootTiles: "CARGANDO TILES VECTORIALES", bootGrid: "MONTANDO GRID DE EMPRESAS",
     bootBooting: "INICIANDO PERU GRID…", bootOnline: "GRID EN LÍNEA ✓",
     bootFailed: "ERROR DE INICIO",
@@ -378,10 +381,12 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   .panel-list::-webkit-scrollbar-thumb { background: var(--line); }
   .co {
     display: flex; align-items: center; gap: 11px; padding: 11px 16px; cursor: pointer;
-    border-bottom: 1px solid rgba(43,51,66,0.5);
+    width: 100%; color: inherit; background: transparent; font: inherit; text-align: left;
+    border: 0; border-bottom: 1px solid rgba(43,51,66,0.5);
   }
   .co:hover { background: rgba(5,220,96,0.07); }
   .co.active { background: rgba(29,168,66,0.14); }
+  .co:focus-visible { outline: 2px solid var(--green-bright); outline-offset: -3px; }
   .co .prefix { width: 10px; color: var(--green-bright); opacity: 0; font-weight: 700; }
   .co.active .prefix { opacity: 1; }
   .co .logo { width: 26px; height: 26px; flex: 0 0 auto; background: #fff; border-radius: 6px; display: grid; place-items: center; overflow: hidden; border: 1px solid var(--green-dim); }
@@ -401,7 +406,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   .btn.ghost { background: transparent; color: var(--text); border-color: var(--line); }
   .btn.ghost:hover { border-color: var(--green-bright); color: var(--green-bright); }
 
-  .drag-handle { display: none; }
+  .drag-handle { display: none; border: 0; color: inherit; }
 
   #panelToggle {
     position: absolute; top: 14px; left: 334px; z-index: 8;
@@ -447,6 +452,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
      WRAPPER (the element handed to maplibregl.Marker) carries NONE of our CSS —
      MapLibre writes transform on it every frame. All visuals live on .co-marker (inner). */
   .co-marker { position: relative; width: 28px; height: 28px; cursor: pointer; }
+  .co-marker:focus-visible { outline: 2px solid var(--green-bright); outline-offset: 4px; }
   .co-marker .tile { position: absolute; inset: 0; background: #fff; border: 1px solid var(--green-dim); border-radius: 6px;
     display: grid; place-items: center; overflow: hidden; transition: transform .14s ease; }
   .co-marker:hover .tile, .co-marker:active .tile { transform: scale(1.12); }
@@ -475,6 +481,13 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   }
   .co-pop .source-link { color: var(--green-bright); text-decoration: none; white-space: nowrap; }
   .co-pop .source-link:hover { text-decoration: underline; }
+  .co-pop .popup-card { position: relative; padding-right: 24px; }
+  .co-pop .popup-close {
+    position: absolute; top: -8px; right: -10px; width: 32px; height: 32px;
+    display: grid; place-items: center; cursor: pointer; color: var(--muted);
+    border: 0; background: transparent; font: 20px/1 var(--sans);
+  }
+  .co-pop .popup-close:hover, .co-pop .popup-close:focus-visible { color: var(--green-bright); }
   .chip { display: inline-block; margin-top: 10px; padding: 3px 8px; border-radius: 6px; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
   .chip.boot { background: rgba(29,168,66,0.18); color: var(--green-bright); border: 1px solid var(--green-dim); }
   .chip.fund { background: var(--green); color: #fff; border: 1px solid var(--green); }
@@ -584,7 +597,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   </div>
 
   <aside id="panel">
-    <div class="drag-handle" id="handle"></div>
+    <button type="button" class="drag-handle" id="handle" aria-controls="panel" aria-expanded="false" data-i18n-aria="togglePanel" aria-label="Expand or collapse sidebar"></button>
     <div class="panel-head" id="panelHead">
       <div class="eyebrow" data-i18n="tagline">Where The Builders Are</div>
       <h1>Peru Grid<span class="cursor"></span></h1>
@@ -663,16 +676,16 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
 
   <!-- Add company modal -->
   <div class="scrim" id="scrim">
-    <div class="modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modal-head"><h2 id="modalTitle" data-i18n="modalTitle">Add A Company</h2><button type="button" class="x" id="closeModal" data-i18n-aria="close" aria-label="Close">×</button></div>
       <div class="modal-body" id="formWrap">
         <form id="coForm">
-          <div class="field"><label id="entityNameLabel" data-i18n="fCompanyName">Company Name</label><input id="entityNameInput" name="Company" required placeholder="ACME INC." data-i18n-placeholder="pCompanyName" /></div>
-          <div class="field"><label data-i18n="fWebsite">Website</label><input name="Website" required placeholder="acme.com" data-i18n-placeholder="pWebsite" /></div>
-          <div class="field"><label data-i18n="city">City</label>
-            <select name="City"><option value="lima">Lima</option><option value="arequipa">Arequipa</option></select>
+          <div class="field"><label for="entityNameInput" id="entityNameLabel" data-i18n="fCompanyName">Company Name</label><input id="entityNameInput" name="Company" required placeholder="ACME INC." data-i18n-placeholder="pCompanyName" /></div>
+          <div class="field"><label for="websiteInput" data-i18n="fWebsite">Website</label><input id="websiteInput" name="Website" required placeholder="acme.com" data-i18n-placeholder="pWebsite" /></div>
+          <div class="field"><label for="citySelect" data-i18n="city">City</label>
+            <select id="citySelect" name="City"><option value="lima">Lima</option><option value="arequipa">Arequipa</option></select>
           </div>
-          <div class="field"><label data-i18n="fOperatingModel">Operating Model</label>
+          <div class="field"><label for="modelSelect" data-i18n="fOperatingModel">Operating Model</label>
             <select name="Operating Model" id="modelSelect">
               <option value="On-Site" data-i18n="modelOnSite">On-Site</option>
               <option value="Hybrid" data-i18n="modelHybrid">Hybrid</option>
@@ -689,7 +702,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
             <input type="hidden" name="Longitude" id="lngIn" />
           </div>
           <div class="row2">
-            <div class="field"><label data-i18n="fCategory">Category</label>
+            <div class="field"><label for="catSelect" data-i18n="fCategory">Category</label>
               <select name="Category" id="catSelect">
                 <option value="Startup" data-i18n="catStartup">Startup</option>
                 <option value="Technology Consultancy" data-i18n="catConsultancy">Technology Consultancy</option>
@@ -700,8 +713,8 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
                 <option value="VC" data-i18n="catVC">VC</option>
               </select>
             </div>
-            <div class="field" id="stageField" style="display:none"><label data-i18n="fStage">Stage</label>
-              <select name="Subcategory">
+            <div class="field" id="stageField" style="display:none"><label for="subcategorySelect" data-i18n="fStage">Stage</label>
+              <select name="Subcategory" id="subcategorySelect">
                 <option value="" data-i18n="pStage">Select stage</option>
                 <option value="Seed" data-i18n="stageSeed">Seed</option>
                 <option value="Pre-Seed" data-i18n="stagePreSeed">Pre-Seed</option>
@@ -709,7 +722,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
                 <option value="Series A+" data-i18n="stageSeriesAPlus">Series A+</option>
               </select>
             </div>
-            <div class="field"><label data-i18n="fEmail">Your Email</label><input name="Submitter Email" type="email" placeholder="you@email.com" data-i18n-placeholder="pEmail" /></div>
+            <div class="field"><label for="emailInput" data-i18n="fEmail">Your Email</label><input id="emailInput" name="Submitter Email" type="email" placeholder="you@email.com" data-i18n-placeholder="pEmail" /></div>
           </div>
           <button type="submit" class="btn" id="submitBtn" data-i18n="submit">Submit For Review</button>
           <div class="form-error" id="formError" role="alert" style="display:none"></div>
@@ -753,6 +766,7 @@ document.getElementById("langToggle").addEventListener("click", function () {
   localStorage.setItem("pg_lang", getLang() === "en" ? "es" : "en");
   applyI18N();
   if (window.__pgRefreshSidebar) window.__pgRefreshSidebar();
+  if (window.__pgRefreshMarkerLabels) window.__pgRefreshMarkerLabels();
   if (window.__pgSyncViewControls) window.__pgSyncViewControls();
   if (window.__pgUpdateStatusbar) window.__pgUpdateStatusbar();
   if (window.__pgRefreshPopup) window.__pgRefreshPopup();
@@ -1364,12 +1378,21 @@ function buildMarkers() {
     // INNER: all visuals + animations live here
     const inner = document.createElement("div");
     inner.className = "co-marker";
+    inner.tabIndex = 0;
+    inner.setAttribute("role", "button");
+    inner.setAttribute("aria-label", t("openPlaceDetails")(c.name));
     const ring = document.createElement("div"); ring.className = "ring";
     const tile = document.createElement("div"); tile.className = "tile";
     mountLogo(tile, c);
     inner.appendChild(ring); inner.appendChild(tile);
     wrapper.appendChild(inner);
-    inner.addEventListener("click", (e) => { e.stopPropagation(); selectCompany(i, true); });
+    inner.addEventListener("click", (e) => { e.stopPropagation(); selectCompany(i, true, false); });
+    inner.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      e.preventDefault();
+      e.stopPropagation();
+      selectCompany(i, true, true);
+    });
 
     // Fan out co-located pins by a fixed pixel offset (stays separated at any zoom)
     const group = groups[`${c.lat.toFixed(5)},${c.lng.toFixed(5)}`];
@@ -1386,27 +1409,52 @@ function buildMarkers() {
     markers.push({ marker: m, inner });
   });
 }
+window.__pgRefreshMarkerLabels = () => markers.forEach((marker, index) => {
+  const company = COMPANIES[index];
+  if (company) marker.inner.setAttribute("aria-label", t("openPlaceDetails")(company.name));
+});
 
-function selectCompany(i, fly) {
+let popupReturnFocus = null;
+function closeCompanySelection(restoreFocus = false) {
+  if (openPopup) { openPopup.remove(); openPopup = null; }
+  markers.forEach(mk => mk.inner.classList.remove("sel"));
+  document.querySelectorAll(".co").forEach(row => row.classList.remove("active"));
+  selected = -1;
+  if (restoreFocus && popupReturnFocus && popupReturnFocus.isConnected) popupReturnFocus.focus();
+  popupReturnFocus = null;
+}
+
+function selectCompany(i, fly, focusPopup = false) {
   selected = i;
   const c = COMPANIES[i];
   markers.forEach((mk, j) => mk.inner.classList.toggle("sel", j === i));
   document.querySelectorAll(".co").forEach((row) => row.classList.toggle("active", Number(row.dataset.idx) === i));
 
   if (openPopup) openPopup.remove();
+  popupReturnFocus = focusPopup ? document.activeElement : null;
   openPopup = new maplibregl.Popup({ offset: 20, closeButton: false, className: "co-pop", maxWidth: "280px" })
     .setLngLat([c.lng, c.lat])
     .setHTML(`
-      <div class="pname">${escapeHTML(c.name)}</div>
-      ${c.tag ? `<div class="ptag">${escapeHTML((getLang() === "es" && c.tag_es) ? c.tag_es : c.tag)}</div>` : ""}
-      ${safeDomainUrl(c.domain) ? `<a class="site" href="${escapeHTML(safeDomainUrl(c.domain))}" target="_blank" rel="noopener">${escapeHTML(c.domain)} ↗</a>` : ""}
-      <div>${viewState.mode === "remote" ? workspaceChip(c) : taxonomyChip(c)}</div>
-      ${c.address ? `<div class="addr">${escapeHTML(c.address)}</div>` : ""}
-      ${sourceDetails(c)}
+      <div class="popup-card" role="dialog" aria-labelledby="popupTitle">
+        <button type="button" class="popup-close" aria-label="${escapeHTML(t("close"))}">×</button>
+        <div class="pname" id="popupTitle">${escapeHTML(c.name)}</div>
+        ${c.tag ? `<div class="ptag">${escapeHTML((getLang() === "es" && c.tag_es) ? c.tag_es : c.tag)}</div>` : ""}
+        ${safeDomainUrl(c.domain) ? `<a class="site" href="${escapeHTML(safeDomainUrl(c.domain))}" target="_blank" rel="noopener">${escapeHTML(c.domain)} ↗</a>` : ""}
+        <div>${viewState.mode === "remote" ? workspaceChip(c) : taxonomyChip(c)}</div>
+        ${c.address ? `<div class="addr">${escapeHTML(c.address)}</div>` : ""}
+        ${sourceDetails(c)}
+      </div>
     `).addTo(map);
 
+  const popupCloseButtons = document.querySelectorAll(".popup-close");
+  const popupClose = popupCloseButtons[popupCloseButtons.length - 1];
+  if (popupClose) {
+    popupClose.addEventListener("click", () => closeCompanySelection(true));
+    if (focusPopup) popupClose.focus();
+  }
+
   if (fly) map.flyTo({ center: [c.lng, c.lat], zoom: 16, padding: flyPadding(), duration: 1500, essential: true });
-  if (isMobile()) document.getElementById("panel").classList.remove("expanded");
+  if (isMobile() && !focusPopup) setMobilePanelExpanded(false);
 }
 // Rebuilds the open popup (if any) from the current language — selectCompany() always
 // reads getLang() fresh, so re-running it is enough to pick up the new tag_es/tag.
@@ -1414,10 +1462,15 @@ window.__pgRefreshPopup = () => { if (openPopup && selected >= 0) selectCompany(
 
 map.on("click", () => {
   if (addMode) return;
-  if (openPopup) { openPopup.remove(); openPopup = null; }
-  markers.forEach(mk => mk.inner.classList.remove("sel"));
-  document.querySelectorAll(".co").forEach(row => row.classList.remove("active"));
-  selected = -1;
+  closeCompanySelection(false);
+});
+
+document.addEventListener("keydown", (event) => {
+  const modalOpen = document.getElementById("scrim")?.classList.contains("open");
+  if (event.key === "Escape" && openPopup && !modalOpen) {
+    event.preventDefault();
+    closeCompanySelection(true);
+  }
 });
 
 function buildSidebar() {
@@ -1438,16 +1491,17 @@ function buildSidebar() {
   if (sortMode === "alpha") order.sort((a, b) => COMPANIES[a].name.localeCompare(COMPANIES[b].name));
   order.forEach((i) => {
     const c = COMPANIES[i];
-    const row = document.createElement("div");
+    const row = document.createElement("button");
+    row.type = "button";
     row.className = "co" + (i === selected ? " active" : "");
     row.dataset.idx = i;
     row.innerHTML = `
       <span class="prefix">></span>
-      <div class="logo"></div>
-      <div class="meta"><div class="name">${escapeHTML(c.name)}</div></div>
-      <div class="tag">${escapeHTML(viewState.mode === "remote" ? workspaceTypeLabel(c.workspace_type) : companySubcategory(c) || companyCategory(c))}</div>`;
+      <span class="logo"></span>
+      <span class="meta"><span class="name">${escapeHTML(c.name)}</span></span>
+      <span class="tag">${escapeHTML(viewState.mode === "remote" ? workspaceTypeLabel(c.workspace_type) : companySubcategory(c) || companyCategory(c))}</span>`;
     mountLogo(row.querySelector(".logo"), c, true);
-    row.addEventListener("click", () => selectCompany(i, true));
+    row.addEventListener("click", (event) => selectCompany(i, true, event.detail === 0));
     list.appendChild(row);
   });
 }
@@ -1601,11 +1655,31 @@ function startStatusBar() {
 
 // ---------- Mobile sheet ----------
 const panel = document.getElementById("panel");
+const panelHandle = document.getElementById("handle");
+function setMobilePanelExpanded(expanded) {
+  panel.classList.toggle("expanded", expanded);
+  panelHandle.setAttribute("aria-expanded", String(expanded));
+  const hidePanelContent = isMobile() && !expanded;
+  [".panel-head", ".panel-list", ".panel-foot"].forEach(selector => {
+    const content = panel.querySelector(selector);
+    if (content) content.inert = hidePanelContent;
+  });
+}
 document.getElementById("panelHead").addEventListener("click", (e) => {
   if (e.target.closest("button, select, label")) return;
-  if (isMobile()) panel.classList.toggle("expanded");
+  if (isMobile()) setMobilePanelExpanded(!panel.classList.contains("expanded"));
 });
-document.getElementById("handle").addEventListener("click", () => panel.classList.toggle("expanded"));
+panelHandle.addEventListener("click", () => setMobilePanelExpanded(!panel.classList.contains("expanded")));
+let previousMobileViewport = null;
+function syncMobilePanelViewport() {
+  const mobileViewport = isMobile();
+  const keepExpanded = mobileViewport && previousMobileViewport === true
+    && panel.classList.contains("expanded");
+  setMobilePanelExpanded(keepExpanded);
+  previousMobileViewport = mobileViewport;
+}
+syncMobilePanelViewport();
+window.addEventListener("resize", syncMobilePanelViewport);
 
 // :hover can't pause the ticker on touch devices — tap toggles a class that does the same.
 document.getElementById("ticker").addEventListener("click", (e) => {
@@ -1635,7 +1709,12 @@ toggleStage();
 
 const modelSelect = document.getElementById("modelSelect");
 const locationField = document.getElementById("locationField");
-function toggleLocation() { locationField.style.display = modelSelect.value === "Remote" ? "none" : ""; }
+let tempPin = null;
+function toggleLocation() {
+  const remote = modelSelect.value === "Remote";
+  locationField.style.display = remote ? "none" : "";
+  if (remote) clearTemporaryPin();
+}
 modelSelect.addEventListener("change", toggleLocation);
 toggleLocation();
 const modalTitle = document.getElementById("modalTitle");
@@ -1644,7 +1723,17 @@ const entityNameInput = document.getElementById("entityNameInput");
 const submittedBody = document.getElementById("submittedBody");
 let workspaceModal = false;
 let workspacePrefillRestore = null;
+let modalTrigger = null;
+let formSubmissionPending = false;
+let addModeCanvasState = null;
+function setModalBackgroundInert(on) {
+  [...document.body.children].forEach(element => {
+    if (element !== scrim) element.inert = on;
+  });
+}
 function openAddModal(workspace = false) {
+  if (formSubmissionPending) workspace = workspaceModal;
+  if (!scrim.classList.contains("open")) modalTrigger = document.activeElement;
   const titleKey = workspace ? "modalWorkspaceTitle" : "modalTitle";
   const nameKey = workspace ? "fWorkspaceName" : "fCompanyName";
   const placeholderKey = workspace ? "pWorkspaceName" : "pCompanyName";
@@ -1678,22 +1767,84 @@ function openAddModal(workspace = false) {
   const modalError = document.getElementById("formError");
   modalError.textContent = "";
   modalError.style.display = "none";
+  document.getElementById("formWrap").style.display = "block";
+  document.getElementById("formSuccess").classList.remove("show");
+  const submitButton = document.getElementById("submitBtn");
+  submitButton.disabled = formSubmissionPending;
+  submitButton.textContent = t(formSubmissionPending ? "submitting" : "submit");
+  document.getElementById("coForm").setAttribute("aria-busy", String(formSubmissionPending));
   workspaceModal = workspace;
   toggleStage();
   toggleLocation();
+  setModalBackgroundInert(true);
   scrim.classList.add("open");
+  requestAnimationFrame(() => entityNameInput.focus());
 }
 document.getElementById("addBtn").onclick = () => openAddModal(false);
 document.getElementById("addWorkspaceBtn").onclick = () => openAddModal(true);
 scrim.addEventListener("click", (e) => { if (e.target === scrim) closeModal(); });
-function closeModal() { scrim.classList.remove("open"); setAddMode(false); }
-function setAddMode(on) { addMode = on; addHint.classList.toggle("show", on); map.getCanvas().style.cursor = on ? "crosshair" : ""; if (on) scrim.classList.remove("open"); }
+scrim.addEventListener("keydown", (event) => {
+  if (event.key !== "Tab") return;
+  const focusable = [...scrim.querySelectorAll("button, input, select, textarea, [tabindex]")]
+    .filter(element => !element.disabled && element.tabIndex >= 0 && element.offsetParent !== null);
+  if (!focusable.length) return;
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape" || !scrim.classList.contains("open")) return;
+  event.preventDefault();
+  closeModal();
+});
+function closeModal() {
+  const returnFocus = modalTrigger;
+  scrim.classList.remove("open");
+  setModalBackgroundInert(false);
+  setAddMode(false);
+  clearTemporaryPin();
+  modalTrigger = null;
+  if (returnFocus && returnFocus.isConnected) returnFocus.focus();
+}
+function setAddMode(on) {
+  addMode = on;
+  addHint.classList.toggle("show", on);
+  const canvas = map.getCanvas();
+  canvas.style.cursor = on ? "crosshair" : "";
+  if (on) {
+    scrim.classList.remove("open");
+    setModalBackgroundInert(false);
+    if (!addModeCanvasState) {
+      addModeCanvasState = {
+        tabindex: canvas.getAttribute("tabindex"),
+        ariaLabel: canvas.getAttribute("aria-label"),
+      };
+    }
+    canvas.setAttribute("tabindex", "0");
+    canvas.setAttribute("aria-label", t("addHint"));
+    requestAnimationFrame(() => canvas.focus());
+  } else if (addModeCanvasState) {
+    if (addModeCanvasState.tabindex === null) canvas.removeAttribute("tabindex");
+    else canvas.setAttribute("tabindex", addModeCanvasState.tabindex);
+    if (addModeCanvasState.ariaLabel === null) canvas.removeAttribute("aria-label");
+    else canvas.setAttribute("aria-label", addModeCanvasState.ariaLabel);
+    addModeCanvasState = null;
+  }
+}
 document.getElementById("dropPin").onclick = () => setAddMode(true);
 
-let tempPin = null;
-map.on("click", (e) => {
-  if (!addMode) return;
-  const { lng, lat } = e.lngLat;
+function clearTemporaryPin() {
+  if (tempPin) { tempPin.remove(); tempPin = null; }
+  document.getElementById("latIn").value = "";
+  document.getElementById("lngIn").value = "";
+  document.getElementById("coordsLabel").textContent = t("noPinSet");
+}
+function placeTemporaryPin({ lng, lat }) {
   document.getElementById("latIn").value = lat.toFixed(6);
   document.getElementById("lngIn").value = lng.toFixed(6);
   document.getElementById("coordsLabel").textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
@@ -1704,11 +1855,32 @@ map.on("click", (e) => {
   wrap.appendChild(inner);
   tempPin = new maplibregl.Marker({ element: wrap, anchor: "center" }).setLngLat([lng, lat]).addTo(map);
   setAddMode(false);
+  setModalBackgroundInert(true);
   scrim.classList.add("open");
+  requestAnimationFrame(() => entityNameInput.focus());
+}
+map.on("click", (e) => {
+  if (!addMode) return;
+  placeTemporaryPin(e.lngLat);
+});
+map.getCanvas().addEventListener("keydown", (event) => {
+  if (!addMode || !["Enter", " "].includes(event.key)) return;
+  event.preventDefault();
+  placeTemporaryPin(map.getCenter());
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape" || !addMode) return;
+  event.preventDefault();
+  setAddMode(false);
+  setModalBackgroundInert(true);
+  scrim.classList.add("open");
+  requestAnimationFrame(() => document.getElementById("dropPin").focus());
 });
 
 document.getElementById("coForm").addEventListener("submit", async (e) => {
   e.preventDefault();
+  const btn = document.getElementById("submitBtn");
+  if (formSubmissionPending) return;
   const errEl = document.getElementById("formError");
   errEl.style.display = "none";
   if (modelSelect.value === "On-Site" && !document.getElementById("latIn").value) {
@@ -1716,7 +1888,8 @@ document.getElementById("coForm").addEventListener("submit", async (e) => {
     errEl.style.display = "block";
     return;
   }
-  const btn = document.getElementById("submitBtn");
+  formSubmissionPending = true;
+  e.target.setAttribute("aria-busy", "true");
   btn.textContent = t("submitting"); btn.disabled = true;
   const data = Object.fromEntries(new FormData(e.target).entries());
   data._subject = workspaceModal ? "New workspace submission — Peru Grid" : "New company submission — Peru Grid";
@@ -1724,10 +1897,15 @@ document.getElementById("coForm").addEventListener("submit", async (e) => {
   try {
     const res = await fetch(FORM_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(data) });
     if (!res.ok) throw new Error("bad response");
+    formSubmissionPending = false;
+    e.target.setAttribute("aria-busy", "false");
     document.getElementById("formWrap").style.display = "none";
     document.getElementById("formSuccess").classList.add("show");
-    if (tempPin) { tempPin.remove(); tempPin = null; }
+    clearTemporaryPin();
+    document.getElementById("successClose").focus();
   } catch (err) {
+    formSubmissionPending = false;
+    e.target.setAttribute("aria-busy", "false");
     btn.textContent = t("tryAgain"); btn.disabled = false;
     errEl.textContent = t("submitError");
     errEl.style.display = "block";

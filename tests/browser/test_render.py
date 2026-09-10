@@ -4,6 +4,7 @@ No son una prueba del renderer WebGL ni de los tiles de producción.
 """
 import json
 from pathlib import Path
+import re
 import sys
 import unittest
 
@@ -14,6 +15,7 @@ sys.path.insert(0, str(ROOT))
 from scripts.benchmark_performance import MAPLIBRE_STUB
 
 HTML = (ROOT / "index.html").read_text(encoding="utf-8")
+FORM_ENDPOINT = re.search(r'const FORM_ENDPOINT = "([^"]+)"', HTML).group(1)
 FIXTURE = json.loads((ROOT / "tests/fixtures/security.json").read_text(encoding="utf-8"))
 # Ejecutar las funciones del producto, no copias de su lógica de renderizado.
 RENDER = HTML.split("// ---------- Companies", 1)[1].split("// ---------- Controls", 1)[0]
@@ -135,6 +137,8 @@ class RenderTests(unittest.TestCase):
 
     def test_workspace_action_prefills_form_and_late_boot_error_restores_loader(self):
         context = self.browser.new_context(locale="es-PE")
+        form_requests = []
+        form_statuses = [200]
 
         def route_request(route):
             url = route.request.url
@@ -148,6 +152,13 @@ class RenderTests(unittest.TestCase):
                 route.fulfill(status=200, content_type="application/javascript", body=MAPLIBRE_STUB)
             elif "maplibre-gl.css" in url or "fonts.googleapis.com" in url:
                 route.fulfill(status=200, content_type="text/css", body="")
+            elif url == FORM_ENDPOINT:
+                form_requests.append(route.request.post_data_json)
+                route.fulfill(
+                    status=form_statuses.pop(0),
+                    content_type="application/json",
+                    body='{"success":true}',
+                )
             else:
                 route.abort()
 
@@ -159,13 +170,48 @@ class RenderTests(unittest.TestCase):
             page.goto("http://perugrid.full/", wait_until="load")
             page.locator("#loader.done").wait_for(timeout=5_000)
             page.wait_for_function("window.__pgMapBootComplete === true", timeout=5_000)
+            page.set_viewport_size({"width": 390, "height": 844})
+            page.wait_for_function("document.getElementById('panelHead').inert === true")
+            self.assertTrue(page.locator("#coList").evaluate("element => element.inert"))
+            page.locator("#handle").click()
+            self.assertIn("expanded", page.locator("#panel").get_attribute("class") or "")
+            self.assertEqual(page.locator("#handle").get_attribute("aria-expanded"), "true")
+            self.assertFalse(page.locator("#panelHead").evaluate("element => element.inert"))
+            self.assertLessEqual(
+                page.locator("#panel").evaluate("panel => panel.scrollWidth"),
+                page.locator("#panel").evaluate("panel => panel.clientWidth"),
+            )
+            page.locator("#handle").click()
+            self.assertNotIn("expanded", page.locator("#panel").get_attribute("class") or "")
+            self.assertEqual(page.locator("#handle").get_attribute("aria-expanded"), "false")
+            self.assertTrue(page.locator("#panelHead").evaluate("element => element.inert"))
+            self.assertTrue(page.locator("#coList").evaluate("element => element.inert"))
+            page.set_viewport_size({"width": 1280, "height": 800})
             page.locator('label.mode-choice:has([data-view-mode="remote"])').click()
             page.evaluate("modelSelect.value = 'Hybrid'")
             workspace_button = page.locator("#addWorkspaceBtn")
             self.assertTrue(workspace_button.is_visible())
             self.assertGreaterEqual(workspace_button.evaluate("button => button.getBoundingClientRect().height"), 40)
+            workspace_button.focus()
             workspace_button.click()
             self.assertTrue(page.locator("#scrim").evaluate("scrim => scrim.classList.contains('open')"))
+            self.assertEqual(page.locator(".modal").get_attribute("role"), "dialog")
+            self.assertEqual(page.locator(".modal").get_attribute("aria-modal"), "true")
+            self.assertEqual(page.locator(".modal").get_attribute("aria-labelledby"), "modalTitle")
+            self.assertTrue(page.locator("#panel").evaluate("panel => panel.inert"))
+            page.wait_for_function("document.activeElement === document.getElementById('entityNameInput')")
+            self.assertTrue(page.locator("#coForm input:not([type=hidden]), #coForm select").evaluate_all(
+                "controls => controls.every(control => control.labels && control.labels.length === 1)"
+            ))
+            page.locator("#submitBtn").focus()
+            page.keyboard.press("Tab")
+            self.assertTrue(page.locator("#closeModal").evaluate("el => el === document.activeElement"))
+            page.keyboard.press("Escape")
+            self.assertFalse(page.locator("#scrim").evaluate("scrim => scrim.classList.contains('open')"))
+            self.assertFalse(page.locator("#panel").evaluate("panel => panel.inert"))
+            self.assertTrue(workspace_button.evaluate("el => el === document.activeElement"))
+            workspace_button.click()
+            page.wait_for_function("document.activeElement === document.getElementById('entityNameInput')")
             self.assertEqual(page.locator("#catSelect").input_value(), "Coworking Space")
             self.assertEqual(page.locator("#modelSelect").input_value(), "On-Site")
             self.assertEqual(page.locator('#coForm [name="City"]').input_value(), "lima")
@@ -177,7 +223,46 @@ class RenderTests(unittest.TestCase):
                 "form => form.dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}))"
             )
             self.assertEqual(page.locator("#formError").text_content(), page.evaluate("t('workspacePinRequired')"))
-            page.locator("#closeModal").click()
+
+            canvas = page.locator("#map canvas")
+            original_canvas_tabindex = canvas.get_attribute("tabindex")
+            original_canvas_label = canvas.get_attribute("aria-label")
+            page.locator("#dropPin").click()
+            self.assertFalse(page.locator("#scrim").evaluate("element => element.classList.contains('open')"))
+            page.wait_for_function("document.activeElement === document.querySelector('#map canvas')")
+            page.keyboard.press("Escape")
+            self.assertTrue(page.locator("#scrim").evaluate("element => element.classList.contains('open')"))
+            page.wait_for_function("document.activeElement === document.getElementById('dropPin')")
+            self.assertEqual(canvas.get_attribute("tabindex"), original_canvas_tabindex)
+            self.assertEqual(canvas.get_attribute("aria-label"), original_canvas_label)
+            page.locator("#dropPin").click()
+            page.wait_for_function("document.activeElement === document.querySelector('#map canvas')")
+            page.keyboard.press("Enter")
+            self.assertTrue(page.locator("#scrim").evaluate("element => element.classList.contains('open')"))
+            self.assertNotEqual(page.locator("#latIn").input_value(), "")
+            self.assertNotEqual(page.locator("#lngIn").input_value(), "")
+            self.assertEqual(canvas.get_attribute("tabindex"), original_canvas_tabindex)
+            self.assertEqual(canvas.get_attribute("aria-label"), original_canvas_label)
+
+            page.locator("#entityNameInput").fill("Espacio QA")
+            page.locator("#websiteInput").fill("qa.example.org")
+            disabled_during_request = page.locator("#coForm").evaluate(
+                """form => {
+                  const submit = () => form.dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}));
+                  submit();
+                  const disabled = document.getElementById('submitBtn').disabled;
+                  submit();
+                  return disabled;
+                }"""
+            )
+            self.assertTrue(disabled_during_request)
+            page.locator("#formSuccess.show").wait_for()
+            self.assertEqual(len(form_requests), 1)
+            self.assertEqual(form_requests[0]["_subject"], "New workspace submission — Peru Grid")
+            self.assertEqual(form_requests[0]["Category"], "Coworking Space")
+
+            page.locator("#successClose").click()
+            self.assertTrue(workspace_button.evaluate("el => el === document.activeElement"))
             page.locator("#addBtn").click()
             self.assertEqual(page.locator("#catSelect").input_value(), "Startup")
             self.assertEqual(page.locator("#modelSelect").input_value(), "Hybrid")
@@ -185,6 +270,61 @@ class RenderTests(unittest.TestCase):
             self.assertEqual(page.locator("#entityNameLabel").get_attribute("data-i18n"), "fCompanyName")
             self.assertEqual(page.locator("#entityNameInput").get_attribute("data-i18n-placeholder"), "pCompanyName")
             self.assertTrue(page.locator("#formError").is_hidden())
+            self.assertTrue(page.locator("#formSuccess").is_hidden())
+            self.assertEqual(page.locator("#latIn").input_value(), "")
+            self.assertEqual(page.locator("#lngIn").input_value(), "")
+            page.locator("#entityNameInput").fill("Empresa QA")
+            page.locator("#websiteInput").fill("company.example.org")
+            page.evaluate("latIn.value = '-12.122'; lngIn.value = '-77.031'")
+            page.locator("#modelSelect").select_option("Remote")
+            self.assertEqual(page.locator("#latIn").input_value(), "")
+            self.assertEqual(page.locator("#lngIn").input_value(), "")
+            self.assertTrue(page.locator("#locationField").is_hidden())
+            page.locator("#modelSelect").select_option("On-Site")
+            page.locator("#coForm").evaluate(
+                "form => form.dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}))"
+            )
+            self.assertEqual(len(form_requests), 1)
+            self.assertEqual(page.locator("#formError").text_content(), page.evaluate("t('pinRequired')"))
+            page.evaluate(
+                """endpoint => {
+                  window.__pendingPayloads = [];
+                  window.fetch = (url, options = {}) => {
+                    if (url !== endpoint) throw new Error(`unexpected fetch: ${url}`);
+                    window.__pendingPayloads.push(JSON.parse(options.body));
+                    return new Promise(resolve => {
+                      window.__finishPending = () => resolve(new Response('{"success":false}', {
+                        status: 500,
+                        headers: {'Content-Type': 'application/json'}
+                      }));
+                    });
+                  };
+                }""",
+                FORM_ENDPOINT,
+            )
+            page.evaluate("latIn.value = '-12.122'; lngIn.value = '-77.031'")
+            page.locator("#coForm").evaluate(
+                "form => form.dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}))"
+            )
+            self.assertTrue(page.locator("#submitBtn").is_disabled())
+            self.assertEqual(page.locator("#coForm").get_attribute("aria-busy"), "true")
+            page.locator("#closeModal").click()
+            page.locator("#addBtn").click()
+            self.assertTrue(page.locator("#submitBtn").is_disabled())
+            page.locator("#coForm").evaluate(
+                "form => form.dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}))"
+            )
+            self.assertEqual(page.evaluate("window.__pendingPayloads.length"), 1)
+            page.evaluate("window.__finishPending()")
+            page.locator("#formError").wait_for(state="visible")
+            self.assertEqual(
+                page.evaluate("window.__pendingPayloads[0]._subject"),
+                "New company submission — Peru Grid",
+            )
+            self.assertEqual(page.locator("#coForm").get_attribute("aria-busy"), "false")
+            self.assertFalse(page.locator("#submitBtn").is_disabled())
+            self.assertEqual(page.locator("#submitBtn").text_content(), page.evaluate("t('tryAgain')"))
+            self.assertEqual(page.locator("#formError").text_content(), page.evaluate("t('submitError')"))
             page.locator("#closeModal").click()
             page.evaluate("window.showBootError('late map failure')")
             self.assertFalse(page.locator("#loader").evaluate("loader => loader.classList.contains('done')"))
@@ -193,6 +333,32 @@ class RenderTests(unittest.TestCase):
             self.assertEqual(errors, [])
         finally:
             context.close()
+
+    def test_places_and_popups_support_keyboard_navigation(self):
+        companies = json.loads((ROOT / "companies.json").read_text(encoding="utf-8"))
+        self.page.evaluate("data => { ALL_COMPANIES = data; applyCity('lima'); }", companies)
+
+        row = self.page.locator(".co").first
+        marker = self.page.locator(".co-marker").first
+        self.assertEqual(row.evaluate("element => element.tagName"), "BUTTON")
+        self.assertEqual(marker.get_attribute("role"), "button")
+        self.assertEqual(marker.get_attribute("tabindex"), "0")
+
+        row.focus()
+        row.press("Enter")
+        popup = self.page.locator(".test-popup .popup-card")
+        self.assertEqual(popup.get_attribute("role"), "dialog")
+        self.assertEqual(popup.get_attribute("aria-labelledby"), "popupTitle")
+        self.assertTrue(self.page.locator(".popup-close").evaluate("el => el === document.activeElement"))
+        self.page.keyboard.press("Escape")
+        self.assertEqual(self.page.locator(".test-popup").count(), 0)
+        self.assertTrue(row.evaluate("el => el === document.activeElement"))
+
+        marker.focus()
+        marker.press("Space")
+        self.assertEqual(self.page.locator(".test-popup").count(), 1)
+        self.page.locator(".popup-close").press("Enter")
+        self.assertTrue(marker.evaluate("el => el === document.activeElement"))
 
     def set_categories(self, *categories):
         wanted = set(categories)

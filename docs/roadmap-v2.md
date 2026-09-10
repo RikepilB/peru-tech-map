@@ -52,18 +52,15 @@ borrador → en revisión → publicado, sin abrir contribuciones públicas toda
 ## Qué pasa con el backlog de V1 mientras tanto
 
 V1 (el sitio estático actual) sigue siendo la fuente de verdad y se mantiene como fallback
-hasta que V2 pase #30. Backlog abierto que **no** se bloquea por V2 y puede seguir avanzando
-en paralelo sobre `companies.json`:
+hasta que V2 pase #30. La taxonomía de #17/#19 y las decisiones de DATA-01/#12 ya forman parte
+de esa fuente y se migrarán desde `companies.json`. El backlog V1 que sigue abierto es:
 
-- [#17](https://github.com/RikepilB/peru-tech-map/issues/17) / [#19](https://github.com/RikepilB/peru-tech-map/issues/19)
-  — taxonomía `category`/`subcategory` + rework de sidebar. Si aterriza antes de #25, ese
-  esquema se migra tal cual al modelo de datos de V2; si no, #25 lo re-deriva desde cero.
 - [#11](https://github.com/RikepilB/peru-tech-map/issues/11) — entradas de coworking/café
   pendientes de verificar (Regus/WeWork sedes adicionales, Casatomada, Caleta Dolsa,
   Biblioteca San Isidro — direcciones sin confirmar con precisión de pin).
-- [#12](https://github.com/RikepilB/peru-tech-map/issues/12) — candidatos restantes
-  (Tekton Labs, Netzun, TuRuta) verificados con datos reales, pendientes de añadir a
-  `companies.json`.
+
+El modo Trabajar remoto ya existe en V1. #28 conserva alcance V2 para migrar esa experiencia a
+datos publicados por el backend/API, sin rebajar las reglas actuales de fuente y revisión.
 
 Cualquier dato añadido a `companies.json` antes de [#25] se migra automáticamente — esa
 migración parte precisamente de las 89 entradas actuales, no de un snapshot congelado.

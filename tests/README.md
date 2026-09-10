@@ -78,4 +78,5 @@ Una segunda importación idéntica informa `added=0, unchanged=1` y no reescribe
 `fixtures/scout_perugrid_v1.json` se generó con el exportador real de Scout a partir de su
 fixture `synthetic_perugrid_candidate.json`; contiene solo nombres e IDs sintéticos. Su URL
 identifica este fixture público de integración y no constituye evidencia sobre una sede real.
-La prueba integral usa una copia temporal de las 90 entradas y nunca agrega la sede a este repo.
+La prueba integral parte de las 89 entradas actuales, produce un total temporal de 90 y nunca
+agrega la sede sintética a este repo.

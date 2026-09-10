@@ -143,11 +143,24 @@ delay => {
   window.__perfFirstUsefulListMs = null;
   window.__perfMapLoadMs = null;
   window.__perfLoaderDismissMs = null;
+  window.__perfFirstUsefulListError = null;
   const observe = () => {
     const record = () => {
       const count = document.getElementById('coCount');
       if (window.__perfListCountMs === null && count && /^\d+ /.test(count.textContent || '')) {
         window.__perfListCountMs = performance.now();
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          const counts = {
+            label: parseInt(document.getElementById('coCount').textContent, 10),
+            rows: document.querySelectorAll('.co').length,
+            markers: document.querySelectorAll('.co-marker').length,
+          };
+          if (counts.label && counts.label === counts.rows && counts.rows === counts.markers) {
+            window.__perfFirstUsefulListMs = performance.now();
+          } else {
+            window.__perfFirstUsefulListError = counts;
+          }
+        }));
       }
       const loader = document.getElementById('loader');
       if (window.__perfLoaderDismissMs === null && loader && loader.classList.contains('done')) {
@@ -202,20 +215,24 @@ def configure_context(context: BrowserContext, map_delay_ms: int, external_reque
 
 
 def wait_for_list(page: Page) -> None:
-    page.wait_for_function("window.__perfListCountMs !== null", timeout=10_000)
+    page.wait_for_function(
+        "window.__perfFirstUsefulListMs !== null || window.__perfFirstUsefulListError !== null",
+        timeout=10_000,
+    )
     counts = page.evaluate(
-        """async () => {
-          await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-          const counts = {
+        """() => ({
             label: parseInt(document.getElementById('coCount').textContent, 10),
             rows: document.querySelectorAll('.co').length,
             markers: document.querySelectorAll('.co-marker').length,
-          };
-          window.__perfFirstUsefulListMs = performance.now();
-          return counts;
-        }"""
+            error: window.__perfFirstUsefulListError,
+          })"""
     )
-    if not counts["label"] or counts["label"] != counts["rows"] or counts["rows"] != counts["markers"]:
+    if (
+        counts["error"]
+        or not counts["label"]
+        or counts["label"] != counts["rows"]
+        or counts["rows"] != counts["markers"]
+    ):
         raise RuntimeError(f"first useful list is inconsistent: {counts}")
 
 
@@ -627,7 +644,24 @@ def run_benchmark(
         bool(sample["list_before_map_load"]) and bool(sample["content_ready_before_map_load"])
         for sample in cold + warm
     ):
-        raise RuntimeError("the usable list and dismissed loader did not precede the synthetic map load")
+        failed_samples = [
+            {
+                key: sample[key]
+                for key in (
+                    "mode",
+                    "run",
+                    "first_useful_list_ms",
+                    "loader_dismiss_ms",
+                    "map_load_ms",
+                )
+            }
+            for sample in cold + warm
+            if not sample["list_before_map_load"] or not sample["content_ready_before_map_load"]
+        ]
+        raise RuntimeError(
+            "the usable list and dismissed loader did not precede the synthetic map load: "
+            f"{failed_samples}"
+        )
     all_errors = [error for sample in cold + warm for error in sample["page_errors"]]
     if all_errors:
         raise RuntimeError(f"browser page errors detected: {all_errors}")

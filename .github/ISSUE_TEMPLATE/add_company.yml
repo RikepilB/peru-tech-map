@@ -1,5 +1,5 @@
 name: Agregar Empresa / Lugar
-description: Sugiere una startup, consultora, coworking, incubadora, fondo, u ONG para agregar al mapa.
+description: Sugiere una startup, consultora tecnológica, coworking, incubadora, aceleradora, VC u ONG para agregar al mapa.
 title: "[Agregar]: "
 labels: ["add-company"]
 body:
@@ -41,14 +41,24 @@ body:
       label: Categoría
       options:
         - Startup
-        - Consultancy
-        - Coworking
+        - Technology Consultancy
+        - Coworking Space
         - Incubator
+        - Accelerator
+        - VC
         - Nonprofit
-        - Fund
-        - Acquired
     validations:
       required: true
+  - type: dropdown
+    id: subcategory
+    attributes:
+      label: Etapa De Startup (Opcional)
+      description: Completa este campo solo cuando la categoría sea Startup.
+      options:
+        - Pre-Seed
+        - Seed
+        - Bootstrap
+        - Series A+
   - type: input
     id: source
     attributes:
