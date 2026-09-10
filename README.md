@@ -122,6 +122,10 @@ El paquete admite hasta 10 MiB, 1.000 sedes y 100 fuentes por sede; los diagnós
 fixture sintético identifica la prueba pública; no es evidencia
 sobre una sede real y su registro no forma parte del dataset público.
 
+En la vista **Trabajar remoto**, **Agregar espacio** reutiliza el formulario público con
+Coworking Space, On-Site y la ciudad activa preseleccionados. Cada envío sigue pasando por revisión
+manual; Coworking Scout funciona detrás del dataset y no expone claves ni controles técnicos.
+
 ### Filtros Del Mapa
 
 El selector de ancho completo **Qué quieres ver** empieza en `Empresas`, la vista inicial que
@@ -161,15 +165,15 @@ Luego abre **http://localhost:8000**.
 
 ### Medir el shell y los filtros
 
-La línea base PERF-00 usa Chromium y un doble determinista del mapa para comparar el shell,
+PERF-00 y PERF-01 usan Chromium y un doble determinista del mapa para comparar el shell,
 los datos y las interacciones sin depender de tiles públicos:
 
 ```powershell
-python scripts/benchmark_performance.py --runs 5
+python scripts/benchmark_performance.py --runs 5 --require-list-before-map-load --require-no-repeated-set-data
 ```
 
-El reporte y sus límites están en
-[`docs/performance/perf00-browser-baseline-2026-09-09.md`](docs/performance/perf00-browser-baseline-2026-09-09.md).
+Consulta la [línea base PERF-00](docs/performance/perf00-browser-baseline-2026-09-09.md) y el
+[resultado PERF-01](docs/performance/perf01-browser-after-2026-09-09.md), con sus límites y trazas.
 
 ---
 
