@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "captured_at": "2026-09-10T02:43:50.682026Z",
+  "captured_at": "2026-09-10T02:56:30.855154Z",
   "git": {
-    "repository_head": "3e14fff2021b36f44b155aab3c03d118a0fd3a1d",
+    "repository_head": "db3baa547be7ec68f4752e160472c71a53ff7ff9",
     "comparison_base": "51692bf7b665a525275258437ed33cb399ac0979",
     "index_sha256": "f9061f5beaf4b5d99c78d672e8a6749231ace254018c0df0cdc58865dbbaa88d",
-    "benchmark_sha256": "f31e567eea7cfb393e527d773f4601f611fccbc73090298650393b012727ae55"
+    "benchmark_sha256": "5cd3027c6d66e75313e738eb4a977be4ef01b1d788aea52082afc1c97bbbeeb5"
   },
   "environment": {
     "platform": "Windows-11-10.0.26200-SP0",
@@ -42,14 +42,15 @@
       {
         "mode": "cold",
         "run": 1,
-        "first_useful_list_ms": 214.19999999552965,
-        "list_count_ready_ms": 75.5,
-        "map_load_ms": 231.09999999403954,
+        "first_useful_list_ms": 204.10000000149012,
+        "list_count_ready_ms": 72.10000000149012,
+        "map_load_ms": 237,
         "list_before_map_load": true,
-        "loader_dismiss_ms": 75.5,
+        "loader_dismiss_ms": 72.10000000149012,
         "content_ready_before_map_load": true,
         "visible_rows": 38,
         "marker_count": 38,
+        "page_errors": [],
         "first_party_network": {
           "request_count": 4,
           "transfer_bytes": 164923,
@@ -60,48 +61,48 @@
           "prefetch_cache_hits": 0,
           "responses": [
             {
-              "url": "http://127.0.0.1:64056/",
+              "url": "http://127.0.0.1:60026/",
               "status": 200,
               "transfer_bytes": 100200,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/companies.json",
+              "url": "http://127.0.0.1:60026/companies.json",
               "status": 200,
               "transfer_bytes": 53819,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/ticker.json",
+              "url": "http://127.0.0.1:60026/ticker.json",
               "status": 200,
               "transfer_bytes": 2231,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/assets/logos/dialogus.png",
+              "url": "http://127.0.0.1:60026/assets/logos/dialogus.png",
               "status": 200,
               "transfer_bytes": 8673,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             }
           ]
-        },
-        "page_errors": []
+        }
       },
       {
         "mode": "cold",
         "run": 2,
-        "first_useful_list_ms": 241,
-        "list_count_ready_ms": 81.89999999850988,
-        "map_load_ms": 272.8999999985099,
+        "first_useful_list_ms": 179.5,
+        "list_count_ready_ms": 67.5,
+        "map_load_ms": 223.70000000298023,
         "list_before_map_load": true,
-        "loader_dismiss_ms": 81.89999999850988,
+        "loader_dismiss_ms": 67.5,
         "content_ready_before_map_load": true,
         "visible_rows": 38,
         "marker_count": 38,
+        "page_errors": [],
         "first_party_network": {
           "request_count": 4,
           "transfer_bytes": 164923,
@@ -112,48 +113,48 @@
           "prefetch_cache_hits": 0,
           "responses": [
             {
-              "url": "http://127.0.0.1:64056/",
+              "url": "http://127.0.0.1:60026/",
               "status": 200,
               "transfer_bytes": 100200,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/companies.json",
+              "url": "http://127.0.0.1:60026/companies.json",
               "status": 200,
               "transfer_bytes": 53819,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/ticker.json",
+              "url": "http://127.0.0.1:60026/ticker.json",
               "status": 200,
               "transfer_bytes": 2231,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/assets/logos/dialogus.png",
+              "url": "http://127.0.0.1:60026/assets/logos/dialogus.png",
               "status": 200,
               "transfer_bytes": 8673,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             }
           ]
-        },
-        "page_errors": []
+        }
       },
       {
         "mode": "cold",
         "run": 3,
-        "first_useful_list_ms": 217.5,
-        "list_count_ready_ms": 82.10000000149012,
-        "map_load_ms": 234.79999999701977,
+        "first_useful_list_ms": 183.60000000149012,
+        "list_count_ready_ms": 72,
+        "map_load_ms": 233.5,
         "list_before_map_load": true,
-        "loader_dismiss_ms": 82.10000000149012,
+        "loader_dismiss_ms": 72,
         "content_ready_before_map_load": true,
         "visible_rows": 38,
         "marker_count": 38,
+        "page_errors": [],
         "first_party_network": {
           "request_count": 4,
           "transfer_bytes": 164923,
@@ -164,48 +165,48 @@
           "prefetch_cache_hits": 0,
           "responses": [
             {
-              "url": "http://127.0.0.1:64056/",
+              "url": "http://127.0.0.1:60026/",
               "status": 200,
               "transfer_bytes": 100200,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/companies.json",
+              "url": "http://127.0.0.1:60026/companies.json",
               "status": 200,
               "transfer_bytes": 53819,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/ticker.json",
+              "url": "http://127.0.0.1:60026/ticker.json",
               "status": 200,
               "transfer_bytes": 2231,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/assets/logos/dialogus.png",
+              "url": "http://127.0.0.1:60026/assets/logos/dialogus.png",
               "status": 200,
               "transfer_bytes": 8673,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             }
           ]
-        },
-        "page_errors": []
+        }
       },
       {
         "mode": "cold",
         "run": 4,
-        "first_useful_list_ms": 228.89999999850988,
-        "list_count_ready_ms": 91.09999999403954,
-        "map_load_ms": 229.5,
+        "first_useful_list_ms": 209.89999999850988,
+        "list_count_ready_ms": 67.60000000149012,
+        "map_load_ms": 222.19999999552965,
         "list_before_map_load": true,
-        "loader_dismiss_ms": 91.09999999403954,
+        "loader_dismiss_ms": 67.60000000149012,
         "content_ready_before_map_load": true,
         "visible_rows": 38,
         "marker_count": 38,
+        "page_errors": [],
         "first_party_network": {
           "request_count": 4,
           "transfer_bytes": 164923,
@@ -216,48 +217,48 @@
           "prefetch_cache_hits": 0,
           "responses": [
             {
-              "url": "http://127.0.0.1:64056/",
+              "url": "http://127.0.0.1:60026/",
               "status": 200,
               "transfer_bytes": 100200,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/companies.json",
+              "url": "http://127.0.0.1:60026/companies.json",
               "status": 200,
               "transfer_bytes": 53819,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/ticker.json",
+              "url": "http://127.0.0.1:60026/ticker.json",
               "status": 200,
               "transfer_bytes": 2231,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/assets/logos/dialogus.png",
+              "url": "http://127.0.0.1:60026/assets/logos/dialogus.png",
               "status": 200,
               "transfer_bytes": 8673,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             }
           ]
-        },
-        "page_errors": []
+        }
       },
       {
         "mode": "cold",
         "run": 5,
-        "first_useful_list_ms": 233.60000000149012,
-        "list_count_ready_ms": 89.80000000447035,
-        "map_load_ms": 277.1000000014901,
+        "first_useful_list_ms": 210.60000000149012,
+        "list_count_ready_ms": 75.29999999701977,
+        "map_load_ms": 227.39999999850988,
         "list_before_map_load": true,
-        "loader_dismiss_ms": 89.80000000447035,
+        "loader_dismiss_ms": 75.29999999701977,
         "content_ready_before_map_load": true,
         "visible_rows": 38,
         "marker_count": 38,
+        "page_errors": [],
         "first_party_network": {
           "request_count": 4,
           "transfer_bytes": 164923,
@@ -268,362 +269,396 @@
           "prefetch_cache_hits": 0,
           "responses": [
             {
-              "url": "http://127.0.0.1:64056/",
+              "url": "http://127.0.0.1:60026/",
               "status": 200,
               "transfer_bytes": 100200,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/companies.json",
+              "url": "http://127.0.0.1:60026/companies.json",
               "status": 200,
               "transfer_bytes": 53819,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/ticker.json",
+              "url": "http://127.0.0.1:60026/ticker.json",
               "status": 200,
               "transfer_bytes": 2231,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/assets/logos/dialogus.png",
+              "url": "http://127.0.0.1:60026/assets/logos/dialogus.png",
               "status": 200,
               "transfer_bytes": 8673,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             }
           ]
-        },
-        "page_errors": []
+        }
       }
     ],
     "warm": [
       {
         "mode": "warm",
         "run": 1,
-        "first_useful_list_ms": 172.30000000447035,
-        "list_count_ready_ms": 39.600000001490116,
-        "map_load_ms": 239.80000000447035,
+        "first_useful_list_ms": 161.40000000596046,
+        "list_count_ready_ms": 27.30000000447035,
+        "map_load_ms": 218.10000000149012,
         "list_before_map_load": true,
-        "loader_dismiss_ms": 39.70000000298023,
+        "loader_dismiss_ms": 27.30000000447035,
         "content_ready_before_map_load": true,
         "visible_rows": 38,
         "marker_count": 38,
+        "page_errors": [],
         "first_party_network": {
-          "request_count": 4,
-          "transfer_bytes": 164923,
+          "request_count": 5,
+          "transfer_bytes": 173596,
           "status_counts": {
-            "200": 4
+            "200": 5
           },
           "disk_cache_hits": 0,
           "prefetch_cache_hits": 0,
           "responses": [
             {
-              "url": "http://127.0.0.1:64056/",
+              "url": "http://127.0.0.1:60026/",
               "status": 200,
               "transfer_bytes": 100200,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/companies.json",
+              "url": "http://127.0.0.1:60026/companies.json",
               "status": 200,
               "transfer_bytes": 53819,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/ticker.json",
+              "url": "http://127.0.0.1:60026/ticker.json",
               "status": 200,
               "transfer_bytes": 2231,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/assets/logos/dialogus.png",
+              "url": "http://127.0.0.1:60026/assets/logos/dialogus.png",
+              "status": 200,
+              "transfer_bytes": 8673,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:60026/assets/logos/dialogus.png",
               "status": 200,
               "transfer_bytes": 8673,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             }
           ]
-        },
-        "page_errors": []
+        }
       },
       {
         "mode": "warm",
         "run": 2,
-        "first_useful_list_ms": 175.79999999701977,
-        "list_count_ready_ms": 46.100000001490116,
-        "map_load_ms": 244.39999999850988,
+        "first_useful_list_ms": 138.19999999552965,
+        "list_count_ready_ms": 31.69999999552965,
+        "map_load_ms": 237.29999999701977,
         "list_before_map_load": true,
-        "loader_dismiss_ms": 46.100000001490116,
+        "loader_dismiss_ms": 31.69999999552965,
         "content_ready_before_map_load": true,
         "visible_rows": 38,
         "marker_count": 38,
+        "page_errors": [],
         "first_party_network": {
-          "request_count": 4,
-          "transfer_bytes": 164923,
+          "request_count": 5,
+          "transfer_bytes": 173596,
           "status_counts": {
-            "200": 4
+            "200": 5
           },
           "disk_cache_hits": 0,
           "prefetch_cache_hits": 0,
           "responses": [
             {
-              "url": "http://127.0.0.1:64056/",
+              "url": "http://127.0.0.1:60026/",
               "status": 200,
               "transfer_bytes": 100200,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/companies.json",
+              "url": "http://127.0.0.1:60026/companies.json",
               "status": 200,
               "transfer_bytes": 53819,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/ticker.json",
+              "url": "http://127.0.0.1:60026/ticker.json",
               "status": 200,
               "transfer_bytes": 2231,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/assets/logos/dialogus.png",
+              "url": "http://127.0.0.1:60026/assets/logos/dialogus.png",
+              "status": 200,
+              "transfer_bytes": 8673,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:60026/assets/logos/dialogus.png",
               "status": 200,
               "transfer_bytes": 8673,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             }
           ]
-        },
-        "page_errors": []
+        }
       },
       {
         "mode": "warm",
         "run": 3,
-        "first_useful_list_ms": 194.10000000149012,
-        "list_count_ready_ms": 38.100000001490116,
-        "map_load_ms": 228.60000000149012,
+        "first_useful_list_ms": 160,
+        "list_count_ready_ms": 28.30000000447035,
+        "map_load_ms": 222.30000000447035,
         "list_before_map_load": true,
-        "loader_dismiss_ms": 38.100000001490116,
+        "loader_dismiss_ms": 28.30000000447035,
         "content_ready_before_map_load": true,
         "visible_rows": 38,
         "marker_count": 38,
+        "page_errors": [],
         "first_party_network": {
-          "request_count": 4,
-          "transfer_bytes": 164923,
+          "request_count": 5,
+          "transfer_bytes": 173596,
           "status_counts": {
-            "200": 4
+            "200": 5
           },
           "disk_cache_hits": 0,
           "prefetch_cache_hits": 0,
           "responses": [
             {
-              "url": "http://127.0.0.1:64056/",
+              "url": "http://127.0.0.1:60026/",
               "status": 200,
               "transfer_bytes": 100200,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/companies.json",
+              "url": "http://127.0.0.1:60026/companies.json",
               "status": 200,
               "transfer_bytes": 53819,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/ticker.json",
+              "url": "http://127.0.0.1:60026/ticker.json",
               "status": 200,
               "transfer_bytes": 2231,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/assets/logos/dialogus.png",
+              "url": "http://127.0.0.1:60026/assets/logos/dialogus.png",
+              "status": 200,
+              "transfer_bytes": 8673,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:60026/assets/logos/dialogus.png",
               "status": 200,
               "transfer_bytes": 8673,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             }
           ]
-        },
-        "page_errors": []
+        }
       },
       {
         "mode": "warm",
         "run": 4,
-        "first_useful_list_ms": 185.5,
-        "list_count_ready_ms": 32.399999998509884,
-        "map_load_ms": 226.39999999850988,
+        "first_useful_list_ms": 162.5,
+        "list_count_ready_ms": 30.200000002980232,
+        "map_load_ms": 221.40000000596046,
         "list_before_map_load": true,
-        "loader_dismiss_ms": 32.399999998509884,
+        "loader_dismiss_ms": 30.200000002980232,
         "content_ready_before_map_load": true,
         "visible_rows": 38,
         "marker_count": 38,
+        "page_errors": [],
         "first_party_network": {
-          "request_count": 4,
-          "transfer_bytes": 164923,
+          "request_count": 5,
+          "transfer_bytes": 173596,
           "status_counts": {
-            "200": 4
+            "200": 5
           },
           "disk_cache_hits": 0,
           "prefetch_cache_hits": 0,
           "responses": [
             {
-              "url": "http://127.0.0.1:64056/",
+              "url": "http://127.0.0.1:60026/",
               "status": 200,
               "transfer_bytes": 100200,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/companies.json",
+              "url": "http://127.0.0.1:60026/companies.json",
               "status": 200,
               "transfer_bytes": 53819,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/ticker.json",
+              "url": "http://127.0.0.1:60026/ticker.json",
               "status": 200,
               "transfer_bytes": 2231,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/assets/logos/dialogus.png",
+              "url": "http://127.0.0.1:60026/assets/logos/dialogus.png",
+              "status": 200,
+              "transfer_bytes": 8673,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:60026/assets/logos/dialogus.png",
               "status": 200,
               "transfer_bytes": 8673,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             }
           ]
-        },
-        "page_errors": []
+        }
       },
       {
         "mode": "warm",
         "run": 5,
-        "first_useful_list_ms": 165.10000000149012,
-        "list_count_ready_ms": 28.900000005960464,
-        "map_load_ms": 223.80000000447035,
+        "first_useful_list_ms": 156.29999999701977,
+        "list_count_ready_ms": 27,
+        "map_load_ms": 220.10000000149012,
         "list_before_map_load": true,
-        "loader_dismiss_ms": 28.900000005960464,
+        "loader_dismiss_ms": 27,
         "content_ready_before_map_load": true,
         "visible_rows": 38,
         "marker_count": 38,
+        "page_errors": [],
         "first_party_network": {
-          "request_count": 4,
-          "transfer_bytes": 164923,
+          "request_count": 5,
+          "transfer_bytes": 173596,
           "status_counts": {
-            "200": 4
+            "200": 5
           },
           "disk_cache_hits": 0,
           "prefetch_cache_hits": 0,
           "responses": [
             {
-              "url": "http://127.0.0.1:64056/",
+              "url": "http://127.0.0.1:60026/",
               "status": 200,
               "transfer_bytes": 100200,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/companies.json",
+              "url": "http://127.0.0.1:60026/companies.json",
               "status": 200,
               "transfer_bytes": 53819,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/ticker.json",
+              "url": "http://127.0.0.1:60026/ticker.json",
               "status": 200,
               "transfer_bytes": 2231,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             },
             {
-              "url": "http://127.0.0.1:64056/assets/logos/dialogus.png",
+              "url": "http://127.0.0.1:60026/assets/logos/dialogus.png",
+              "status": 200,
+              "transfer_bytes": 8673,
+              "from_disk_cache": false,
+              "from_prefetch_cache": false
+            },
+            {
+              "url": "http://127.0.0.1:60026/assets/logos/dialogus.png",
               "status": 200,
               "transfer_bytes": 8673,
               "from_disk_cache": false,
               "from_prefetch_cache": false
             }
           ]
-        },
-        "page_errors": []
+        }
       }
     ],
     "cold_first_useful_list": {
-      "median_ms": 228.9,
-      "mad_ms": 11.4,
-      "p95_ms": 241.0,
-      "min_ms": 214.2,
-      "max_ms": 241.0
+      "median_ms": 204.1,
+      "mad_ms": 6.5,
+      "p95_ms": 210.6,
+      "min_ms": 179.5,
+      "max_ms": 210.6
     },
     "warm_first_useful_list": {
-      "median_ms": 175.8,
-      "mad_ms": 9.7,
-      "p95_ms": 194.1,
-      "min_ms": 165.1,
-      "max_ms": 194.1
+      "median_ms": 160.0,
+      "mad_ms": 2.5,
+      "p95_ms": 162.5,
+      "min_ms": 138.2,
+      "max_ms": 162.5
     }
   },
   "interactions": {
     "ecosystem_add_coworking": {
       "handler": {
-        "median_ms": 2.3,
-        "mad_ms": 0.3,
-        "p95_ms": 2.8,
-        "min_ms": 1.9,
-        "max_ms": 2.8
+        "median_ms": 2.1,
+        "mad_ms": 0.1,
+        "p95_ms": 2.2,
+        "min_ms": 1.8,
+        "max_ms": 2.2
       },
       "settled_after_two_frames": {
-        "median_ms": 29.8,
-        "mad_ms": 1.5,
-        "p95_ms": 31.3,
-        "min_ms": 23.9,
-        "max_ms": 31.3
+        "median_ms": 22.8,
+        "mad_ms": 0.4,
+        "p95_ms": 27.5,
+        "min_ms": 22.4,
+        "max_ms": 27.5
       }
     },
     "switch_to_remote": {
       "handler": {
-        "median_ms": 11.9,
+        "median_ms": 10.0,
         "mad_ms": 0.9,
-        "p95_ms": 13.8,
-        "min_ms": 10.0,
-        "max_ms": 13.8
+        "p95_ms": 12.3,
+        "min_ms": 9.1,
+        "max_ms": 12.3
       },
       "settled_after_two_frames": {
-        "median_ms": 29.0,
-        "mad_ms": 2.7,
-        "p95_ms": 34.9,
-        "min_ms": 23.4,
-        "max_ms": 34.9
+        "median_ms": 34.4,
+        "mad_ms": 1.6,
+        "p95_ms": 36.8,
+        "min_ms": 32.8,
+        "max_ms": 36.8
       }
     },
     "remote_remove_cafe": {
       "handler": {
-        "median_ms": 1.0,
-        "mad_ms": 0.1,
-        "p95_ms": 1.2,
+        "median_ms": 0.8,
+        "mad_ms": 0.0,
+        "p95_ms": 1.5,
         "min_ms": 0.8,
-        "max_ms": 1.2
+        "max_ms": 1.5
       },
       "settled_after_two_frames": {
-        "median_ms": 24.0,
-        "mad_ms": 1.7,
-        "p95_ms": 30.5,
-        "min_ms": 22.3,
-        "max_ms": 30.5
+        "median_ms": 25.7,
+        "mad_ms": 2.0,
+        "p95_ms": 34.0,
+        "min_ms": 21.9,
+        "max_ms": 34.0
       }
     }
   },
@@ -701,7 +736,7 @@
   },
   "trace_artifact": {
     "filename": "perf01-browser-trace.zip",
-    "sha256": "38870edc12d7ddb67aa396f86b3141d9253ffc11cb90bdda94729c45873f9795",
+    "sha256": "4fc39674f376953e5a4a521409027bb7356e3e4c43d5c172009baa33fbddaa81",
     "excluded_from_timings": true,
     "versioned": true
   },
