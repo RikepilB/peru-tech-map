@@ -228,3 +228,7 @@ Datos de mapa © [OpenStreetMap](https://www.openstreetmap.org/copyright) contri
 ## Licencia
 
 El **código** tiene [licencia MIT](./LICENSE). Los **datasets** (`companies.json`, `ticker.json`) tienen licencia [CC BY 4.0](./LICENSE-DATA) — las licencias de software estándar no se ajustan bien a datos factuales, por eso se licencian por separado. Los datos base del mapa son © OpenStreetMap contributors bajo [ODbL](https://www.openstreetmap.org/copyright); mantén visible el control de atribución en el mapa.
+
+## Coworking Scout
+
+La guía pública vive en [/scout/](https://www.perugrid.com/scout/). Desde el mapa: Trabajar remoto → Usar Coworking Scout. Incluye inicio local, CLI y enlaces de integración; el motor se ejecuta en el equipo del usuario.

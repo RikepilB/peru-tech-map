@@ -21,6 +21,8 @@ jobs:
         run: python -m playwright install --with-deps chromium
       - name: Probar render seguro en Chromium sin red
         run: python tests/browser/test_render.py -v
+      - name: Probar la guía pública de Scout
+        run: python tests/browser/test_scout_page.py -v
       - name: Verificar el harness de rendimiento sin red pÃºblica
         run: python scripts/benchmark_performance.py --runs 1 --require-list-before-map-load --require-no-repeated-set-data --output "$RUNNER_TEMP/perf-smoke.json" --trace "$RUNNER_TEMP/perf-smoke-trace.zip"
       - name: Guardar diagnÃ³stico de rendimiento
