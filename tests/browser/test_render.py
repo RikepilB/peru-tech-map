@@ -43,6 +43,7 @@ window.maplibregl = {
     constructor() { this.element = document.createElement('div'); this.element.className = 'test-popup'; }
     setLngLat() { return this; }
     setHTML(html) { this.element.innerHTML = html; return this; }
+    getElement() { return this.element; }
     addTo() { document.body.append(this.element); return this; }
     remove() { this.element.remove(); }
   }

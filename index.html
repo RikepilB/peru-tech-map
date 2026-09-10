@@ -1446,8 +1446,7 @@ function selectCompany(i, fly, focusPopup = false) {
       </div>
     `).addTo(map);
 
-  const popupCloseButtons = document.querySelectorAll(".popup-close");
-  const popupClose = popupCloseButtons[popupCloseButtons.length - 1];
+  const popupClose = openPopup.getElement()?.querySelector(".popup-close");
   if (popupClose) {
     popupClose.addEventListener("click", () => closeCompanySelection(true));
     if (focusPopup) popupClose.focus();

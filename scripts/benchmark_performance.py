@@ -125,8 +125,10 @@ MAPLIBRE_STUB = r"""
   }
 
   class FakePopup {
+    constructor() { this.element = document.createElement('div'); }
     setLngLat() { return this; }
-    setHTML() { return this; }
+    setHTML(html) { this.element.innerHTML = html; return this; }
+    getElement() { return this.element; }
     addTo() { return this; }
     remove() {}
   }
