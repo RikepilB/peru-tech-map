@@ -1,0 +1,81 @@
+{
+  "base_url": "https://peru-tech-2ctr79430-rikepilbs-projects.vercel.app",
+  "comparison": {
+    "changed": [
+      "/",
+      "/index.html"
+    ],
+    "unchanged": [
+      "/companies.json",
+      "/ticker.json"
+    ]
+  },
+  "deployment_id": "dpl_4CY2zkA6GM6gwdFVCHCHrSM5k8tD",
+  "generated_at": "2026-09-10T05:38:26.684973+00:00",
+  "git_commit": "a834a76b54f79eb15e487974ac627485beb40df5",
+  "local_data": {
+    "matches": true,
+    "resources": [
+      "/companies.json",
+      "/ticker.json"
+    ]
+  },
+  "resources": {
+    "/": {
+      "bytes": 98564,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "conditional_status": 304,
+      "etag": "W/\"4106e25f363689556f705e693fb53596\"",
+      "repeated_status": 200,
+      "repeated_x_vercel_cache": "HIT",
+      "sha256": "d42a8fc52898f61df86c5772d4766854506680b484dbc75f8c719ebe33b495c1",
+      "status": 200,
+      "x_vercel_cache": "MISS"
+    },
+    "/companies.json": {
+      "bytes": 52468,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "conditional_status": 304,
+      "etag": "\"7af06a8189609ba7d7b1321a625e7d85\"",
+      "json_sha256": "a015d1d3b79bc1e0dfa87a0161ab9999ebc4c30939f250b3a04319db513e2319",
+      "record_count": 89,
+      "repeated_status": 200,
+      "repeated_x_vercel_cache": "HIT",
+      "sha256": "0681a42712bb3e5230b8535210f083ad218e4d69dbf9bde486c09870f2fe07a1",
+      "status": 200,
+      "verified_absent_names": [
+        "MindQube",
+        "Talently",
+        "WeWork San Isidro",
+        "uDocz"
+      ],
+      "x_vercel_cache": "HIT"
+    },
+    "/index.html": {
+      "bytes": 98564,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "conditional_status": 304,
+      "etag": "W/\"4106e25f363689556f705e693fb53596\"",
+      "repeated_status": 200,
+      "repeated_x_vercel_cache": "HIT",
+      "sha256": "d42a8fc52898f61df86c5772d4766854506680b484dbc75f8c719ebe33b495c1",
+      "status": 200,
+      "x_vercel_cache": "MISS"
+    },
+    "/ticker.json": {
+      "bytes": 2019,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "conditional_status": 304,
+      "etag": "\"beb43f1dbf79c770e4d6a3afbbec03e9\"",
+      "json_sha256": "d07d429a0b600d393e620dd9c8acf46fc0a2160996a5caa438af130108329164",
+      "record_count": 16,
+      "repeated_status": 200,
+      "repeated_x_vercel_cache": "HIT",
+      "sha256": "85e78fdd9cadd1b496e3148c686b69a12ca3bbb8fb93467aecd3a9db0c7c02e5",
+      "status": 200,
+      "x_vercel_cache": "MISS"
+    }
+  },
+  "schema_version": 1,
+  "verifier_sha256": "35a04aa861b642a8e565c3e9b9bf555dcd8944342ce1393368384a0da554e29a"
+}

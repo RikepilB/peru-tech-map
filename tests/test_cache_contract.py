@@ -7,6 +7,7 @@ import unittest
 from scripts.verify_cache import (
     CacheContractError,
     CacheResponse,
+    _parse_curl_headers,
     compare_revisions,
     probe_resources,
     verify_local_data,
@@ -176,6 +177,18 @@ class CacheContractTests(unittest.TestCase):
         del missing_replay["resources"]["/companies.json"]["repeated_status"]
         with self.assertRaisesRegex(CacheContractError, "status evidence is invalid"):
             compare_revisions(missing_replay, missing_replay)
+
+    def test_vercel_curl_header_parser_uses_final_http_block(self):
+        status, headers = _parse_curl_headers(
+            "/companies.json",
+            b"HTTP/1.1 100 Continue\r\n\r\n"
+            b"HTTP/2 304\r\nETag: \"dataset\"\r\n"
+            b"X-Vercel-Cache: HIT\r\n\r\n",
+        )
+
+        self.assertEqual(status, 304)
+        self.assertEqual(headers["etag"], '"dataset"')
+        self.assertEqual(headers["x-vercel-cache"], "HIT")
 
 
 def _json_digest(value):

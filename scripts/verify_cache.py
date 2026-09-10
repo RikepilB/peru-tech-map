@@ -8,7 +8,11 @@ from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
+import re
+import shutil
+import subprocess
 import sys
+import tempfile
 from typing import Callable
 from urllib.error import HTTPError
 from urllib.error import URLError
@@ -310,6 +314,100 @@ def _url_fetcher(base_url: str, timeout: float):
     return fetch
 
 
+def _deployment(value: str) -> str:
+    if re.fullmatch(r"dpl_[A-Za-z0-9]+", value):
+        return value
+    parsed = urlsplit(value)
+    if (
+        parsed.scheme == "https"
+        and parsed.hostname
+        and parsed.hostname.endswith(".vercel.app")
+        and parsed.username is None
+        and parsed.password is None
+        and parsed.path in {"", "/"}
+        and not parsed.query
+        and not parsed.fragment
+    ):
+        return value.rstrip("/")
+    raise argparse.ArgumentTypeError(
+        "Vercel deployment must be a dpl_ ID or a vercel.app origin"
+    )
+
+
+def _parse_curl_headers(path: str, raw: bytes) -> tuple[int, dict[str, str]]:
+    blocks = raw.replace(b"\r\n", b"\n").strip().split(b"\n\n")
+    http_blocks = [block for block in blocks if block.startswith(b"HTTP/")]
+    if not http_blocks:
+        raise CacheContractError(f"{path}: vercel curl returned no HTTP headers")
+    lines = http_blocks[-1].decode("iso-8859-1").splitlines()
+    status_parts = lines[0].split()
+    if len(status_parts) < 2 or not status_parts[1].isdigit():
+        raise CacheContractError(f"{path}: vercel curl returned an invalid status")
+    headers = {}
+    for line in lines[1:]:
+        if ":" not in line:
+            continue
+        key, value = line.split(":", 1)
+        headers[key.strip().casefold()] = value.strip()
+    return int(status_parts[1]), headers
+
+
+def _vercel_fetcher(deployment: str, timeout: float):
+    executable = shutil.which("vercel")
+    if not executable:
+        raise CacheContractError("vercel CLI is required for a protected deployment")
+
+    def fetch(path: str, if_none_match: str | None = None) -> CacheResponse:
+        with tempfile.TemporaryDirectory() as directory:
+            headers_path = Path(directory) / "headers.txt"
+            body_path = Path(directory) / "body.bin"
+            command = [
+                executable,
+                "curl",
+                path,
+                "--deployment",
+                deployment,
+                "--yes",
+                "--",
+                "--silent",
+                "--show-error",
+                "--max-time",
+                str(timeout),
+                "--max-filesize",
+                str(MAX_RESPONSE_BYTES),
+                "--dump-header",
+                str(headers_path),
+                "--output",
+                str(body_path),
+            ]
+            if if_none_match:
+                command.extend(("--header", f"If-None-Match: {if_none_match}"))
+            try:
+                completed = subprocess.run(
+                    command,
+                    capture_output=True,
+                    timeout=timeout + 30,
+                    check=False,
+                )
+            except subprocess.TimeoutExpired as exc:
+                raise CacheContractError(f"{path}: vercel curl timed out") from exc
+            if completed.returncode != 0:
+                raise CacheContractError(
+                    f"{path}: vercel curl failed with exit {completed.returncode}"
+                )
+            try:
+                raw_headers = headers_path.read_bytes()
+                body = body_path.read_bytes() if body_path.exists() else b""
+            except OSError as exc:
+                raise CacheContractError(
+                    f"{path}: cannot read vercel curl response"
+                ) from exc
+            status, headers = _parse_curl_headers(path, raw_headers)
+            return CacheResponse(status, headers, body)
+
+    return fetch
+
+
 def _load_report(path: str) -> dict:
     try:
         return json.loads(Path(path).read_text(encoding="utf-8"))
@@ -320,6 +418,11 @@ def _load_report(path: str) -> dict:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", type=_base_url, default=DEFAULT_BASE_URL)
+    parser.add_argument(
+        "--vercel-deployment",
+        type=_deployment,
+        help="use authenticated vercel curl for a protected preview",
+    )
     parser.add_argument("--timeout", type=float, default=20)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--compare")
@@ -364,7 +467,11 @@ def main(argv: list[str] | None = None) -> int:
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "base_url": args.base_url,
             "resources": probe_resources(
-                _url_fetcher(args.base_url, args.timeout),
+                (
+                    _vercel_fetcher(args.vercel_deployment, args.timeout)
+                    if args.vercel_deployment
+                    else _url_fetcher(args.base_url, args.timeout)
+                ),
                 expected_absent_site_ids=set(args.expect_absent_site_id or ()),
                 expected_absent_names=set(args.expect_absent_name or ()),
                 require_vercel=args.require_vercel,

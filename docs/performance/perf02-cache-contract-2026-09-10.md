@@ -31,6 +31,18 @@ archivos revisados del repositorio y que `WeWork San Isidro`, `MindQube`, `Talen
 siguen ausentes. El reporte conserva hashes, tamaños, headers, commit y despliegue; nunca guarda
 los cuerpos recibidos.
 
+## Evidencia del preview
+
+El reporte [perf02-cache-preview-2026-09-10.json](perf02-cache-preview-2026-09-10.json) verificó
+el despliegue protegido `dpl_4CY2zkA6GM6gwdFVCHCHrSM5k8tD`, commit
+`a834a76b54f79eb15e487974ac627485beb40df5`, mediante `vercel curl` autenticado. Los cuatro
+recursos devolvieron la política exacta, 304 sin cuerpo y una repetición HIT. Los 89 lugares y 16
+titulares coincidieron semánticamente con el checkout y conservaron sus hashes de contenido.
+
+La respuesta HTML protegida añadió 163 bytes y presentó como débil el mismo ETag de contenido;
+por eso la comparación registra `/` e `/index.html` como distintos del dominio público. Este
+efecto del preview no se interpreta como un cambio del `index.html` fuente.
+
 ## Gate de despliegue
 
 Desde la raíz del checkout que representa el despliegue:
@@ -46,6 +58,10 @@ python scripts/verify_cache.py `
   --output cache-report.json
 ```
 
+Para un preview protegido, el Vercel CLI debe estar autenticado y el checkout enlazado al proyecto.
+`--vercel-deployment` delega el acceso a `vercel curl`; el verificador no lee ni imprime el
+token de bypass.
+
 Cada recurso debe responder 200 con ETag y las tres directivas declaradas. La repetición debe
 conservar cuerpo y ETag; `If-None-Match` debe devolver 304 sin cuerpo. Este 304 es el gate HTTP de
 reutilización: el navegador puede usar su representación almacenada después de validarla. El
@@ -56,6 +72,7 @@ Para una publicación que cambie el dataset y retire una sede:
 ```powershell
 python scripts/verify_cache.py `
   --base-url <immutable-preview-url> `
+  --vercel-deployment <dpl-id> `
   --compare cache-before.json `
   --expect-changed /companies.json `
   --expect-local-data `
