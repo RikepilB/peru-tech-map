@@ -4,11 +4,15 @@ No son una prueba del renderer WebGL ni de los tiles de producción.
 """
 import json
 from pathlib import Path
+import sys
 import unittest
 
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+from scripts.benchmark_performance import MAPLIBRE_STUB
+
 HTML = (ROOT / "index.html").read_text(encoding="utf-8")
 FIXTURE = json.loads((ROOT / "tests/fixtures/security.json").read_text(encoding="utf-8"))
 # Ejecutar las funciones del producto, no copias de su lógica de renderizado.
@@ -100,8 +104,19 @@ class RenderTests(unittest.TestCase):
 
     def setUp(self):
         self.context = self.browser.new_context(locale="es-PE")
-        self.context.route("**/*", lambda route: route.fulfill(status=200, content_type="text/html", body=PAGE)
-                           if route.request.url == "http://perugrid.test/" else route.abort())
+
+        def route_request(route):
+            url = route.request.url
+            if url == "http://perugrid.test/":
+                route.fulfill(status=200, content_type="text/html", body=PAGE)
+            elif url == "http://perugrid.test/companies.json":
+                route.fulfill(status=200, content_type="application/json", body="[]")
+            elif url == "http://perugrid.test/ticker.json":
+                route.fulfill(status=200, content_type="application/json", body=json.dumps(FIXTURE["ticker"]))
+            else:
+                route.abort()
+
+        self.context.route("**/*", route_request)
         self.page = self.context.new_page()
         self.page.goto("http://perugrid.test/")
         self.page.add_script_tag(
@@ -117,6 +132,67 @@ class RenderTests(unittest.TestCase):
     def assert_no_injection(self):
         self.assertEqual(self.page.evaluate("window.__injected"), 0)
         self.assertEqual(self.page.locator("[onerror], [onload], [onclick], svg").count(), 0)
+
+    def test_workspace_action_prefills_form_and_late_boot_error_restores_loader(self):
+        context = self.browser.new_context(locale="es-PE")
+
+        def route_request(route):
+            url = route.request.url
+            if url == "http://perugrid.full/":
+                route.fulfill(status=200, content_type="text/html", body=HTML)
+            elif url == "http://perugrid.full/companies.json":
+                route.fulfill(status=200, content_type="application/json", path=ROOT / "companies.json")
+            elif url == "http://perugrid.full/ticker.json":
+                route.fulfill(status=200, content_type="application/json", path=ROOT / "ticker.json")
+            elif "maplibre-gl.js" in url:
+                route.fulfill(status=200, content_type="application/javascript", body=MAPLIBRE_STUB)
+            elif "maplibre-gl.css" in url or "fonts.googleapis.com" in url:
+                route.fulfill(status=200, content_type="text/css", body="")
+            else:
+                route.abort()
+
+        context.route("**/*", route_request)
+        page = context.new_page()
+        errors = []
+        page.on("pageerror", lambda error: errors.append(str(error)))
+        try:
+            page.goto("http://perugrid.full/", wait_until="load")
+            page.locator("#loader.done").wait_for(timeout=5_000)
+            page.wait_for_function("window.__pgMapBootComplete === true", timeout=5_000)
+            page.locator('label.mode-choice:has([data-view-mode="remote"])').click()
+            page.evaluate("modelSelect.value = 'Hybrid'")
+            workspace_button = page.locator("#addWorkspaceBtn")
+            self.assertTrue(workspace_button.is_visible())
+            self.assertGreaterEqual(workspace_button.evaluate("button => button.getBoundingClientRect().height"), 40)
+            workspace_button.click()
+            self.assertTrue(page.locator("#scrim").evaluate("scrim => scrim.classList.contains('open')"))
+            self.assertEqual(page.locator("#catSelect").input_value(), "Coworking Space")
+            self.assertEqual(page.locator("#modelSelect").input_value(), "On-Site")
+            self.assertEqual(page.locator('#coForm [name="City"]').input_value(), "lima")
+            self.assertEqual(page.locator("#modalTitle").get_attribute("data-i18n"), "modalWorkspaceTitle")
+            self.assertEqual(page.locator("#entityNameLabel").get_attribute("data-i18n"), "fWorkspaceName")
+            self.assertEqual(page.locator("#entityNameInput").get_attribute("data-i18n-placeholder"), "pWorkspaceName")
+            self.assertEqual(page.locator("#submittedBody").get_attribute("data-i18n"), "workspaceSubmittedBody")
+            page.locator("#coForm").evaluate(
+                "form => form.dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}))"
+            )
+            self.assertEqual(page.locator("#formError").text_content(), page.evaluate("t('workspacePinRequired')"))
+            page.locator("#closeModal").click()
+            page.locator("#addBtn").click()
+            self.assertEqual(page.locator("#catSelect").input_value(), "Startup")
+            self.assertEqual(page.locator("#modelSelect").input_value(), "Hybrid")
+            self.assertEqual(page.locator("#modalTitle").get_attribute("data-i18n"), "modalTitle")
+            self.assertEqual(page.locator("#entityNameLabel").get_attribute("data-i18n"), "fCompanyName")
+            self.assertEqual(page.locator("#entityNameInput").get_attribute("data-i18n-placeholder"), "pCompanyName")
+            self.assertTrue(page.locator("#formError").is_hidden())
+            page.locator("#closeModal").click()
+            page.evaluate("window.showBootError('late map failure')")
+            self.assertFalse(page.locator("#loader").evaluate("loader => loader.classList.contains('done')"))
+            self.assertEqual(page.locator("#bootRetry").count(), 1)
+            self.assertIn("late map failure", page.locator("#loader").text_content())
+            self.assertEqual(errors, [])
+        finally:
+            context.close()
 
     def set_categories(self, *categories):
         wanted = set(categories)
@@ -147,7 +223,6 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(self.page.locator(".pname").text_content(), FIXTURE["company"]["name"])
         self.assertEqual(self.page.locator(".ptag").text_content(), FIXTURE["company"]["tag_es"])
         self.assertEqual(self.page.locator(".addr").text_content(), FIXTURE["company"]["address"])
-        self.page.evaluate("items => { window.fetch = async () => ({ok:true, json:async () => items}); }", FIXTURE["ticker"])
         self.page.evaluate("loadTicker()")
         self.assertEqual(self.page.locator(".ti-label").first.text_content(), FIXTURE["ticker"][0]["label"])
         self.assertIn(FIXTURE["ticker"][0]["text"], self.page.locator("#tickerTrack").text_content())
@@ -527,8 +602,7 @@ class RenderTests(unittest.TestCase):
         self.assert_no_injection()
 
     def test_failed_fetch_shows_error_state(self):
-        self.page.evaluate("window.fetch = async () => ({ok:false, status:503})")
-        self.page.evaluate("loadCompanies()")
+        self.page.evaluate("loadCompanies(Promise.reject(new Error('HTTP 503')))")
         self.assertIn("FAIL", self.page.locator("#gridStatus").text_content())
         self.assertEqual(self.page.locator(".panel-err").count(), 1)
         self.assertEqual(self.page.locator(".co").count(), 0)

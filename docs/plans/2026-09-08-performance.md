@@ -1,6 +1,7 @@
 # Rendimiento de PeruGrid y Cowork Scout
 
-Estado: PERF-00 ejecutado el 2026-09-09; PERF-01 es el siguiente frente. Complementa
+Estado: PERF-00 y PERF-01 ejecutados el 2026-09-09; PERF-02 es el siguiente frente de PeruGrid
+y PERF-03 el siguiente de Coworking Scout. Complementa
 [V1 + Scout](2026-09-08-v1-cowork-scout.md). La evaluación conserva la aplicación estática;
 Astro, React/Next.js y Go continúan condicionados a una necesidad y comparación medible.
 
@@ -164,3 +165,10 @@ caché. Cinco estados `idle` equivalentes repitieron diez escrituras GeoJSON; es
 comprobable de PERF-01. Estas cifras no incluyen WebGL, tiles ni red pública y solo se comparan
 en el mismo host/protocolo. Un trace diagnóstico separado acompaña la captura y CI conserva un
 trace smoke durante 14 días.
+
+PERF-01 inicia ambos JSON antes de construir el mapa y entrega la lista sin esperar a `map.load`.
+Las diez muestras frías/calientes quedaron listas antes del evento sintético del mapa. La mediana
+bajó de 344,1 a 204,1 ms en frío (-40,7 %) y de 353,7 a 160,0 ms en caliente (-54,8 %) en el mismo
+host y protocolo. Cinco estados `idle` estables produjeron cero `setData()` y un control positivo
+confirmó las transiciones agregar, conservar y retirar geometría. CI exige ambos gates. Resultado,
+datos crudos y límites: [reporte PERF-01](../performance/perf01-browser-after-2026-09-09.md).

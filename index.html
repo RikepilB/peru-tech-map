@@ -29,13 +29,14 @@ window.I18N = {
     city: "City", sort: "Sort",
     default: "Default", alpha: "A–Z",
     addCompany: "+ Add A Company",
+    addWorkspace: "+ Add A Workspace",
     addHint: "Tap the map to drop a pin",
     resetBearing: "Reset bearing (north up)",
     rotateLeft: "Rotate left", rotateRight: "Rotate right",
     zoomIn: "Zoom in", zoomOut: "Zoom out",
     toggle3d: "Toggle 3D",
-    modalTitle: "Add A Company", close: "Close",
-    fCompanyName: "Company Name", pCompanyName: "ACME INC.",
+    modalTitle: "Add A Company", modalWorkspaceTitle: "Add A Workspace", close: "Close",
+    fCompanyName: "Company Name", fWorkspaceName: "Workspace Name", pCompanyName: "ACME INC.", pWorkspaceName: "WORKSPACE LIMA",
     fWebsite: "Website", pWebsite: "acme.com",
     fLocation: "Location", dropPin: "Drop A Pin", noPinSet: "NO PIN SET",
     fCategory: "Category",
@@ -47,7 +48,9 @@ window.I18N = {
     submit: "Submit For Review", submitting: "Submitting…", tryAgain: "Try Again",
     submitError: "Something went wrong submitting the form — check your connection and try again.",
     pinRequired: "On-Site companies need a pin — drop one on the map first.",
+    workspacePinRequired: "Workspaces need a pin — drop one on the map first.",
     submitted: "Submitted", submittedBody: "Thanks — new companies get reviewed and added.",
+    workspaceSubmittedBody: "Thanks — new workspaces are verified before they appear on the map.",
     bootInit: "INITIALIZING MAPLIBRE GL", bootTiles: "LOADING VECTOR TILES", bootGrid: "MOUNTING COMPANY GRID",
     bootBooting: "BOOTING PERU GRID…", bootOnline: "GRID ONLINE ✓",
     bootFailed: "BOOT FAILED",
@@ -86,13 +89,14 @@ window.I18N = {
     city: "Ciudad", sort: "Orden",
     default: "Por Defecto", alpha: "A–Z",
     addCompany: "+ Agregar Empresa",
+    addWorkspace: "+ Agregar Espacio",
     addHint: "Toca el mapa para colocar un pin",
     resetBearing: "Reiniciar orientación (norte arriba)",
     rotateLeft: "Rotar izquierda", rotateRight: "Rotar derecha",
     zoomIn: "Acercar", zoomOut: "Alejar",
     toggle3d: "Alternar 3D",
-    modalTitle: "Agregar Empresa", close: "Cerrar",
-    fCompanyName: "Nombre De La Empresa", pCompanyName: "ACME INC.",
+    modalTitle: "Agregar Empresa", modalWorkspaceTitle: "Agregar Espacio", close: "Cerrar",
+    fCompanyName: "Nombre De La Empresa", fWorkspaceName: "Nombre Del Espacio", pCompanyName: "ACME INC.", pWorkspaceName: "ESPACIO CENTRO",
     fWebsite: "Sitio Web", pWebsite: "acme.com",
     fLocation: "Ubicación", dropPin: "Colocar Un Pin", noPinSet: "SIN PIN",
     fCategory: "Categoría",
@@ -104,7 +108,9 @@ window.I18N = {
     submit: "Enviar Para Revisión", submitting: "Enviando…", tryAgain: "Intentar De Nuevo",
     submitError: "Algo salió mal al enviar el formulario — revisa tu conexión e intenta de nuevo.",
     pinRequired: "Las empresas presenciales necesitan un pin — colócalo en el mapa primero.",
+    workspacePinRequired: "Los espacios necesitan un pin — colócalo en el mapa primero.",
     submitted: "Enviado", submittedBody: "Gracias — las nuevas empresas se revisan y se agregan.",
+    workspaceSubmittedBody: "Gracias — verificamos los nuevos espacios antes de mostrarlos en el mapa.",
     bootInit: "INICIANDO MAPLIBRE GL", bootTiles: "CARGANDO TILES VECTORIALES", bootGrid: "MONTANDO GRID DE EMPRESAS",
     bootBooting: "INICIANDO PERU GRID…", bootOnline: "GRID EN LÍNEA ✓",
     bootFailed: "ERROR DE INICIO",
@@ -158,6 +164,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   function showBootError(msg) {
     if (handled) return; handled = true;
     var loader = document.getElementById("loader");
+    if (loader) loader.classList.remove("done");
     var inner = loader && loader.querySelector(".inner");
     if (!inner) return;
     inner.innerHTML =
@@ -176,8 +183,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   });
   window.addEventListener("load", function () {
     setTimeout(function () {
-      var loader = document.getElementById("loader");
-      if (loader && !loader.classList.contains("done")) {
+      if (!window.__pgMapBootComplete) {
         showBootError(t("bootTimeout"));
       }
     }, BOOT_TIMEOUT_MS);
@@ -358,6 +364,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   .filter-note {
     margin: 0; color: var(--muted); font: 500 10px/1.45 var(--sans); letter-spacing: .02em;
   }
+  .workspace-add { min-height: 40px; margin-top: 2px; }
   .filter-reset {
     width: fit-content; min-height: 32px; margin: -2px 0 0; padding: 5px 0;
     border: 0; background: transparent; color: var(--green-bright);
@@ -629,6 +636,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
             <label class="filter-choice"><input class="filter-input" type="checkbox" data-workspace-type="library" value="library" checked><span class="filter-choice-label" data-i18n="workspaceLibrary">Libraries</span></label>
           </div>
           <p class="filter-note" id="remoteNotice" data-i18n="remoteNotice">Location backed by a public source. Wi-Fi and amenities are not yet verified.</p>
+          <button type="button" class="btn ghost workspace-add" id="addWorkspaceBtn" data-i18n="addWorkspace">+ Add A Workspace</button>
         </fieldset>
         <button type="button" class="filter-reset" id="clearViewFilters" data-i18n="clearFilters" hidden>Restore companies</button>
       </div>
@@ -656,10 +664,10 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   <!-- Add company modal -->
   <div class="scrim" id="scrim">
     <div class="modal">
-      <div class="modal-head"><h2 data-i18n="modalTitle">Add A Company</h2><button type="button" class="x" id="closeModal" data-i18n-aria="close" aria-label="Close">×</button></div>
+      <div class="modal-head"><h2 id="modalTitle" data-i18n="modalTitle">Add A Company</h2><button type="button" class="x" id="closeModal" data-i18n-aria="close" aria-label="Close">×</button></div>
       <div class="modal-body" id="formWrap">
         <form id="coForm">
-          <div class="field"><label data-i18n="fCompanyName">Company Name</label><input name="Company" required placeholder="ACME INC." data-i18n-placeholder="pCompanyName" /></div>
+          <div class="field"><label id="entityNameLabel" data-i18n="fCompanyName">Company Name</label><input id="entityNameInput" name="Company" required placeholder="ACME INC." data-i18n-placeholder="pCompanyName" /></div>
           <div class="field"><label data-i18n="fWebsite">Website</label><input name="Website" required placeholder="acme.com" data-i18n-placeholder="pWebsite" /></div>
           <div class="field"><label data-i18n="city">City</label>
             <select name="City"><option value="lima">Lima</option><option value="arequipa">Arequipa</option></select>
@@ -709,7 +717,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
       </div>
       <div class="form-success" id="formSuccess">
         <div class="big" data-i18n="submitted">Submitted</div>
-        <p data-i18n="submittedBody">Thanks — new companies get reviewed and added.</p>
+        <p id="submittedBody" data-i18n="submittedBody">Thanks — new companies get reviewed and added.</p>
         <div style="margin-top:18px"><button class="btn ghost" id="successClose" data-i18n="close">Close</button></div>
       </div>
     </div>
@@ -757,6 +765,16 @@ document.getElementById("langToggle").addEventListener("click", function () {
 // Wrapped in bootApp() and started via __mapLibReady() (see head watchdog script) rather than
 // relying on `defer` ordering alone to guarantee maplibre-gl.js has finished loading.
 function bootApp() {
+// Begin first-party data transfer before constructing the map. The sidebar can become usable
+// while the public style and tiles are still loading, and each dataset is requested only once.
+const companiesDataReady = fetch("./companies.json", { cache: "no-cache" }).then(res => {
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  return res.json();
+});
+const tickerDataReady = fetch("./ticker.json", { cache: "no-cache" }).then(res => {
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  return res.json();
+});
 const CITIES = {
   lima: {
     label: "LIMA",
@@ -808,10 +826,10 @@ map.on("load", async () => {
   themeBaseLayers();
   setupBuildings();
   addSky();
-  loadTicker();
-  await loadCompanies();
+  await companiesReady;
   startStatusBar();
   map.flyTo({ ...CITIES[currentCity].home, duration: 2600, curve: 1.4, essential: true });
+  window.__pgMapBootComplete = true;
 });
 
 // Refresh which buildings are "ours" whenever the view settles (pan/zoom/tile-load/3D toggle).
@@ -1040,11 +1058,20 @@ function pointInPolygon(x, y, geometry) {
 // building footprint in the viewport with ONE queryRenderedFeatures call per layer (not one
 // per company — that scaled O(companies) native calls per idle event and got measurably
 // slower as the dataset grew), then matches company coordinates against them in plain JS.
+const buildingSourcePayloads = new WeakMap();
+function setBuildingSourceData(source, features, beforeSet) {
+  const data = { type: "FeatureCollection", features };
+  const signature = JSON.stringify(data);
+  if (buildingSourcePayloads.get(source) === signature) return false;
+  if (beforeSet) beforeSet();
+  source.setData(data);
+  buildingSourcePayloads.set(source, signature);
+  return true;
+}
 function refreshCompanyBuildingHighlights() {
   const src3d = map.getSource("co-buildings-3d"), src2d = map.getSource("co-buildings-2d");
   if (!src3d || !src2d) return;
-  clearCoBuildingHover(); // ids get reassigned below — stale feature-state would stick to the wrong building
-  if (map.getZoom() < 13) { src3d.setData({ type: "FeatureCollection", features: [] }); src2d.setData({ type: "FeatureCollection", features: [] }); return; }
+  if (map.getZoom() < 13) { setBuildingSourceData(src3d, [], clearCoBuildingHover); setBuildingSourceData(src2d, [], clearCoBuildingHover); return; }
 
   const w = map.getCanvas().clientWidth, h = map.getCanvas().clientHeight;
   const bbox = [[0, 0], [w, h]];
@@ -1075,8 +1102,9 @@ function refreshCompanyBuildingHighlights() {
       break;
     }
   });
-  src3d.setData({ type: "FeatureCollection", features: feats3d });
-  src2d.setData({ type: "FeatureCollection", features: feats2d });
+  // Clear feature-state only when a payload changes; stable idle events preserve hover.
+  setBuildingSourceData(src3d, feats3d, clearCoBuildingHover);
+  setBuildingSourceData(src2d, feats2d, clearCoBuildingHover);
 }
 
 // ---------- Companies (single source of truth: companies.json) ----------
@@ -1126,11 +1154,9 @@ function companyVisible(company) {
   return typeVisible(companyCategory(company), companySubcategory(company));
 }
 
-async function loadCompanies() {
+async function loadCompanies(dataReady = companiesDataReady) {
   try {
-    const res = await fetch("./companies.json", { cache: "no-cache" });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    ALL_COMPANIES = await res.json();
+    ALL_COMPANIES = await dataReady;
     const g = document.getElementById("gridStatus"); if (g) g.textContent = " OK";
     applyCity(currentCity, { skipFly: true });
   } catch (err) {
@@ -1139,6 +1165,8 @@ async function loadCompanies() {
     document.getElementById("coCount").textContent = t("error");
     document.getElementById("coList").innerHTML =
       `<div class="panel-err"><b>${t("gridOffline")}</b>${t("gridOfflineBody")}</div>`;
+  } finally {
+    if (typeof dismissLoader === "function") dismissLoader();
   }
 }
 
@@ -1173,11 +1201,9 @@ function applyCity(city, opts = {}) {
 }
 
 // ---------- Ticker (separate feed: ticker.json — not filtered by city, it's a shared headline reel) ----------
-async function loadTicker() {
+async function loadTicker(dataReady = tickerDataReady) {
   try {
-    const res = await fetch("./ticker.json", { cache: "no-cache" });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const items = await res.json();
+    const items = await dataReady;
     if (!Array.isArray(items) || !items.length) throw new Error("empty");
     const seq = items.map(it =>
       `<span class="ti"><span class="ti-label">${escapeHTML(it.label || "•")}</span>${escapeHTML(it.text)}</span><span class="div">◆</span>`
@@ -1595,7 +1621,6 @@ document.getElementById("panelToggle").addEventListener("click", (e) => {
 const scrim = document.getElementById("scrim");
 let addMode = false;
 const addHint = document.getElementById("addHint");
-document.getElementById("addBtn").onclick = () => scrim.classList.add("open");
 document.getElementById("closeModal").onclick = () => closeModal();
 document.getElementById("successClose").onclick = () => closeModal();
 const catSelect = document.getElementById("catSelect");
@@ -1613,6 +1638,53 @@ const locationField = document.getElementById("locationField");
 function toggleLocation() { locationField.style.display = modelSelect.value === "Remote" ? "none" : ""; }
 modelSelect.addEventListener("change", toggleLocation);
 toggleLocation();
+const modalTitle = document.getElementById("modalTitle");
+const entityNameLabel = document.getElementById("entityNameLabel");
+const entityNameInput = document.getElementById("entityNameInput");
+const submittedBody = document.getElementById("submittedBody");
+let workspaceModal = false;
+let workspacePrefillRestore = null;
+function openAddModal(workspace = false) {
+  const titleKey = workspace ? "modalWorkspaceTitle" : "modalTitle";
+  const nameKey = workspace ? "fWorkspaceName" : "fCompanyName";
+  const placeholderKey = workspace ? "pWorkspaceName" : "pCompanyName";
+  const submittedBodyKey = workspace ? "workspaceSubmittedBody" : "submittedBody";
+  modalTitle.dataset.i18n = titleKey;
+  modalTitle.textContent = t(titleKey);
+  entityNameLabel.dataset.i18n = nameKey;
+  entityNameLabel.textContent = t(nameKey);
+  entityNameInput.dataset.i18nPlaceholder = placeholderKey;
+  entityNameInput.placeholder = t(placeholderKey);
+  submittedBody.dataset.i18n = submittedBodyKey;
+  submittedBody.textContent = t(submittedBodyKey);
+  const citySelect = document.querySelector('#coForm [name="City"]');
+  if (workspace) {
+    if (!workspaceModal) {
+      workspacePrefillRestore = {
+        category: catSelect.value,
+        model: modelSelect.value,
+        city: citySelect && citySelect.value,
+      };
+    }
+    catSelect.value = "Coworking Space";
+    modelSelect.value = "On-Site";
+    if (citySelect) citySelect.value = currentCity;
+  } else if (workspaceModal && workspacePrefillRestore) {
+    catSelect.value = workspacePrefillRestore.category;
+    modelSelect.value = workspacePrefillRestore.model;
+    if (citySelect && workspacePrefillRestore.city) citySelect.value = workspacePrefillRestore.city;
+    workspacePrefillRestore = null;
+  }
+  const modalError = document.getElementById("formError");
+  modalError.textContent = "";
+  modalError.style.display = "none";
+  workspaceModal = workspace;
+  toggleStage();
+  toggleLocation();
+  scrim.classList.add("open");
+}
+document.getElementById("addBtn").onclick = () => openAddModal(false);
+document.getElementById("addWorkspaceBtn").onclick = () => openAddModal(true);
 scrim.addEventListener("click", (e) => { if (e.target === scrim) closeModal(); });
 function closeModal() { scrim.classList.remove("open"); setAddMode(false); }
 function setAddMode(on) { addMode = on; addHint.classList.toggle("show", on); map.getCanvas().style.cursor = on ? "crosshair" : ""; if (on) scrim.classList.remove("open"); }
@@ -1640,14 +1712,14 @@ document.getElementById("coForm").addEventListener("submit", async (e) => {
   const errEl = document.getElementById("formError");
   errEl.style.display = "none";
   if (modelSelect.value === "On-Site" && !document.getElementById("latIn").value) {
-    errEl.textContent = t("pinRequired");
+    errEl.textContent = t(workspaceModal ? "workspacePinRequired" : "pinRequired");
     errEl.style.display = "block";
     return;
   }
   const btn = document.getElementById("submitBtn");
   btn.textContent = t("submitting"); btn.disabled = true;
   const data = Object.fromEntries(new FormData(e.target).entries());
-  data._subject = "New company submission — Peru Grid";
+  data._subject = workspaceModal ? "New workspace submission — Peru Grid" : "New company submission — Peru Grid";
   data._template = "table";
   try {
     const res = await fetch(FORM_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" }, body: JSON.stringify(data) });
@@ -1661,6 +1733,11 @@ document.getElementById("coForm").addEventListener("submit", async (e) => {
     errEl.style.display = "block";
   }
 });
+
+// Start both independent requests before MapLibre finishes loading. Their render paths can use
+// the constructed map immediately, while source-dependent building work waits for map events.
+const companiesReady = loadCompanies();
+loadTicker();
 
 // ---------- Loader (terminal boot) ----------
 const loader = document.getElementById("loader");
@@ -1683,7 +1760,7 @@ function dismissLoader() {
   if (dismissed) return; dismissed = true;
   pct = 100; pctEl.textContent = "100%"; spinEl.textContent = "";
   document.getElementById("bootBar").textContent = t("bootOnline");
-  setTimeout(() => loader.classList.add("done"), 220);
+  loader.classList.add("done");
 }
 map.once("idle", dismissLoader);
 setTimeout(dismissLoader, 9000);
