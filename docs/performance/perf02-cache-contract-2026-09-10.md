@@ -73,6 +73,7 @@ Para una publicación que cambie el dataset y retire una sede:
 python scripts/verify_cache.py `
   --base-url <immutable-preview-url> `
   --vercel-deployment <dpl-id> `
+  --require-vercel `
   --compare cache-before.json `
   --expect-changed /companies.json `
   --expect-local-data `
