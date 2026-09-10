@@ -1,7 +1,7 @@
 # Rendimiento de PeruGrid y Cowork Scout
 
-Estado: PERF-00 y PERF-01 ejecutados el 2026-09-09; PERF-02 está implementado y en verificación
-de despliegue. PERF-03 fue ejecutado en Coworking Scout. Complementa
+Estado: PERF-00 y PERF-01 ejecutados el 2026-09-09; PERF-02 ejecutado y verificado en producción
+el 2026-09-10. PERF-03 fue ejecutado en Coworking Scout. QA-01 es el siguiente frente. Complementa
 [V1 + Scout](2026-09-08-v1-cowork-scout.md). La evaluación conserva la aplicación estática;
 Astro, React/Next.js y Go continúan condicionados a una necesidad y comparación medible.
 

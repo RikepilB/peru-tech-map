@@ -1,0 +1,80 @@
+{
+  "base_url": "https://www.perugrid.com",
+  "comparison": {
+    "changed": [],
+    "unchanged": [
+      "/",
+      "/companies.json",
+      "/index.html",
+      "/ticker.json"
+    ]
+  },
+  "deployment_id": "dpl_7Wn4GD8TjhEs7KsU35MXTgq99iKK",
+  "generated_at": "2026-09-10T05:57:30.539598+00:00",
+  "git_commit": "1b083826159a00f01dba9e2f910601e74ed8fa64",
+  "local_data": {
+    "matches": true,
+    "resources": [
+      "/companies.json",
+      "/ticker.json"
+    ]
+  },
+  "resources": {
+    "/": {
+      "bytes": 98401,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "conditional_status": 304,
+      "etag": "\"4106e25f363689556f705e693fb53596\"",
+      "repeated_status": 200,
+      "repeated_x_vercel_cache": "HIT",
+      "sha256": "d3433347540541dfb64866114431e5403f735829c0a61880ccf37ac7c2f68e01",
+      "status": 200,
+      "x_vercel_cache": "MISS"
+    },
+    "/companies.json": {
+      "bytes": 52468,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "conditional_status": 304,
+      "etag": "\"7af06a8189609ba7d7b1321a625e7d85\"",
+      "json_sha256": "a015d1d3b79bc1e0dfa87a0161ab9999ebc4c30939f250b3a04319db513e2319",
+      "record_count": 89,
+      "repeated_status": 200,
+      "repeated_x_vercel_cache": "HIT",
+      "sha256": "0681a42712bb3e5230b8535210f083ad218e4d69dbf9bde486c09870f2fe07a1",
+      "status": 200,
+      "verified_absent_names": [
+        "MindQube",
+        "Talently",
+        "WeWork San Isidro",
+        "uDocz"
+      ],
+      "x_vercel_cache": "MISS"
+    },
+    "/index.html": {
+      "bytes": 98401,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "conditional_status": 304,
+      "etag": "\"4106e25f363689556f705e693fb53596\"",
+      "repeated_status": 200,
+      "repeated_x_vercel_cache": "HIT",
+      "sha256": "d3433347540541dfb64866114431e5403f735829c0a61880ccf37ac7c2f68e01",
+      "status": 200,
+      "x_vercel_cache": "MISS"
+    },
+    "/ticker.json": {
+      "bytes": 2019,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "conditional_status": 304,
+      "etag": "\"beb43f1dbf79c770e4d6a3afbbec03e9\"",
+      "json_sha256": "d07d429a0b600d393e620dd9c8acf46fc0a2160996a5caa438af130108329164",
+      "record_count": 16,
+      "repeated_status": 200,
+      "repeated_x_vercel_cache": "HIT",
+      "sha256": "85e78fdd9cadd1b496e3148c686b69a12ca3bbb8fb93467aecd3a9db0c7c02e5",
+      "status": 200,
+      "x_vercel_cache": "MISS"
+    }
+  },
+  "schema_version": 1,
+  "verifier_sha256": "e4043972734780eb7c7dac619bb2b273f0a2966ec8529aca028b1ccb345da5ed"
+}

@@ -1,6 +1,7 @@
 # PeruGrid V1 + Cowork Scout: plan de recuperación e integración
 
-Fecha: 2026-09-08. Estado: ejecución en curso; PG-04 preparado para revisión.
+Fecha: 2026-09-08. Estado: ejecución en curso; entregas V1, Scout y PERF-01–03 fusionadas;
+QA-01 es el siguiente frente.
 
 Actualización de ejecución: **PG-01–03, CS-01–03 e INT-01 están fusionados**. La corrección
 PG-03.1 reemplazó el selector excluyente por controles combinables mediante el PR #47.
@@ -236,8 +237,8 @@ en ambos repositorios (Scout #5–6 y PeruGrid #46). DATA-01 aplica la matriz
 `docs/data-reconciliation-2026-09-09.md`, sustituye pins genéricos por ocho sedes trazables y
 mantiene los casos sin coordenada exacta como pendientes. PG-04 implementa la vista pública
 «Trabajar remoto» con tipos combinables y solo publica lugares respaldados por una fuente pública
-redistribuible. El siguiente frente es QA-01 y la línea base de rendimiento. Conservar en ambos
-repositorios los archivos locales ajenos.
+redistribuible. PERF-00–03 ya tienen implementación y evidencia; el siguiente frente es QA-01.
+Conservar en ambos repositorios los archivos locales ajenos.
 
 ## PG-03.1 — Corrección UX del selector de filtros
 
