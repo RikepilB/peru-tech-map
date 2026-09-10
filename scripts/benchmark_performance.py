@@ -51,6 +51,7 @@ MAPLIBRE_STUB = r"""
       document.getElementById(options.container).appendChild(this.canvas);
       window.__perfMap = this;
       setTimeout(() => {
+        window.__perfMapLoadMs = performance.now();
         this.emit('load');
         setTimeout(() => this.emit('idle'), 20);
       }, window.__PERF_MAP_DELAY_MS || 0);
@@ -94,8 +95,11 @@ MAPLIBRE_STUB = r"""
     getCenter() { return this.center; }
     getBearing() { return this.bearing; }
     getZoom() { return this.zoom; }
-    project() { return {x: -1, y: -1}; }
-    queryRenderedFeatures() { return []; }
+    project() { return window.__perfProjectOnScreen ? {x: 100, y: 100} : {x: -1, y: -1}; }
+    queryRenderedFeatures(_bounds, options = {}) {
+      const layer = options.layers && options.layers[0];
+      return window.__perfBuildingFeatures && layer ? (window.__perfBuildingFeatures[layer] || []) : [];
+    }
     setPaintProperty() {}
     setLayoutProperty() {}
     setFilter() {}
@@ -137,14 +141,20 @@ delay => {
   window.__PERF_MAP_DELAY_MS = delay;
   window.__perfListCountMs = null;
   window.__perfFirstUsefulListMs = null;
+  window.__perfMapLoadMs = null;
+  window.__perfLoaderDismissMs = null;
   const observe = () => {
     const record = () => {
       const count = document.getElementById('coCount');
       if (window.__perfListCountMs === null && count && /^\d+ /.test(count.textContent || '')) {
         window.__perfListCountMs = performance.now();
       }
+      const loader = document.getElementById('loader');
+      if (window.__perfLoaderDismissMs === null && loader && loader.classList.contains('done')) {
+        window.__perfLoaderDismissMs = performance.now();
+      }
     };
-    new MutationObserver(record).observe(document.documentElement, {subtree: true, childList: true, characterData: true});
+    new MutationObserver(record).observe(document.documentElement, {subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['class']});
     record();
   };
   if (document.documentElement) observe();
@@ -275,6 +285,11 @@ def read_load_sample(
           run,
           first_useful_list_ms: window.__perfFirstUsefulListMs,
           list_count_ready_ms: window.__perfListCountMs,
+          map_load_ms: window.__perfMapLoadMs,
+          list_before_map_load: window.__perfMapLoadMs === null || window.__perfFirstUsefulListMs < window.__perfMapLoadMs,
+          loader_dismiss_ms: window.__perfLoaderDismissMs,
+          content_ready_before_map_load: window.__perfLoaderDismissMs !== null &&
+            (window.__perfMapLoadMs === null || window.__perfLoaderDismissMs < window.__perfMapLoadMs),
           visible_rows: document.querySelectorAll('.co').length,
           marker_count: document.querySelectorAll('.co-marker').length,
         })""",
@@ -330,7 +345,78 @@ def stable_idle_writes(page: Page, idle_events: int = 5) -> dict[str, object]:
     return {
         "stable_idle_events": idle_events,
         "sources": sources,
+        "stable_set_data_detected": any(source["calls"] for source in sources.values()),
         "repeated_set_data_detected": any(source["repeated_payload_calls"] for source in sources.values()),
+    }
+
+
+def building_source_invalidation(page: Page, company: dict[str, object]) -> dict[str, object]:
+    """Verify one real geometry write, a stable skip, and a removal write."""
+    page.evaluate(
+        """company => {
+          const d = 0.0002;
+          const ring = [
+            [company.lng - d, company.lat - d],
+            [company.lng + d, company.lat - d],
+            [company.lng + d, company.lat + d],
+            [company.lng - d, company.lat + d],
+            [company.lng - d, company.lat - d],
+          ];
+          const feature = {
+            type: 'Feature',
+            geometry: {type: 'Polygon', coordinates: [ring]},
+            properties: {render_height: 12, render_min_height: 0},
+          };
+          window.__perfProjectOnScreen = true;
+          window.__perfBuildingFeatures = {'building-3d': [feature], building: [feature]};
+          window.__perfMap.zoom = 14;
+          Object.values(window.__perfMap.sources).forEach(source => {
+            source.calls = 0;
+            source.repeatedCalls = 0;
+          });
+        }""",
+        company,
+    )
+
+    def settle_and_read() -> dict[str, dict[str, int]]:
+        page.evaluate("window.__perfMap.emit('idle')")
+        page.wait_for_timeout(180)
+        return page.evaluate(
+            """() => Object.fromEntries(Object.entries(window.__perfMap.sources).map(([id, source]) => [id, {
+              calls: source.calls,
+              repeated_payload_calls: source.repeatedCalls,
+              features: source.data.features.length,
+            }]))"""
+        )
+
+    first_geometry = settle_and_read()
+    page.evaluate("Object.values(window.__perfMap.sources).forEach(source => { source.calls = 0; source.repeatedCalls = 0; })")
+    stable_geometry = settle_and_read()
+    page.evaluate(
+        """() => {
+          window.__perfBuildingFeatures = {'building-3d': [], building: []};
+          Object.values(window.__perfMap.sources).forEach(source => { source.calls = 0; source.repeatedCalls = 0; });
+        }"""
+    )
+    removed_geometry = settle_and_read()
+    valid = all(
+        first_geometry[source_id]["calls"] == 1
+        and first_geometry[source_id]["features"] == 1
+        and stable_geometry[source_id]["calls"] == 0
+        and removed_geometry[source_id]["calls"] == 1
+        and removed_geometry[source_id]["features"] == 0
+        for source_id in ("co-buildings-3d", "co-buildings-2d")
+    )
+    if not valid:
+        raise RuntimeError(
+            f"building source invalidation failed: first={first_geometry}, "
+            f"stable={stable_geometry}, removed={removed_geometry}"
+        )
+    return {
+        "first_geometry": first_geometry,
+        "stable_geometry": stable_geometry,
+        "removed_geometry": removed_geometry,
+        "all_transitions_valid": True,
     }
 
 
@@ -380,6 +466,7 @@ def expected_counts_from_app(browser, url: str, map_delay_ms: int) -> dict[str, 
     try:
         page.goto(url, wait_until="load")
         wait_for_list(page)
+        page.wait_for_function("window.__perfMapLoadMs !== null", timeout=10_000)
         counts = {"initial_ecosystem": read_consistent_count(page)}
         page.evaluate("document.querySelector('[data-view-category=\"Coworking Space\"]').click()")
         counts["ecosystem_with_coworking"] = read_consistent_count(page)
@@ -414,11 +501,18 @@ def run_benchmark(
     runs: int,
     map_delay_ms: int,
     require_no_repeated_set_data: bool = False,
+    require_list_before_map_load: bool = False,
     trace_path: Path | None = None,
     trace_versioned: bool = False,
 ) -> dict[str, object]:
     companies_path = ROOT / "companies.json"
     companies = json.loads(companies_path.read_text(encoding="utf-8"))
+    geometry_company = next(
+        company for company in companies
+        if company.get("city") == "lima"
+        and company.get("workspace_type") in {"coworking", "library"}
+        and company.get("sources")
+    )
     git_head = git_stdout("rev-parse", "HEAD")
     comparison_base = git_stdout("merge-base", "origin/master", "HEAD")
     interaction_runs: dict[str, list[dict[str, float]]] = {
@@ -430,6 +524,7 @@ def run_benchmark(
     cold: list[dict[str, object]] = []
     warm: list[dict[str, object]] = []
     idle_writes: dict[str, object] | None = None
+    building_invalidation: dict[str, object] | None = None
 
     with local_server() as url, sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True)
@@ -446,6 +541,7 @@ def run_benchmark(
             network.reset()
             page.goto(url, wait_until="load")
             wait_for_list(page)
+            page.wait_for_function("window.__perfMapLoadMs !== null", timeout=10_000)
             cold.append(read_load_sample(page, "cold", run, list(errors), network, url))
             if cold[-1]["visible_rows"] != counts["initial_ecosystem"]:
                 raise RuntimeError(f"initial result count does not match application contract: {cold[-1]}")
@@ -454,10 +550,10 @@ def run_benchmark(
             network.reset()
             page.reload(wait_until="load")
             wait_for_list(page)
+            page.wait_for_function("window.__perfMapLoadMs !== null", timeout=10_000)
             warm.append(read_load_sample(page, "warm", run, errors[error_start:], network, url))
             if warm[-1]["visible_rows"] != counts["initial_ecosystem"]:
                 raise RuntimeError(f"warm result count does not match application contract: {warm[-1]}")
-
             interaction_runs["ecosystem_add_coworking"].append(measure_click(
                 page, '[data-view-category="Coworking Space"]', counts["ecosystem_with_coworking"]
             ))
@@ -469,6 +565,7 @@ def run_benchmark(
             ))
             if run == runs:
                 idle_writes = stable_idle_writes(page)
+                building_invalidation = building_source_invalidation(page, geometry_company)
 
             external_requests.extend(run_external_requests)
             context.close()
@@ -481,6 +578,7 @@ def run_benchmark(
             trace_page = trace_context.new_page()
             trace_page.goto(url, wait_until="load")
             wait_for_list(trace_page)
+            trace_page.wait_for_function("window.__perfMapLoadMs !== null", timeout=10_000)
             measure_click(trace_page, '[data-view-category="Coworking Space"]', counts["ecosystem_with_coworking"])
             measure_click(trace_page, '[data-view-mode="remote"]', counts["remote_all_types"])
             measure_click(trace_page, '[data-workspace-type="cafe"]', counts["remote_without_cafe"])
@@ -491,11 +589,24 @@ def run_benchmark(
 
     if idle_writes is None:
         raise RuntimeError("building-source detector was not exercised")
-    if require_no_repeated_set_data and idle_writes["repeated_set_data_detected"]:
+    if building_invalidation is None:
+        raise RuntimeError("building-source invalidation was not exercised")
+    if require_no_repeated_set_data and idle_writes["stable_set_data_detected"]:
         raise RuntimeError(f"repeated stable-view setData calls detected: {idle_writes}")
+    if require_list_before_map_load and not all(
+        bool(sample["list_before_map_load"]) and bool(sample["content_ready_before_map_load"])
+        for sample in cold + warm
+    ):
+        raise RuntimeError("the usable list and dismissed loader did not precede the synthetic map load")
     all_errors = [error for sample in cold + warm for error in sample["page_errors"]]
     if all_errors:
         raise RuntimeError(f"browser page errors detected: {all_errors}")
+    for sample in cold + warm:
+        responses = sample["first_party_network"]["responses"]
+        for filename in ("companies.json", "ticker.json"):
+            matching = [response for response in responses if response["url"].split("?", 1)[0].endswith("/" + filename)]
+            if len(matching) != 1:
+                raise RuntimeError(f"expected one {filename} request per navigation: {sample}")
     tile_requests = sorted({url for url in external_requests if "openfreemap.org" in url})
     if tile_requests:
         raise RuntimeError(f"public tile requests escaped the deterministic map stub: {tile_requests}")
@@ -548,6 +659,7 @@ def run_benchmark(
         },
         "correctness": {"expected_counts": counts, "all_samples_valid": True},
         "stable_view_building_source_writes": idle_writes,
+        "building_source_invalidation": building_invalidation,
         "network": {
             "external_requests_blocked_or_stubbed": len(external_requests),
             "external_hosts": sorted({url.split("/", 3)[2] for url in external_requests}),
@@ -575,6 +687,7 @@ def main() -> int:
         help="Declara que el trace se añadirá al repositorio junto al resultado",
     )
     parser.add_argument("--require-no-repeated-set-data", action="store_true")
+    parser.add_argument("--require-list-before-map-load", action="store_true")
     args = parser.parse_args()
     if args.runs < 1 or args.map_delay_ms < 0:
         parser.error("--runs must be positive and --map-delay-ms cannot be negative")
@@ -593,6 +706,7 @@ def main() -> int:
         args.runs,
         args.map_delay_ms,
         args.require_no_repeated_set_data,
+        args.require_list_before_map_load,
         trace_path,
         args.trace_versioned,
     )
