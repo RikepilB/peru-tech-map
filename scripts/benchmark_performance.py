@@ -270,13 +270,30 @@ class NetworkRecorder:
         }
 
 
+def final_navigation_network(
+    network: NetworkRecorder, origin: str, navigation: str
+) -> dict[str, object]:
+    """Return the completed navigation summary after enforcing one request per dataset."""
+    summary = network.summarize(origin)
+    responses = summary["responses"]
+    for filename in ("companies.json", "ticker.json"):
+        matching = [
+            response
+            for response in responses
+            if response["url"].split("?", 1)[0].endswith("/" + filename)
+        ]
+        if len(matching) != 1:
+            raise RuntimeError(
+                f"expected one {filename} request in completed {navigation}: {summary}"
+            )
+    return summary
+
+
 def read_load_sample(
     page: Page,
     mode: str,
     run: int,
     errors: list[str],
-    network: NetworkRecorder,
-    origin: str,
 ) -> dict[str, object]:
     page.wait_for_timeout(50)
     metrics = page.evaluate(
@@ -295,7 +312,6 @@ def read_load_sample(
         })""",
         {"mode": mode, "run": run},
     )
-    metrics["first_party_network"] = network.summarize(origin)
     metrics["page_errors"] = errors
     return metrics
 
@@ -463,7 +479,9 @@ def expected_counts_from_app(browser, url: str, map_delay_ms: int) -> dict[str, 
     context = browser.new_context(locale="es-PE", viewport={"width": 1280, "height": 800})
     configure_context(context, map_delay_ms, [])
     page = context.new_page()
+    network = NetworkRecorder(context.new_cdp_session(page))
     try:
+        network.reset()
         page.goto(url, wait_until="load")
         wait_for_list(page)
         page.wait_for_function("window.__perfMapLoadMs !== null", timeout=10_000)
@@ -474,6 +492,8 @@ def expected_counts_from_app(browser, url: str, map_delay_ms: int) -> dict[str, 
         counts["remote_all_types"] = read_consistent_count(page)
         page.evaluate("document.querySelector('[data-workspace-type=\"cafe\"]').click()")
         counts["remote_without_cafe"] = read_consistent_count(page)
+        page.wait_for_timeout(50)
+        final_navigation_network(network, url, "expected-counts navigation")
         return counts
     finally:
         context.close()
@@ -542,16 +562,19 @@ def run_benchmark(
             page.goto(url, wait_until="load")
             wait_for_list(page)
             page.wait_for_function("window.__perfMapLoadMs !== null", timeout=10_000)
-            cold.append(read_load_sample(page, "cold", run, list(errors), network, url))
+            cold.append(read_load_sample(page, "cold", run, list(errors)))
             if cold[-1]["visible_rows"] != counts["initial_ecosystem"]:
                 raise RuntimeError(f"initial result count does not match application contract: {cold[-1]}")
+            cold[-1]["first_party_network"] = final_navigation_network(
+                network, url, f"cold run {run}"
+            )
 
             error_start = len(errors)
             network.reset()
             page.reload(wait_until="load")
             wait_for_list(page)
             page.wait_for_function("window.__perfMapLoadMs !== null", timeout=10_000)
-            warm.append(read_load_sample(page, "warm", run, errors[error_start:], network, url))
+            warm.append(read_load_sample(page, "warm", run, errors[error_start:]))
             if warm[-1]["visible_rows"] != counts["initial_ecosystem"]:
                 raise RuntimeError(f"warm result count does not match application contract: {warm[-1]}")
             interaction_runs["ecosystem_add_coworking"].append(measure_click(
@@ -567,6 +590,10 @@ def run_benchmark(
                 idle_writes = stable_idle_writes(page)
                 building_invalidation = building_source_invalidation(page, geometry_company)
 
+            warm[-1]["first_party_network"] = final_navigation_network(
+                network, url, f"warm run {run}"
+            )
+
             external_requests.extend(run_external_requests)
             context.close()
 
@@ -576,6 +603,8 @@ def run_benchmark(
             configure_context(trace_context, map_delay_ms, [])
             trace_context.tracing.start(screenshots=True, snapshots=True, sources=True)
             trace_page = trace_context.new_page()
+            trace_network = NetworkRecorder(trace_context.new_cdp_session(trace_page))
+            trace_network.reset()
             trace_page.goto(url, wait_until="load")
             wait_for_list(trace_page)
             trace_page.wait_for_function("window.__perfMapLoadMs !== null", timeout=10_000)
@@ -583,6 +612,7 @@ def run_benchmark(
             measure_click(trace_page, '[data-view-mode="remote"]', counts["remote_all_types"])
             measure_click(trace_page, '[data-workspace-type="cafe"]', counts["remote_without_cafe"])
             stable_idle_writes(trace_page)
+            final_navigation_network(trace_network, url, "trace navigation")
             trace_context.tracing.stop(path=str(trace_path))
             trace_context.close()
         browser.close()
@@ -601,12 +631,6 @@ def run_benchmark(
     all_errors = [error for sample in cold + warm for error in sample["page_errors"]]
     if all_errors:
         raise RuntimeError(f"browser page errors detected: {all_errors}")
-    for sample in cold + warm:
-        responses = sample["first_party_network"]["responses"]
-        for filename in ("companies.json", "ticker.json"):
-            matching = [response for response in responses if response["url"].split("?", 1)[0].endswith("/" + filename)]
-            if len(matching) != 1:
-                raise RuntimeError(f"expected one {filename} request per navigation: {sample}")
     tile_requests = sorted({url for url in external_requests if "openfreemap.org" in url})
     if tile_requests:
         raise RuntimeError(f"public tile requests escaped the deterministic map stub: {tile_requests}")
