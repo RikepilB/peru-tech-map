@@ -830,13 +830,17 @@ function peekPx() {
 }
 const flyPadding = () => {
   if (!isMobile()) return { left: 340, top: 40, right: 40, bottom: 60 };
-  // The peeked sheet plus the bottom chrome cover the map's lower edge — pad so the selected
-  // marker centers in the visible strip above the sheet instead of behind it.
+  // The bottom padding must match the sheet extent that will be in place when the fly
+  // settles: pointer taps snap the sheet to peek before flying, while keyboard/synthetic
+  // activations (focusPopup) leave it at its current snap. selectCompany() therefore snaps
+  // before calling this. The bottom chrome below the sheet is measured live.
+  const sheet = document.getElementById("panel");
+  const visible = sheet ? sheet.offsetHeight - sheetSnapTranslate(sheetCurrentSnap()) : peekPx();
   const chrome = ["statusbar", "ticker"].reduce((sum, id) => {
     const el = document.getElementById(id);
     return sum + (el ? el.offsetHeight : 0);
   }, 0);
-  return { top: 70, left: 20, right: 20, bottom: Math.round(peekPx() + chrome + 20) };
+  return { top: 70, left: 20, right: 20, bottom: Math.round(visible + chrome + 20) };
 };
 
 let currentCity = "lima";
@@ -1478,8 +1482,9 @@ function selectCompany(i, fly, focusPopup = false) {
     if (focusPopup) popupClose.focus();
   }
 
-  if (fly) map.flyTo({ center: [c.lng, c.lat], zoom: 16, padding: flyPadding(), duration: 1500, essential: true });
+  // Snap before flying so flyPadding() reads the sheet extent that will actually be in place.
   if (isMobile() && !focusPopup) setMobilePanelExpanded(false);
+  if (fly) map.flyTo({ center: [c.lng, c.lat], zoom: 16, padding: flyPadding(), duration: 1500, essential: true });
 }
 // Rebuilds the open popup (if any) from the current language — selectCompany() always
 // reads getLang() fresh, so re-running it is enough to pick up the new tag_es/tag.
@@ -1799,6 +1804,16 @@ function sheetToggleFromClick() {
   }
   sheetToggleTap();
 }
+// Clicks on filtered controls die in their own bubble handlers (stopPropagation) or in the
+// guard below, so a pointer gesture that started on one never gets its click consumed and
+// the sequence would drift ahead — swallowing the next keyboard/synthetic activation. This
+// capture listener runs before those handlers and resyncs the counters for exactly those
+// clicks. It leaves head-proper and handle clicks alone for sheetToggleFromClick to process.
+document.getElementById("panelHead").addEventListener("click", (e) => {
+  if (e.target.closest("button, select, label") && sheetClicksConsumed < sheetPointerSeq) {
+    sheetClicksConsumed = sheetPointerSeq;
+  }
+}, true);
 document.getElementById("panelHead").addEventListener("click", (e) => {
   if (e.target.closest("button, select, label")) return;
   sheetToggleFromClick();
