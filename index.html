@@ -239,13 +239,13 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
     --blur: 12px;
     --statusbar: 24px;
     --ticker: 26px;
-    --sheet-peek: 96px;
+    --sheet-peek: 112px;
     --safe-b: env(safe-area-inset-bottom, 0px);
     --safe-t: env(safe-area-inset-top, 0px);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   /* NOTE: no global transition/transform rules — they would fight MapLibre marker positioning */
-  html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); overscroll-behavior: none; }
   body { font-family: var(--sans); color: var(--text); font-size: 13px; }
   #map { position: absolute; top: 0; left: 0; right: 0; bottom: calc(var(--statusbar) + var(--safe-b) + var(--ticker)); }
   .maplibregl-ctrl-attrib { font-size: 9px !important; background: rgba(27,34,44,0.7) !important; }
@@ -380,7 +380,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   .filter-reset:hover { text-decoration: underline; text-underline-offset: 3px; }
   .filter-reset:focus-visible { outline: 2px solid var(--green-bright); outline-offset: 3px; border-radius: 2px; }
 
-  .panel-list { flex: 1; overflow-y: auto; }
+  .panel-list { flex: 1; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
   .panel-list::-webkit-scrollbar { width: 8px; }
   .panel-list::-webkit-scrollbar-thumb { background: var(--line); }
   .co {
@@ -554,6 +554,10 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
     .filter-stage-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     #langToggle { padding: 9px 10px; }
     .statusbar { gap: 12px; padding: 0 10px; padding-bottom: var(--safe-b); }
+    /* Bottom sheet with three rest states: peek (default), .snap-half (drag-only stop) and
+       .expanded (fully open — the class the click/keyboard flows already key on). The JS drag
+       engine writes inline transforms while the finger is down, then hands back to these
+       classes so the transition curve stays defined in one place. */
     #panel {
       top: auto; left: 0; right: 0; bottom: calc(var(--statusbar) + var(--safe-b) + var(--ticker)); width: auto;
       height: 85vh; height: 85dvh;
@@ -561,15 +565,20 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
       transform: translateY(calc(100% - var(--sheet-peek)));
       transition: transform .32s cubic-bezier(.32,.72,0,1);
       border-right: 0; border-top: 1px solid var(--line);
+      will-change: transform;
+    }
+    #panel.snap-half {
+      transform: translateY(calc(100% - 55vh));
+      transform: translateY(calc(100% - 55dvh));
     }
     #panel.expanded { transform: translateY(0); }
     .drag-handle {
       display: flex; align-items: center; justify-content: center;
-      width: 100%; height: 22px; margin: 0; padding: 0; background: transparent;
-      touch-action: none;
+      width: 100%; height: 28px; margin: 0; padding: 0; background: transparent;
+      touch-action: none; cursor: grab;
     }
     .drag-handle::after { content: ""; width: 38px; height: 4px; background: var(--line); border-radius: 2px; }
-    .panel-head { cursor: pointer; padding-top: 0; }
+    .panel-head { cursor: pointer; padding-top: 0; touch-action: none; user-select: none; -webkit-user-select: none; }
     #panelToggle { display: none; }
   }
 </style>
@@ -814,9 +823,21 @@ const FORM_ENDPOINT = "https://formsubmit.co/ajax/bbd1d388bad84c6ba3b9b23d6c7848
 const MUTED_FUNDING_TYPES = new Set(["Startup", "Technology Consultancy", "Coworking Space", "Incubator", "Accelerator", "VC", "Nonprofit", "Consultancy", "Coworking", "Fund"]);
 
 const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
-const flyPadding = () => isMobile()
-  ? { bottom: Math.round(window.innerHeight * 0.6), top: 30, left: 20, right: 20 }
-  : { left: 340, top: 40, right: 40, bottom: 60 };
+// Peek height of the mobile sheet, kept in sync with the --sheet-peek custom property.
+function peekPx() {
+  const v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--sheet-peek"));
+  return isNaN(v) ? 112 : v;
+}
+const flyPadding = () => {
+  if (!isMobile()) return { left: 340, top: 40, right: 40, bottom: 60 };
+  // The peeked sheet plus the bottom chrome cover the map's lower edge — pad so the selected
+  // marker centers in the visible strip above the sheet instead of behind it.
+  const chrome = ["statusbar", "ticker"].reduce((sum, id) => {
+    const el = document.getElementById(id);
+    return sum + (el ? el.offsetHeight : 0);
+  }, 0);
+  return { top: 70, left: 20, right: 20, bottom: Math.round(peekPx() + chrome + 20) };
+};
 
 let currentCity = "lima";
 let ALL_COMPANIES = []; // full companies.json, every city
@@ -1658,27 +1679,137 @@ function startStatusBar() {
 }
 
 // ---------- Mobile sheet ----------
+// Draggable bottom sheet with three snap points: peek (default), .snap-half (a drag-only stop
+// at 55dvh) and .expanded (fully open — the class the click/keyboard flows already key on).
+// The pointer path owns drags and real taps; click handlers stay for the native button's
+// keyboard activation and synthetic clicks, with a timestamp guard so the click twin that
+// follows every real tap doesn't toggle the sheet a second time.
 const panel = document.getElementById("panel");
 const panelHandle = document.getElementById("handle");
-function setMobilePanelExpanded(expanded) {
-  panel.classList.toggle("expanded", expanded);
-  panelHandle.setAttribute("aria-expanded", String(expanded));
-  const hidePanelContent = isMobile() && !expanded;
+const SHEET_SNAPS = ["peek", "half", "full"];
+
+function sheetSnapTranslate(name) {
+  const sheetH = panel.offsetHeight;
+  if (name === "full") return 0;
+  if (name === "half") return Math.max(0, sheetH - window.innerHeight * 0.55);
+  return Math.max(0, sheetH - peekPx());
+}
+function sheetCurrentSnap() {
+  if (panel.classList.contains("expanded")) return "full";
+  if (panel.classList.contains("snap-half")) return "half";
+  return "peek";
+}
+function sheetTranslate() {
+  const m = getComputedStyle(panel).transform;
+  if (!m || m === "none") return 0;
+  const p = m.match(/^matrix\(([^)]+)\)$/);
+  return p ? (parseFloat(p[1].split(",")[5]) || 0) : 0;
+}
+function setSnap(name) {
+  // Clearing the inline transition+transform in the same tick as the class change makes the
+  // sheet animate from wherever the finger left it to the rest state.
+  panel.style.transition = "";
+  panel.style.transform = "";
+  panel.classList.toggle("snap-half", name === "half");
+  panel.classList.toggle("expanded", name === "full");
+  panelHandle.setAttribute("aria-expanded", name === "peek" ? "false" : "true");
+  const hidePanelContent = isMobile() && name === "peek";
   [".panel-head", ".panel-list", ".panel-foot"].forEach(selector => {
     const content = panel.querySelector(selector);
     if (content) content.inert = hidePanelContent;
   });
 }
+function setMobilePanelExpanded(expanded) {
+  setSnap(expanded ? "full" : "peek");
+}
+function settleSheet(velocity) {
+  const projected = sheetTranslate() + (velocity || 0) * 160;
+  let target = SHEET_SNAPS[0], best = Infinity;
+  for (const s of SHEET_SNAPS) {
+    const d = Math.abs(sheetSnapTranslate(s) - projected);
+    if (d < best) { best = d; target = s; }
+  }
+  setSnap(target);
+}
+function sheetToggleTap() {
+  setSnap(sheetCurrentSnap() === "peek" ? "full" : "peek");
+}
+
+let sheetDrag = null; // live gesture state; null when the sheet is at rest
+// Every pointerdown on the grab surfaces bumps this; the next click — the twin a real tap or
+// a rejected drag produces, whenever the browser gets around to dispatching it — is consumed
+// exactly once. Keyboard and synthetic clicks never follow a pointerdown, so they pass.
+let sheetPointerSeq = 0;
+let sheetClicksConsumed = 0;
+function sheetDown(e) {
+  if (!isMobile() || !e.isPrimary || sheetDrag) return;
+  // Bump before the target guards: even a rejected drag (from a filter pill or label) makes
+  // the browser synthesize a click on their common ancestor when the finger lifts elsewhere —
+  // without the bump that click would reach the head handler and toggle the sheet.
+  sheetPointerSeq++;
+  if (e.target.closest("a, select, input, label")) return; // filters and links stay plain taps
+  const button = e.target.closest("button");
+  if (button && button.id !== "handle") return;
+  sheetDrag = {
+    id: e.pointerId, startY: e.clientY, startT: sheetTranslate(),
+    lastY: e.clientY, lastT: performance.now(), v: 0, moved: false,
+  };
+  panel.style.transition = "none";
+  try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
+}
+function sheetMove(e) {
+  if (!sheetDrag || e.pointerId !== sheetDrag.id) return;
+  const dy = e.clientY - sheetDrag.startY;
+  if (Math.abs(dy) > 6) sheetDrag.moved = true;
+  const ty = Math.min(sheetSnapTranslate("peek"), Math.max(0, sheetDrag.startT + dy));
+  const now = performance.now();
+  if (now > sheetDrag.lastT) {
+    sheetDrag.v = (e.clientY - sheetDrag.lastY) / (now - sheetDrag.lastT);
+    sheetDrag.lastY = e.clientY;
+    sheetDrag.lastT = now;
+  }
+  panel.style.transform = "translateY(" + ty + "px)";
+}
+function sheetUp(e) {
+  if (!sheetDrag || e.pointerId !== sheetDrag.id) return;
+  const d = sheetDrag;
+  sheetDrag = null;
+  if (d.moved) settleSheet(d.v);
+  else sheetToggleTap();
+}
+function sheetCancel(e) {
+  if (!sheetDrag || e.pointerId !== sheetDrag.id) return;
+  sheetDrag = null;
+  settleSheet(0);
+}
+panelHandle.addEventListener("pointerdown", sheetDown);
+document.getElementById("panelHead").addEventListener("pointerdown", sheetDown);
+// move/up/cancel live on window: pointer capture retargets events to the pressed element and
+// they bubble here, and a lost capture (older Safari) still ends the gesture instead of
+// freezing the sheet mid-drag with transitions disabled.
+window.addEventListener("pointermove", sheetMove);
+window.addEventListener("pointerup", sheetUp);
+window.addEventListener("pointercancel", sheetCancel);
+
+function sheetToggleFromClick() {
+  if (!isMobile()) return;
+  if (sheetClicksConsumed < sheetPointerSeq) {
+    sheetClicksConsumed = sheetPointerSeq; // twin of a pointer gesture — swallow it
+    return;
+  }
+  sheetToggleTap();
+}
 document.getElementById("panelHead").addEventListener("click", (e) => {
   if (e.target.closest("button, select, label")) return;
-  if (isMobile()) setMobilePanelExpanded(!panel.classList.contains("expanded"));
+  sheetToggleFromClick();
 });
-panelHandle.addEventListener("click", () => setMobilePanelExpanded(!panel.classList.contains("expanded")));
+panelHandle.addEventListener("click", sheetToggleFromClick);
+
 let previousMobileViewport = null;
 function syncMobilePanelViewport() {
   const mobileViewport = isMobile();
   const keepExpanded = mobileViewport && previousMobileViewport === true
-    && panel.classList.contains("expanded");
+    && sheetCurrentSnap() !== "peek";
   setMobilePanelExpanded(keepExpanded);
   previousMobileViewport = mobileViewport;
 }
