@@ -31,6 +31,7 @@ window.I18N = {
     default: "Default", alpha: "A–Z",
     addCompany: "+ Add A Company",
     addWorkspace: "+ Add A Workspace",
+    useScout: "Use Coworking Scout ↗",
     addHint: "Tap the map to drop a pin",
     resetBearing: "Reset bearing (north up)",
     rotateLeft: "Rotate left", rotateRight: "Rotate right",
@@ -92,6 +93,7 @@ window.I18N = {
     default: "Por Defecto", alpha: "A–Z",
     addCompany: "+ Agregar Empresa",
     addWorkspace: "+ Agregar Espacio",
+    useScout: "Usar Coworking Scout ↗",
     addHint: "Toca el mapa para colocar un pin",
     resetBearing: "Reiniciar orientación (norte arriba)",
     rotateLeft: "Rotar izquierda", rotateRight: "Rotar derecha",
@@ -367,6 +369,8 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
   .filter-note {
     margin: 0; color: var(--muted); font: 500 10px/1.45 var(--sans); letter-spacing: .02em;
   }
+  .scout-entry { display: block; padding: 10px 0; color: var(--green); font-size: 12px; text-align: center; text-underline-offset: 4px; }
+  .scout-entry:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
   .workspace-add { min-height: 40px; margin-top: 2px; }
   .filter-reset {
     width: fit-content; min-height: 32px; margin: -2px 0 0; padding: 5px 0;
@@ -650,6 +654,7 @@ window.t = function (key) { return (window.I18N[getLang()] || window.I18N.en)[ke
           </div>
           <p class="filter-note" id="remoteNotice" data-i18n="remoteNotice">Location backed by a public source. Wi-Fi and amenities are not yet verified.</p>
           <button type="button" class="btn ghost workspace-add" id="addWorkspaceBtn" data-i18n="addWorkspace">+ Add A Workspace</button>
+          <a class="scout-entry" href="/scout/" data-i18n="useScout">Use Coworking Scout ↗</a>
         </fieldset>
         <button type="button" class="filter-reset" id="clearViewFilters" data-i18n="clearFilters" hidden>Restore companies</button>
       </div>
