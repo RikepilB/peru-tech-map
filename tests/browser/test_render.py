@@ -86,6 +86,7 @@ PAGE = f"""<style>{STYLES}</style>
     <label class="filter-choice"><input class="filter-input" type="checkbox" data-workspace-type="library" value="library" checked><span class="filter-choice-label">Libraries</span></label>
   </div>
   <p class="filter-note">Verified locations only.</p>
+  <a class="scout-entry" href="/scout/">Use Coworking Scout ↗</a>
 </fieldset>
 <button class="filter-reset" id="clearViewFilters" hidden>Restore companies</button></div></div><div id="coList"></div></aside>
 <button id="panelToggle"></button><div id="gridStatus"></div>
@@ -672,13 +673,13 @@ class RenderTests(unittest.TestCase):
 
     def test_remote_work_controls_have_bilingual_copy_and_mobile_targets(self):
         expected = {
-            "en": ("Map mode", "Ecosystem", "Work remotely", "Place types", "Coworking", "Café", "Library", "Location backed by a public source. Wi-Fi and amenities are not yet verified."),
-            "es": ("Modo del mapa", "Ecosistema", "Trabajar remoto", "Tipos de lugar", "Coworking", "Café", "Biblioteca", "Ubicación respaldada por una fuente pública. Wi-Fi y servicios aún no verificados."),
+            "en": ("Map mode", "Ecosystem", "Work remotely", "Place types", "Coworking", "Café", "Library", "Location backed by a public source. Wi-Fi and amenities are not yet verified.", "Use Coworking Scout ↗"),
+            "es": ("Modo del mapa", "Ecosistema", "Trabajar remoto", "Tipos de lugar", "Coworking", "Café", "Biblioteca", "Ubicación respaldada por una fuente pública. Wi-Fi y servicios aún no verificados.", "Usar Coworking Scout ↗"),
         }
         for lang, labels in expected.items():
             with self.subTest(lang=lang):
                 values = self.page.evaluate(
-                    "lang => { localStorage.setItem('pg_lang', lang); return [t('mapMode'), t('ecosystemMode'), t('remoteWorkMode'), t('filterWorkspace'), t('workspaceCoworking'), t('workspaceCafe'), t('workspaceLibrary'), t('remoteNotice')]; }",
+                    "lang => { localStorage.setItem('pg_lang', lang); return [t('mapMode'), t('ecosystemMode'), t('remoteWorkMode'), t('filterWorkspace'), t('workspaceCoworking'), t('workspaceCafe'), t('workspaceLibrary'), t('remoteNotice'), t('useScout')]; }",
                     lang,
                 )
                 self.assertEqual(tuple(values), labels)
@@ -687,6 +688,9 @@ class RenderTests(unittest.TestCase):
         self.page.set_viewport_size({"width": 320, "height": 700})
         self.page.evaluate("data => { ALL_COMPANIES = data; applyCity('lima'); }", companies)
         self.set_mode("remote")
+        scout_link = self.page.locator(".scout-entry")
+        self.assertTrue(scout_link.is_visible())
+        self.assertEqual(scout_link.get_attribute("href"), "/scout/")
         self.assertGreaterEqual(self.page.locator('[data-view-mode="remote"]').locator("xpath=..").bounding_box()["height"], 44)
         for option in self.page.locator("[data-workspace-type]").all():
             self.assertGreaterEqual(option.locator("xpath=..").bounding_box()["height"], 44)

@@ -231,4 +231,4 @@ El **código** tiene [licencia MIT](./LICENSE). Los **datasets** (`companies.jso
 
 ## Coworking Scout
 
-La guía pública vive en [/scout/](https://www.perugrid.com/scout/). Desde el mapa: Trabajar remoto → Usar Coworking Scout. Incluye inicio local, CLI y enlaces de integración; el motor se ejecuta en el equipo del usuario.
+La experiencia pública vive en [/scout/](https://perugrid.com/scout/). Desde el mapa: **Trabajar remoto → Usar Coworking Scout**. Permite buscar y combinar coworkings, cafés y bibliotecas con fuentes públicas del catálogo. La misma página resume la CLI, API local y flujo para agentes para colaboradores que ya tienen acceso al repositorio privado; el motor se ejecuta en su equipo.

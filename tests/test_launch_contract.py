@@ -52,6 +52,24 @@ class LaunchContractTests(unittest.TestCase):
 
         self.assertEqual(directives, ["User-agent: *", "Allow: /"])
 
+    def test_scout_is_publicly_reachable_without_private_repository_links(self):
+        map_html = (ROOT / "index.html").read_text(encoding="utf-8")
+        scout_html = (ROOT / "scout" / "index.html").read_text(encoding="utf-8")
+        parser = HeadLinkParser()
+        parser.feed(scout_html)
+
+        canonical = [
+            link.get("href")
+            for link in parser.links
+            if link.get("rel") == "canonical"
+        ]
+
+        self.assertIn('href="/scout/"', map_html)
+        self.assertEqual(canonical, ["https://perugrid.com/scout/"])
+        self.assertNotIn("github.com/RikepilB/coworking-scout", scout_html)
+        self.assertIn("Explorador público", scout_html)
+        self.assertIn("fetch('/companies.json')", scout_html)
+
     def test_submission_surfaces_match_the_public_category_contract(self):
         parser = HeadLinkParser()
         parser.feed((ROOT / "index.html").read_text(encoding="utf-8"))

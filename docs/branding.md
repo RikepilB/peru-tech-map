@@ -34,20 +34,23 @@ indexados como pines y se consulta su actividad y organización.
 
 ## Página Scout — intención de diseño
 
-Audiencia: personas que quieren investigar lugares y operadores que aportan evidencia al mapa.
-Acción principal: comenzar con Scout local; secundaria: volver al mapa para explorar sin instalar.
-La página /scout/ explica investigar → revisar → exportar, seguida por una guía CLI breve y enlaces
-al contrato real. Inspiración estructural: Voidscape docs/agents/index.md y README, que separan
-primer resultado, comandos y capacidades disponibles. Se conserva la marca PeruGrid: fondo carbón,
-verde, Plus Jakarta Sans, terminal monoespaciada y tipografía grande alineada a la izquierda.
-Sin claims de integraciones listas ni formulario que simule una API remota. Una guía estática con
-comandos copiables es el alcance; el motor Scout se ejecuta localmente. Responsive a 390/1440 px,
-contraste legible, foco visible, anchors nativos y copia con error accesible. No recoge datos nuevos.
+Audiencia: personas que quieren encontrar un lugar y operadores que aportan evidencia al mapa.
+Acción principal: buscar lugares públicos con fuentes; secundaria: volver al mapa. La página
+/scout/ explica investigar → revisar → exportar, ofrece filtros combinables para coworkings, cafés
+y bibliotecas y después resume la CLI para colaboradores autorizados. Inspiración estructural:
+Voidscape docs/agents/index.md y README, que separan primer resultado, comandos y capacidades
+disponibles. Se conserva la marca PeruGrid: fondo carbón, verde, Plus Jakarta Sans, terminal
+monoespaciada y tipografía grande alineada a la izquierda. Sin claims de integraciones listas ni
+formulario que simule una API remota. El explorador consume el dataset público de PeruGrid; el
+motor Scout y su API se ejecutan localmente. Responsive a 390/1440 px, contraste legible, foco
+visible, anchors nativos y copia con error accesible. No recoge datos nuevos.
 
 
-Revisión Scout: PASS visual a 1440 y 390 px; jerarquía izquierda, terminales con wrap y sin overflow.
-PASS funcional: anchors, detalles nativos, copia y denegación del portapapeles. La CI incluye el
-recorrido. Title, description, canonical /scout/, favicon y enlaces a contratos reales presentes.
-Privacidad/antibot: no aplica a esta página sin formulario; no se añade analítica. Operación: el
-mismo despliegue estático y rollback de docs/operations.md. Comandos status/list/export comprobados
-con Scout instalado y base temporal; no se ejecutaron APIs pagadas ni conectores remotos.
+Revisión Scout: PASS visual a 1440 y 390 px; jerarquía izquierda, filtros legibles, terminales con
+wrap y sin overflow. PASS funcional para anchors, filtros combinables, búsqueda, detalles nativos,
+copia y denegación del portapapeles. La CI incluye el recorrido y el contrato impide enlaces al
+repositorio privado.
+Title, description, canonical /scout/ y favicon presentes. Privacidad/antibot: no aplica a esta
+página sin formulario; no se añade analítica. Operación: el mismo despliegue estático y rollback de
+docs/operations.md. Comandos status/list/export comprobados con Scout instalado y base temporal;
+no se ejecutaron APIs pagadas ni conectores remotos.
